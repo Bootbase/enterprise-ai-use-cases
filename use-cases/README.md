@@ -27,7 +27,7 @@ A curated catalog of real-world agentic AI use cases — researched, designed, a
 | UC-023 | [Autonomous B2B Sales Development](workflow-automation/UC-023-autonomous-b2b-sales-development-agentic-ai/) | Workflow Automation | Cross-Industry | `research` |
 | UC-024 | [Autonomous Financial Close and Reconciliation](workflow-automation/UC-024-autonomous-financial-close-reconciliation-agentic-ai/) | Workflow Automation | Cross-Industry | `research` |
 | UC-025 | [Autonomous Multi-Jurisdiction Tax Compliance](workflow-automation/UC-025-autonomous-multi-jurisdiction-tax-compliance-agentic-ai/) | Workflow Automation | Cross-Industry | `detailed` |
-| UC-026 | [Autonomous Financial Audit and Controls Testing](workflow-automation/UC-026-autonomous-financial-audit-controls-testing-agentic-ai/) | Workflow Automation | Cross-Industry | `research` |
+| UC-026 | [Autonomous Financial Audit and Controls Testing](workflow-automation/UC-026-autonomous-financial-audit-controls-testing-agentic-ai/) | Workflow Automation | Cross-Industry | `detailed` |
 | UC-030 | [Autonomous Incident Investigation (AI SRE)](code-and-devops/UC-030-autonomous-incident-investigation-ai-sre/) | Code & DevOps | Cross-Industry | `research` |
 | UC-031 | [Autonomous SOC Alert Triage and Response](code-and-devops/UC-031-autonomous-soc-ai-alert-triage-response/) | Code & DevOps | Cross-Industry | `research` |
 | UC-032 | [Autonomous Legacy Code Modernization](code-and-devops/UC-032-autonomous-legacy-code-modernization-agentic-ai/) | Code & DevOps | Cross-Industry | `research` |

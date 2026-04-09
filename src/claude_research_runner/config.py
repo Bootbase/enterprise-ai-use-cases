@@ -10,6 +10,7 @@ class AppConfig:
     root: Path
     claude_bin: str
     sleep_hours: int
+    max_runtime_hours: float
     session_name: str
     state_path: Path
     logs_dir: Path
@@ -33,6 +34,7 @@ def build_config(
     git_remote: str | None,
     no_push: bool,
     state_path: str | None = None,
+    max_runtime_hours: float = 24,
 ) -> AppConfig:
     resolved_root = Path(root or ".").resolve()
     _, effective_session_name = build_session_name(session_name)
@@ -42,6 +44,7 @@ def build_config(
         root=resolved_root,
         claude_bin=claude_bin,
         sleep_hours=sleep_hours,
+        max_runtime_hours=max_runtime_hours,
         session_name=effective_session_name,
         state_path=effective_state_path,
         logs_dir=logs_dir,

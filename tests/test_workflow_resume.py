@@ -10,7 +10,8 @@ from unittest.mock import patch
 
 from claude_research_runner.app import _recover_session_id_from_log, run_workflow
 from claude_research_runner.config import build_config
-from claude_research_runner.models import ClaudeRunResult
+from claude_research_runner.models import ClaudeRunResult, LimitHit, Phase
+from claude_research_runner.state import load_state
 
 
 def _run(cwd: Path, *args: str) -> str:
@@ -68,6 +69,7 @@ class WorkflowResumeTests(unittest.TestCase):
                 root=str(root),
                 claude_bin="python3",
                 sleep_hours=0,
+                max_runtime_hours=24,
                 session_name="runner-test",
                 git_remote="origin",
                 no_push=False,
@@ -78,34 +80,38 @@ class WorkflowResumeTests(unittest.TestCase):
 
             try:
                 with patch("claude_research_runner.app._read_claude_auth_status", return_value="Login method: Claude Max Account\n"):
-                    with patch("claude_research_runner.app.run_claude") as mocked_run:
+                    with patch(
+                        "claude_research_runner.app._runtime_limit_reached",
+                        side_effect=lambda _config, state: state.current_phase == Phase.COMPLETED,
+                    ):
+                        with patch("claude_research_runner.app.run_claude") as mocked_run:
 
-                        def _side_effect(**kwargs):
-                            prompt = kwargs["command_text"]
-                            env = os.environ.copy()
-                            completed = subprocess.run(
-                                ["python3", str(fake_claude), "--dangerously-skip-permissions", prompt],
-                                cwd=root,
-                                text=True,
-                                encoding="utf-8",
-                                capture_output=True,
-                                env=env,
-                                check=False,
-                            )
-                            kwargs["log_path"].parent.mkdir(parents=True, exist_ok=True)
-                            rendered = completed.stdout.strip()
-                            payload = json.dumps({"rendered": rendered, "raw": rendered}) + "\n"
-                            kwargs["log_path"].write_text(payload, encoding="utf-8")
-                            return ClaudeRunResult(
-                                exit_code=completed.returncode,
-                                rendered_text=completed.stdout,
-                                raw_output=completed.stdout,
-                                stderr_text=completed.stderr,
-                                limit_hit=None,
-                            )
+                            def _side_effect(**kwargs):
+                                prompt = kwargs["command_text"]
+                                env = os.environ.copy()
+                                completed = subprocess.run(
+                                    ["python3", str(fake_claude), "--dangerously-skip-permissions", prompt],
+                                    cwd=root,
+                                    text=True,
+                                    encoding="utf-8",
+                                    capture_output=True,
+                                    env=env,
+                                    check=False,
+                                )
+                                kwargs["log_path"].parent.mkdir(parents=True, exist_ok=True)
+                                rendered = completed.stdout.strip()
+                                payload = json.dumps({"rendered": rendered, "raw": rendered}) + "\n"
+                                kwargs["log_path"].write_text(payload, encoding="utf-8")
+                                return ClaudeRunResult(
+                                    exit_code=completed.returncode,
+                                    rendered_text=completed.stdout,
+                                    raw_output=completed.stdout,
+                                    stderr_text=completed.stderr,
+                                    limit_hit=None,
+                                )
 
-                        mocked_run.side_effect = _side_effect
-                        exit_code = run_workflow(config)
+                            mocked_run.side_effect = _side_effect
+                            exit_code = run_workflow(config)
 
                 if dirty_readme:
                     committed_readme = _run(root, "git", "show", "HEAD:README.md")
@@ -133,6 +139,119 @@ class WorkflowResumeTests(unittest.TestCase):
     def test_end_to_end_with_dirty_readme(self) -> None:
         exit_code, _ = self._run_workflow(dirty_readme=True)
         self.assertEqual(exit_code, 0)
+
+    def test_stops_on_weekly_limit(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            root = Path(tmp_dir) / "repo"
+            root.mkdir()
+            _run(root, "git", "init", "-b", "main")
+            _run(root, "git", "config", "user.name", "Test User")
+            _run(root, "git", "config", "user.email", "test@example.com")
+            (root / "README.md").write_text("", encoding="utf-8")
+            _run(root, "git", "add", "README.md")
+            _run(root, "git", "commit", "-m", "init")
+
+            config = build_config(
+                root=str(root),
+                claude_bin="python3",
+                sleep_hours=0,
+                max_runtime_hours=24,
+                session_name="runner-test",
+                git_remote=None,
+                no_push=True,
+            )
+
+            with patch("claude_research_runner.app._read_claude_auth_status", return_value="Login method: Claude Max Account\n"):
+                with patch(
+                    "claude_research_runner.app.run_claude",
+                    return_value=ClaudeRunResult(
+                        exit_code=0,
+                        rendered_text="weekly limit reached",
+                        raw_output="weekly limit reached",
+                        stderr_text="",
+                        limit_hit=LimitHit(kind="weekly", matched_text="weekly limit reached"),
+                    ),
+                ):
+                    exit_code = run_workflow(config)
+
+            self.assertEqual(exit_code, 0)
+            state = load_state(root / ".claude-research-runner" / "state.json")
+            self.assertIsNotNone(state)
+            assert state is not None
+            self.assertEqual(state.current_phase, Phase.STOPPED)
+            self.assertIn("weekly", state.stop_reason or "")
+
+    def test_starts_second_cycle_before_user_interrupt(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            root = Path(tmp_dir) / "repo"
+            root.mkdir()
+            _run(root, "git", "init", "-b", "main")
+            _run(root, "git", "config", "user.name", "Test User")
+            _run(root, "git", "config", "user.email", "test@example.com")
+            (root / "README.md").write_text("", encoding="utf-8")
+            _run(root, "git", "add", "README.md")
+            _run(root, "git", "commit", "-m", "init")
+
+            fake_claude = Path(__file__).parent / "support" / "fake_claude.py"
+            config = build_config(
+                root=str(root),
+                claude_bin="python3",
+                sleep_hours=0,
+                max_runtime_hours=24,
+                session_name="runner-test",
+                git_remote=None,
+                no_push=True,
+            )
+
+            calls = 0
+            current_topic_id = "UC-024"
+            next_topic_number = 24
+
+            def _side_effect(**kwargs):
+                nonlocal calls, current_topic_id, next_topic_number
+                calls += 1
+                if calls == 3:
+                    raise KeyboardInterrupt
+
+                prompt = kwargs["command_text"]
+                if prompt == "/research-new":
+                    current_topic_id = f"UC-{next_topic_number:03d}"
+                    next_topic_number += 1
+
+                env = os.environ.copy()
+                env["FAKE_CLAUDE_TOPIC_ID"] = current_topic_id
+                completed = subprocess.run(
+                    ["python3", str(fake_claude), "--dangerously-skip-permissions", prompt],
+                    cwd=root,
+                    text=True,
+                    encoding="utf-8",
+                    capture_output=True,
+                    env=env,
+                    check=False,
+                )
+                kwargs["log_path"].parent.mkdir(parents=True, exist_ok=True)
+                rendered = completed.stdout.strip()
+                payload = json.dumps({"rendered": rendered, "raw": rendered}) + "\n"
+                kwargs["log_path"].write_text(payload, encoding="utf-8")
+                return ClaudeRunResult(
+                    exit_code=completed.returncode,
+                    rendered_text=completed.stdout,
+                    raw_output=completed.stdout,
+                    stderr_text=completed.stderr,
+                    limit_hit=None,
+                )
+
+            with patch("claude_research_runner.app._read_claude_auth_status", return_value="Login method: Claude Max Account\n"):
+                with patch("claude_research_runner.app.run_claude", side_effect=_side_effect):
+                    exit_code = run_workflow(config)
+
+            self.assertEqual(exit_code, 130)
+            self.assertEqual(calls, 3)
+            state = load_state(root / ".claude-research-runner" / "state.json")
+            self.assertIsNotNone(state)
+            assert state is not None
+            self.assertEqual(state.current_phase, Phase.STOPPED)
+            self.assertEqual(state.stop_reason, "Stopped by user")
 
 
 if __name__ == "__main__":

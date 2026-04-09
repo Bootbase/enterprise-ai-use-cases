@@ -66,7 +66,7 @@ def _parse_login_method(status_text: str) -> str | None:
 
 def _load_or_create_state(config: AppConfig) -> tuple[RunState, bool]:
     state = load_state(config.state_path)
-    if state and state.current_phase not in {Phase.COMPLETED, Phase.FAILED}:
+    if state and state.current_phase not in {Phase.COMPLETED, Phase.STOPPED, Phase.FAILED}:
         if Path(state.root).resolve() != config.root.resolve():
             raise RunnerError(f"State file root {state.root} does not match requested root {config.root}")
         info(f"Resuming workflow from {config.state_path}")
@@ -188,8 +188,13 @@ def _resume_wait(config: AppConfig, state: RunState) -> None:
         target = datetime.now().astimezone() + timedelta(hours=state.sleep_hours)
     remaining = (target - datetime.now().astimezone()).total_seconds()
     if remaining > 0:
-        info(f"Sleeping for {remaining:.0f}s before retrying {state.resume_phase.value if state.resume_phase else 'workflow'}")
-        time.sleep(remaining)
+        sleep_for = remaining
+        runtime_remaining = _runtime_remaining_seconds(config, state)
+        if runtime_remaining is not None:
+            sleep_for = min(sleep_for, max(runtime_remaining, 0))
+        if sleep_for > 0:
+            info(f"Sleeping for {sleep_for:.0f}s before retrying {state.resume_phase.value if state.resume_phase else 'workflow'}")
+            time.sleep(sleep_for)
     state.waiting_until = None
     if state.resume_phase is None:
         raise RunnerError("State is waiting for a retry but no resume_phase is recorded")
@@ -205,6 +210,47 @@ def _schedule_retry(config: AppConfig, state: RunState, phase: Phase, message: s
     state.limit_retries += 1
     state.waiting_until = (datetime.now().astimezone() + timedelta(hours=state.sleep_hours)).isoformat()
     save_state(config.state_path, state)
+
+
+def _runtime_deadline(config: AppConfig, state: RunState) -> datetime | None:
+    if state.timestamps.started_at is None:
+        return None
+    return datetime.fromisoformat(state.timestamps.started_at) + timedelta(hours=config.max_runtime_hours)
+
+
+def _runtime_limit_reached(config: AppConfig, state: RunState) -> bool:
+    deadline = _runtime_deadline(config, state)
+    if deadline is None:
+        return False
+    return datetime.now().astimezone() >= deadline
+
+
+def _runtime_remaining_seconds(config: AppConfig, state: RunState) -> float | None:
+    deadline = _runtime_deadline(config, state)
+    if deadline is None:
+        return None
+    return (deadline - datetime.now().astimezone()).total_seconds()
+
+
+def _next_cycle_state(config: AppConfig, previous_state: RunState) -> RunState:
+    started_at = previous_state.timestamps.started_at
+    shutil.rmtree(config.state_path.parent, ignore_errors=True)
+    state = default_state(config.root, config.session_name, config.sleep_hours)
+    if started_at is not None:
+        state.timestamps.started_at = started_at
+    state.timestamps.updated_at = state.timestamps.started_at
+    return state
+
+
+def _stop_run(config: AppConfig, state: RunState, reason: str, *, exit_code: int = 0, warning: bool = False) -> int:
+    if warning:
+        warn(reason)
+    else:
+        info(reason)
+    state.current_phase = Phase.STOPPED
+    state.stop_reason = reason
+    save_state(config.state_path, state)
+    return exit_code
 
 
 def _readme_baseline_path(config: AppConfig) -> Path:
@@ -340,7 +386,7 @@ def _stage_readme_delta(config: AppConfig) -> None:
         ) from exc
 
 
-def _run_phase(config: AppConfig, state: RunState, phase: Phase, command_text: str) -> bool:
+def _run_phase(config: AppConfig, state: RunState, phase: Phase, command_text: str) -> bool | None:
     resume_session = state.session_started
     if phase == Phase.RESEARCH_NEW_RUNNING and not state.session_started:
         state.session_started = True
@@ -366,6 +412,12 @@ def _run_phase(config: AppConfig, state: RunState, phase: Phase, command_text: s
         state.session_id = result.session_id
 
     if result.limit_hit is not None:
+        if result.limit_hit.kind == "weekly":
+            state.current_phase = Phase.STOPPED
+            state.resume_phase = phase
+            state.stop_reason = f"Claude weekly limit hit: {result.limit_hit.matched_text}"
+            save_state(config.state_path, state)
+            return None
         _schedule_retry(config, state, phase, f"Claude usage limit hit: {result.limit_hit.matched_text}")
         return False
     if result.exit_code != 0:
@@ -418,6 +470,17 @@ def run_workflow(config: AppConfig) -> int:
 
     try:
         while True:
+            if _runtime_limit_reached(config, state):
+                try:
+                    _restore_user_readme_overlay(config)
+                except RunnerError as restore_exc:
+                    warn(str(restore_exc))
+                return _stop_run(
+                    config,
+                    state,
+                    f"Stopped after reaching the max runtime of {config.max_runtime_hours:g} hours",
+                )
+
             if state.current_phase == Phase.PREFLIGHT:
                 banner("Preflight")
                 _fresh_preflight(config, state)
@@ -430,7 +493,14 @@ def run_workflow(config: AppConfig) -> int:
 
             if state.current_phase == Phase.RESEARCH_NEW_RUNNING:
                 banner("Research New")
-                if not _run_phase(config, state, Phase.RESEARCH_NEW_RUNNING, "/research-new"):
+                phase_result = _run_phase(config, state, Phase.RESEARCH_NEW_RUNNING, "/research-new")
+                if phase_result is None:
+                    try:
+                        _restore_user_readme_overlay(config)
+                    except RunnerError as restore_exc:
+                        warn(str(restore_exc))
+                    return _stop_run(config, state, state.stop_reason or "Claude stopped the workflow")
+                if not phase_result:
                     continue
                 continue
 
@@ -471,12 +541,19 @@ def run_workflow(config: AppConfig) -> int:
                 banner("Research Complete")
                 if not state.topic_id:
                     raise RunnerError("Cannot run research-complete without a topic_id")
-                if not _run_phase(
+                phase_result = _run_phase(
                     config,
                     state,
                     Phase.RESEARCH_COMPLETE_RUNNING,
                     f"/research-complete {state.topic_id}",
-                ):
+                )
+                if phase_result is None:
+                    try:
+                        _restore_user_readme_overlay(config)
+                    except RunnerError as restore_exc:
+                        warn(str(restore_exc))
+                    return _stop_run(config, state, state.stop_reason or "Claude stopped the workflow")
+                if not phase_result:
                     continue
                 continue
 
@@ -503,17 +580,36 @@ def run_workflow(config: AppConfig) -> int:
                 state.current_phase = Phase.COMPLETED
                 save_state(config.state_path, state)
                 _restore_user_readme_overlay(config)
-                info(f"Workflow completed successfully. State saved to {config.state_path}")
-                return 0
+                info(f"Workflow cycle completed successfully. State saved to {config.state_path}")
+                continue
 
             if state.current_phase == Phase.COMPLETED:
-                info(f"Workflow already completed. State saved to {config.state_path}")
+                if _runtime_limit_reached(config, state):
+                    return _stop_run(
+                        config,
+                        state,
+                        f"Stopped after reaching the max runtime of {config.max_runtime_hours:g} hours",
+                    )
+                info("Starting the next workflow cycle")
+                state = _next_cycle_state(config, state)
+                save_state(config.state_path, state)
+                continue
+
+            if state.current_phase == Phase.STOPPED:
+                info(state.stop_reason or f"Workflow stopped. State saved to {config.state_path}")
                 return 0
 
             if state.current_phase == Phase.FAILED:
                 return _mark_failed(config, state, state.failure_message or "Workflow is already marked failed")
 
             raise RunnerError(f"Unhandled phase: {state.current_phase}")
+
+    except KeyboardInterrupt:
+        try:
+            _restore_user_readme_overlay(config)
+        except RunnerError as restore_exc:
+            warn(str(restore_exc))
+        return _stop_run(config, state, "Stopped by user", exit_code=130, warning=True)
 
     except (RunnerError, GitError) as exc:
         if state.current_phase != Phase.WAITING_FOR_LIMIT_RESET:

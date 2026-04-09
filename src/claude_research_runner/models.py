@@ -15,6 +15,7 @@ class Phase(StrEnum):
     RESEARCH_COMPLETE_GIT = "research_complete_git"
     WAITING_FOR_LIMIT_RESET = "waiting_for_limit_reset"
     COMPLETED = "completed"
+    STOPPED = "stopped"
     FAILED = "failed"
 
 
@@ -57,6 +58,7 @@ class RunState:
     artifacts: ArtifactState = field(default_factory=ArtifactState)
     timestamps: TimestampState = field(default_factory=TimestampState)
     failure_message: str | None = None
+    stop_reason: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
@@ -87,6 +89,7 @@ class RunState:
             artifacts=ArtifactState(**artifact_payload),
             timestamps=TimestampState(**timestamp_payload),
             failure_message=payload.get("failure_message"),
+            stop_reason=payload.get("stop_reason"),
         )
 
 

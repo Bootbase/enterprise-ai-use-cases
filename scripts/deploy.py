@@ -136,7 +136,7 @@ def step4_git():
     print(result.stdout)
 
     msg = (
-        "feat: add GitHub Pages site with BootbaseBV branding\n\n"
+        "feat: add GitHub Pages site with Bootbase branding\n\n"
         "- Jekyll site in docs/ with custom domain (enterprise-ai-use-cases.bootbase.be)\n"
         "- Renumbered IDs: 100 slots per category (001-099, 100-199, ..., 500-999)\n"
         "- Use cases organized by category subdirectory\n"

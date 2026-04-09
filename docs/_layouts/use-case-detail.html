@@ -16,7 +16,21 @@ layout: default
     <h1 class="uc-title">{{ page.uc_title }}</h1>
     <div class="uc-meta-badges">
       <span class="badge badge-id">{{ page.uc_id }}</span>
-      <span class="badge badge-category">{{ page.category }}</span>
+      <span class="badge badge-category">
+        <i data-lucide="{{ page.category_icon | default: 'folder' }}"></i>
+        {{ page.category }}
+      </span>
+      {% if page.industry %}
+      <span class="badge badge-industry">
+        <i data-lucide="building-2"></i>
+        {{ page.industry }}
+      </span>
+      {% endif %}
+      {% if page.complexity %}
+      <span class="badge badge-complexity badge-complexity-{{ page.complexity | downcase }}">
+        {{ page.complexity }} Complexity
+      </span>
+      {% endif %}
       <span class="badge badge-status badge-status-{{ page.status }}">
         {% if page.status == 'detailed' %}
           <i data-lucide="check-circle"></i>

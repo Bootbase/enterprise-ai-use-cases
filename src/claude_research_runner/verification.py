@@ -7,6 +7,7 @@ from .models import VerificationResult
 
 
 STATUS_ROW_RE = re.compile(r"\|\s*\*\*Status\*\*\s*\|\s*`(?P<status>[^`]+)`")
+INDEX_READMES = ("README.md", "use-cases/README.md")
 
 
 def find_use_case_dirs(root: Path, topic_id: str) -> list[Path]:
@@ -15,12 +16,13 @@ def find_use_case_dirs(root: Path, topic_id: str) -> list[Path]:
 
 
 def readme_row(root: Path, topic_id: str) -> str | None:
-    readme = root / "README.md"
-    if not readme.exists():
-        return None
-    for line in readme.read_text(encoding="utf-8").splitlines():
-        if line.startswith(f"| {topic_id} "):
-            return line
+    for relative_path in INDEX_READMES:
+        readme = root / relative_path
+        if not readme.exists():
+            continue
+        for line in readme.read_text(encoding="utf-8").splitlines():
+            if line.startswith(f"| {topic_id} "):
+                return line
     return None
 
 
@@ -35,9 +37,9 @@ def use_case_status(use_case_md: Path) -> str | None:
 def verify_research_new(root: Path, topic_id: str) -> VerificationResult:
     row = readme_row(root, topic_id)
     if row is None:
-        raise RuntimeError(f"{topic_id} is missing from README.md")
+        raise RuntimeError(f"{topic_id} is missing from the repository index files")
     if "`research`" not in row:
-        raise RuntimeError(f"{topic_id} row in README.md is not marked as research")
+        raise RuntimeError(f"{topic_id} row in the repository index files is not marked as research")
 
     matches = find_use_case_dirs(root, topic_id)
     if len(matches) != 1:
@@ -57,7 +59,7 @@ def verify_research_new(root: Path, topic_id: str) -> VerificationResult:
 def verify_research_complete(root: Path, topic_id: str) -> VerificationResult:
     row = readme_row(root, topic_id)
     if row is None or "`detailed`" not in row:
-        raise RuntimeError(f"{topic_id} row in README.md is not marked as detailed")
+        raise RuntimeError(f"{topic_id} row in the repository index files is not marked as detailed")
 
     matches = find_use_case_dirs(root, topic_id)
     if len(matches) != 1:

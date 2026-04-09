@@ -36,6 +36,9 @@ class RunnerError(RuntimeError):
     pass
 
 
+INDEX_FILES = ("README.md", "use-cases/README.md")
+
+
 def _read_claude_auth_status(root: Path, claude_bin: str) -> str:
     from subprocess import run
 
@@ -173,9 +176,9 @@ def _fresh_preflight(config: AppConfig, state: RunState) -> None:
     state.git.upstream = upstream
     state.git.push_remote = config.git_remote or (upstream.split("/", 1)[0] if upstream else None)
     state.artifacts.logs_dir = str(config.logs_dir)
-    _prepare_readme_for_run(config)
+    _prepare_index_files_for_run(config)
     _snapshot_existing_use_case_dirs(config)
-    _snapshot_readme_baseline(config)
+    _snapshot_index_baselines(config)
     state.current_phase = Phase.RESEARCH_NEW_RUNNING
     save_state(config.state_path, state)
 
@@ -253,32 +256,42 @@ def _stop_run(config: AppConfig, state: RunState, reason: str, *, exit_code: int
     return exit_code
 
 
-def _readme_baseline_path(config: AppConfig) -> Path:
-    return config.baselines_dir / "README.md"
+def _index_snapshot_slug(relative_path: str) -> str:
+    return relative_path.replace("/", "__")
+
+
+def _index_baseline_path(config: AppConfig, relative_path: str) -> Path:
+    return config.baselines_dir / "index-files" / f"{_index_snapshot_slug(relative_path)}.baseline"
 
 
 def _existing_use_case_dirs_path(config: AppConfig) -> Path:
     return config.baselines_dir / "existing-use-case-dirs.txt"
 
 
-def _user_readme_snapshot_path(config: AppConfig) -> Path:
-    return config.baselines_dir / "README.user.md"
+def _user_index_snapshot_path(config: AppConfig, relative_path: str) -> Path:
+    return config.baselines_dir / "index-files" / f"{_index_snapshot_slug(relative_path)}.user"
 
 
-def _head_readme_snapshot_path(config: AppConfig) -> Path:
-    return config.baselines_dir / "README.head.md"
+def _head_index_snapshot_path(config: AppConfig, relative_path: str) -> Path:
+    return config.baselines_dir / "index-files" / f"{_index_snapshot_slug(relative_path)}.head"
 
 
-def _prepare_readme_for_run(config: AppConfig) -> None:
-    if not dirty_paths(config.root, "README.md"):
-        return
+def _prepare_index_files_for_run(config: AppConfig) -> None:
+    for relative_path in INDEX_FILES:
+        file_path = config.root / relative_path
+        if not file_path.exists():
+            continue
+        if not dirty_paths(config.root, relative_path):
+            continue
 
-    readme_path = config.root / "README.md"
-    config.baselines_dir.mkdir(parents=True, exist_ok=True)
-    _user_readme_snapshot_path(config).write_text(readme_path.read_text(encoding="utf-8"), encoding="utf-8")
-    _head_readme_snapshot_path(config).write_text(show_head_file(config.root, "README.md"), encoding="utf-8")
-    restore_worktree_from_head(config.root, "README.md")
-    warn("README.md is already dirty; local README edits were snapshotted and temporarily hidden during the run")
+        config.baselines_dir.mkdir(parents=True, exist_ok=True)
+        user_snapshot_path = _user_index_snapshot_path(config, relative_path)
+        head_snapshot_path = _head_index_snapshot_path(config, relative_path)
+        user_snapshot_path.parent.mkdir(parents=True, exist_ok=True)
+        user_snapshot_path.write_text(file_path.read_text(encoding="utf-8"), encoding="utf-8")
+        head_snapshot_path.write_text(show_head_file(config.root, relative_path), encoding="utf-8")
+        restore_worktree_from_head(config.root, relative_path)
+        warn(f"{relative_path} is already dirty; local edits were snapshotted and temporarily hidden during the run")
 
 
 def _snapshot_existing_use_case_dirs(config: AppConfig) -> None:
@@ -308,80 +321,82 @@ def _existing_topic_ids(config: AppConfig) -> set[str]:
     return topic_ids
 
 
-def _restore_user_readme_overlay(config: AppConfig) -> None:
-    user_snapshot = _user_readme_snapshot_path(config)
-    head_snapshot = _head_readme_snapshot_path(config)
-    readme_path = config.root / "README.md"
-    if not user_snapshot.exists() or not head_snapshot.exists() or not readme_path.exists():
-        return
+def _restore_user_index_overlays(config: AppConfig) -> None:
+    for relative_path in INDEX_FILES:
+        user_snapshot = _user_index_snapshot_path(config, relative_path)
+        head_snapshot = _head_index_snapshot_path(config, relative_path)
+        file_path = config.root / relative_path
+        if not user_snapshot.exists() or not head_snapshot.exists() or not file_path.exists():
+            continue
 
-    with NamedTemporaryFile("w+", encoding="utf-8", delete=False) as current_file:
-        current_file.write(readme_path.read_text(encoding="utf-8"))
-        current_file.flush()
-        current_path = current_file.name
+        with NamedTemporaryFile("w+", encoding="utf-8", delete=False) as current_file:
+            current_file.write(file_path.read_text(encoding="utf-8"))
+            current_file.flush()
+            current_path = current_file.name
 
-    try:
-        completed = run(
-            ["git", "merge-file", "-p", current_path, str(head_snapshot), str(user_snapshot)],
-            cwd=config.root,
-            text=True,
-            encoding="utf-8",
-            capture_output=True,
-            check=False,
-        )
-        if completed.returncode not in (0, 1):
-            raise RunnerError(
-                "Failed to restore pre-existing README.md edits after the run: "
-                f"{completed.stderr.strip() or completed.stdout.strip()}"
+        try:
+            completed = run(
+                ["git", "merge-file", "-p", current_path, str(head_snapshot), str(user_snapshot)],
+                cwd=config.root,
+                text=True,
+                encoding="utf-8",
+                capture_output=True,
+                check=False,
             )
-        readme_path.write_text(completed.stdout, encoding="utf-8")
-        if completed.returncode == 1:
-            warn("README.md was restored with merge conflicts against pre-existing local edits")
-    finally:
-        Path(current_path).unlink(missing_ok=True)
+            if completed.returncode not in (0, 1):
+                raise RunnerError(
+                    f"Failed to restore pre-existing {relative_path} edits after the run: "
+                    f"{completed.stderr.strip() or completed.stdout.strip()}"
+                )
+            file_path.write_text(completed.stdout, encoding="utf-8")
+            if completed.returncode == 1:
+                warn(f"{relative_path} was restored with merge conflicts against pre-existing local edits")
+        finally:
+            Path(current_path).unlink(missing_ok=True)
 
 
-def _snapshot_readme_baseline(config: AppConfig) -> None:
-    baseline_path = _readme_baseline_path(config)
-    baseline_path.parent.mkdir(parents=True, exist_ok=True)
-    source = config.root / "README.md"
-    if source.exists():
-        baseline_path.write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
+def _snapshot_index_baselines(config: AppConfig) -> None:
+    for relative_path in INDEX_FILES:
+        baseline_path = _index_baseline_path(config, relative_path)
+        baseline_path.parent.mkdir(parents=True, exist_ok=True)
+        source = config.root / relative_path
+        if source.exists():
+            baseline_path.write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
 
 
-def _stage_readme_delta(config: AppConfig) -> None:
-    readme_path = config.root / "README.md"
-    baseline_path = _readme_baseline_path(config)
-    if not readme_path.exists():
-        raise RunnerError("README.md is missing from the repository root")
+def _stage_index_delta(config: AppConfig, relative_path: str) -> None:
+    file_path = config.root / relative_path
+    baseline_path = _index_baseline_path(config, relative_path)
+    if not file_path.exists():
+        return
     if not baseline_path.exists():
-        stage_paths(config.root, ["README.md"])
+        stage_paths(config.root, [relative_path])
         return
 
     baseline_text = baseline_path.read_text(encoding="utf-8")
-    current_text = readme_path.read_text(encoding="utf-8")
+    current_text = file_path.read_text(encoding="utf-8")
     if baseline_text == current_text:
-        restore_staged_from_head(config.root, "README.md")
+        restore_staged_from_head(config.root, relative_path)
         return
 
     patch_text = "".join(
         unified_diff(
             baseline_text.splitlines(keepends=True),
             current_text.splitlines(keepends=True),
-            fromfile="a/README.md",
-            tofile="b/README.md",
+            fromfile=f"a/{relative_path}",
+            tofile=f"b/{relative_path}",
         )
     )
     if not patch_text:
-        restore_staged_from_head(config.root, "README.md")
+        restore_staged_from_head(config.root, relative_path)
         return
 
-    restore_staged_from_head(config.root, "README.md")
+    restore_staged_from_head(config.root, relative_path)
     try:
         apply_patch_to_index(config.root, patch_text)
     except GitError as exc:
         raise RunnerError(
-            "Could not isolate README.md changes from pre-existing edits; "
+            f"Could not isolate {relative_path} changes from pre-existing edits; "
             f"the generated delta overlaps with earlier uncommitted changes: {exc}"
         ) from exc
 
@@ -431,9 +446,10 @@ def _run_phase(config: AppConfig, state: RunState, phase: Phase, command_text: s
 
 
 def _commit_phase(config: AppConfig, state: RunState, *, message: str, paths: list[str]) -> None:
-    stage_targets = [path for path in paths if path != "README.md"]
-    if "README.md" in paths:
-        _stage_readme_delta(config)
+    stage_targets = [path for path in paths if path not in INDEX_FILES]
+    for relative_path in paths:
+        if relative_path in INDEX_FILES:
+            _stage_index_delta(config, relative_path)
     if stage_targets:
         stage_paths(config.root, stage_targets)
     commit_sha = commit(config.root, message)
@@ -460,7 +476,7 @@ def _commit_phase(config: AppConfig, state: RunState, *, message: str, paths: li
                     time.sleep(attempt)
         if last_error is not None:
             raise last_error
-    _snapshot_readme_baseline(config)
+    _snapshot_index_baselines(config)
     save_state(config.state_path, state)
 
 
@@ -472,7 +488,7 @@ def run_workflow(config: AppConfig) -> int:
         while True:
             if _runtime_limit_reached(config, state):
                 try:
-                    _restore_user_readme_overlay(config)
+                    _restore_user_index_overlays(config)
                 except RunnerError as restore_exc:
                     warn(str(restore_exc))
                 return _stop_run(
@@ -496,7 +512,7 @@ def run_workflow(config: AppConfig) -> int:
                 phase_result = _run_phase(config, state, Phase.RESEARCH_NEW_RUNNING, "/research-new")
                 if phase_result is None:
                     try:
-                        _restore_user_readme_overlay(config)
+                        _restore_user_index_overlays(config)
                     except RunnerError as restore_exc:
                         warn(str(restore_exc))
                     return _stop_run(config, state, state.stop_reason or "Claude stopped the workflow")
@@ -531,7 +547,7 @@ def run_workflow(config: AppConfig) -> int:
                     config,
                     state,
                     message=f"chore(research): add {state.topic_id} via claude runner",
-                    paths=["README.md", state.artifacts.research_new_folder],
+                    paths=["README.md", "use-cases/README.md", state.artifacts.research_new_folder],
                 )
                 state.current_phase = Phase.RESEARCH_COMPLETE_RUNNING
                 save_state(config.state_path, state)
@@ -549,7 +565,7 @@ def run_workflow(config: AppConfig) -> int:
                 )
                 if phase_result is None:
                     try:
-                        _restore_user_readme_overlay(config)
+                        _restore_user_index_overlays(config)
                     except RunnerError as restore_exc:
                         warn(str(restore_exc))
                     return _stop_run(config, state, state.stop_reason or "Claude stopped the workflow")
@@ -575,11 +591,11 @@ def run_workflow(config: AppConfig) -> int:
                     config,
                     state,
                     message=f"chore(research): complete {state.topic_id} via claude runner",
-                    paths=["README.md", state.artifacts.research_new_folder],
+                    paths=["README.md", "use-cases/README.md", state.artifacts.research_new_folder],
                 )
                 state.current_phase = Phase.COMPLETED
                 save_state(config.state_path, state)
-                _restore_user_readme_overlay(config)
+                _restore_user_index_overlays(config)
                 info(f"Workflow cycle completed successfully. State saved to {config.state_path}")
                 continue
 
@@ -606,7 +622,7 @@ def run_workflow(config: AppConfig) -> int:
 
     except KeyboardInterrupt:
         try:
-            _restore_user_readme_overlay(config)
+            _restore_user_index_overlays(config)
         except RunnerError as restore_exc:
             warn(str(restore_exc))
         return _stop_run(config, state, "Stopped by user", exit_code=130, warning=True)
@@ -614,7 +630,7 @@ def run_workflow(config: AppConfig) -> int:
     except (RunnerError, GitError) as exc:
         if state.current_phase != Phase.WAITING_FOR_LIMIT_RESET:
             try:
-                _restore_user_readme_overlay(config)
+                _restore_user_index_overlays(config)
             except RunnerError as restore_exc:
                 warn(str(restore_exc))
         return _mark_failed(config, state, str(exc))

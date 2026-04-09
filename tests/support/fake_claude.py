@@ -19,7 +19,9 @@ def _emit(text: str) -> None:
 
 
 def _upsert_readme_row(root: Path, topic_id: str, status: str) -> None:
-    readme = root / "README.md"
+    readme_path = os.environ.get("FAKE_CLAUDE_README_PATH", "README.md")
+    readme = root / readme_path
+    readme.parent.mkdir(parents=True, exist_ok=True)
     existing = readme.read_text(encoding="utf-8") if readme.exists() else ""
     lines = existing.splitlines()
     target_prefix = f"| {topic_id} "

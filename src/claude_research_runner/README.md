@@ -17,7 +17,7 @@ The tool will:
 4. infer the `topicId` from Claude output and the new use-case directory
 5. verify the generated files
 6. commit and optionally push:
-   - the repo root `README.md`
+   - repository index files such as `README.md` and `use-cases/README.md`
    - the generated `use-cases/.../UC-...` directory
 7. if Claude hits a resettable usage limit, wait and retry the unfinished phase
 8. after a successful `research-complete`, start the full process again
@@ -164,14 +164,15 @@ Important files:
 - `.claude-research-runner/logs/research-complete.ndjson`
   Streamed Claude output for `research-complete`
 - `.claude-research-runner/baselines/`
-  Internal snapshots used to safely handle pre-existing `README.md` edits and detect pre-existing use-case directories
+  Internal snapshots used to safely handle pre-existing index-file edits and detect pre-existing use-case directories
 
 ## Git Behavior
 
 After a successful `research-new`, the runner commits and pushes:
 
 - the generated `UC-...` directory
-- the root `README.md` delta for that phase
+- any generated delta in `README.md`
+- any generated delta in `use-cases/README.md`
 
 After a successful `research-complete`, it does the same again.
 
@@ -182,16 +183,16 @@ Commit messages are:
 
 Then, unless stopped by a runtime ceiling or a weekly limit, it starts the next `research-new` cycle automatically.
 
-## Dirty Root README
+## Dirty Index Files
 
-If the repository root `README.md` is already dirty before a fresh run:
+If `README.md` or `use-cases/README.md` is already dirty before a fresh run:
 
-- the runner snapshots your current `README.md`
+- the runner snapshots your current version
 - temporarily restores the worktree copy to `HEAD`
-- runs Claude and stages only the generated `README.md` delta for the automated commit
-- restores your original `README.md` edits afterward
+- runs Claude and stages only the generated delta for the automated commit
+- restores your original local edits afterward
 
-If your local `README.md` changes overlap heavily with Claude's generated delta, restoration can still produce merge conflicts.
+If your local edits overlap heavily with Claude's generated delta, restoration can still produce merge conflicts.
 
 ## Guardrails And Assumptions
 

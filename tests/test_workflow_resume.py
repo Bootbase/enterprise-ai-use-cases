@@ -46,7 +46,7 @@ class WorkflowResumeTests(unittest.TestCase):
                 "fdbbf8c0-bd59-4a71-bed7-5440da411e26",
             )
 
-    def _run_workflow(self, *, dirty_readme: bool) -> tuple[int, Path]:
+    def _run_workflow(self, *, dirty_readme: bool, readme_path: str = "README.md") -> tuple[int, Path]:
         with tempfile.TemporaryDirectory() as tmp_dir:
             root = Path(tmp_dir) / "repo"
             remote = Path(tmp_dir) / "remote.git"
@@ -57,12 +57,13 @@ class WorkflowResumeTests(unittest.TestCase):
             _run(root, "git", "init", "--bare", str(remote))
             _run(root, "git", "remote", "add", "origin", str(remote))
             initial_readme = "preexisting note\n" if dirty_readme else ""
-            (root / "README.md").write_text(initial_readme, encoding="utf-8")
-            _run(root, "git", "add", "README.md")
+            (root / readme_path).parent.mkdir(parents=True, exist_ok=True)
+            (root / readme_path).write_text(initial_readme, encoding="utf-8")
+            _run(root, "git", "add", readme_path)
             _run(root, "git", "commit", "-m", "init")
             _run(root, "git", "push", "-u", "origin", "main")
             if dirty_readme:
-                (root / "README.md").write_text("preexisting note\nuser draft change\n", encoding="utf-8")
+                (root / readme_path).write_text("preexisting note\nuser draft change\n", encoding="utf-8")
 
             fake_claude = Path(__file__).parent / "support" / "fake_claude.py"
             config = build_config(
@@ -77,6 +78,7 @@ class WorkflowResumeTests(unittest.TestCase):
 
             original = os.environ.copy()
             os.environ["FAKE_CLAUDE_TOPIC_ID"] = "UC-024"
+            os.environ["FAKE_CLAUDE_README_PATH"] = readme_path
 
             try:
                 with patch("claude_research_runner.app._read_claude_auth_status", return_value="Login method: Claude Max Account\n"):
@@ -114,10 +116,10 @@ class WorkflowResumeTests(unittest.TestCase):
                             exit_code = run_workflow(config)
 
                 if dirty_readme:
-                    committed_readme = _run(root, "git", "show", "HEAD:README.md")
+                    committed_readme = _run(root, "git", "show", f"HEAD:{readme_path}")
                     self.assertNotIn("user draft change", committed_readme)
                     self.assertIn("UC-024", committed_readme)
-                    working_readme = (root / "README.md").read_text(encoding="utf-8")
+                    working_readme = (root / readme_path).read_text(encoding="utf-8")
                     self.assertIn("user draft change", working_readme)
                     self.assertIn("UC-024", working_readme)
 
@@ -138,6 +140,10 @@ class WorkflowResumeTests(unittest.TestCase):
 
     def test_end_to_end_with_dirty_readme(self) -> None:
         exit_code, _ = self._run_workflow(dirty_readme=True)
+        self.assertEqual(exit_code, 0)
+
+    def test_end_to_end_with_use_cases_readme_only(self) -> None:
+        exit_code, _ = self._run_workflow(dirty_readme=False, readme_path="use-cases/README.md")
         self.assertEqual(exit_code, 0)
 
     def test_stops_on_weekly_limit(self) -> None:

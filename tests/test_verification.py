@@ -24,6 +24,17 @@ class VerificationTests(unittest.TestCase):
             result = verify_research_new(root, "UC-024")
             self.assertEqual(result.topic_id, "UC-024")
 
+    def test_verify_research_new_from_use_cases_index(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            root = Path(tmp_dir)
+            _write(root / "use-cases/README.md", "| UC-024 | [Title](foo) | Workflow Automation | Cross | High | `research` |\n")
+            _write(
+                root / "use-cases/workflow-automation/UC-024-test/use-case.md",
+                "| **Status**       | `research`                   |\n",
+            )
+            result = verify_research_new(root, "UC-024")
+            self.assertEqual(result.topic_id, "UC-024")
+
     def test_verify_research_complete(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             root = Path(tmp_dir)
@@ -38,4 +49,3 @@ class VerificationTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

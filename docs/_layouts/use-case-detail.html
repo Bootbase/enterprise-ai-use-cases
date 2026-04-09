@@ -19,7 +19,7 @@ layout: default
     <div class="uc-meta-badges">
       <span class="badge badge-id">{{ page.uc_id }}</span>
       <span class="badge badge-category">
-        <i data-lucide="{{ parent.category_icon | default: 'folder' }}"></i>
+        <i data-lucide="{{ parent.category_icon | default: page.category_icon | default: 'folder' }}"></i>
         {{ parent.category | default: page.category }}
       </span>
       {% assign industry = parent.industry | default: page.industry %}

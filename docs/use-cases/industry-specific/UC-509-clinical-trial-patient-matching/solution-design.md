@@ -6,6 +6,9 @@ uc_title: "Autonomous Clinical Trial Patient Matching and Recruitment with Agent
 detail_type: "solution-design"
 detail_title: "Solution Design"
 category: "Industry-Specific"
+category_icon: "briefcase"
+industry: "Pharmaceutical / Life Sciences"
+complexity: "High"
 status: "detailed"
 slug: "UC-509-clinical-trial-patient-matching"
 permalink: /use-cases/UC-509-clinical-trial-patient-matching/solution-design/

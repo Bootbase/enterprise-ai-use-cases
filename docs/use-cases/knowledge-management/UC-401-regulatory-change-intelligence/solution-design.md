@@ -6,6 +6,9 @@ uc_title: "Autonomous Regulatory Change Intelligence and Compliance Orchestratio
 detail_type: "solution-design"
 detail_title: "Solution Design"
 category: "Knowledge Management"
+category_icon: "book-open"
+industry: "Cross-Industry (Financial Services, Pharmaceutical, Healthcare, Energy, Insurance)"
+complexity: "High"
 status: "detailed"
 slug: "UC-401-regulatory-change-intelligence"
 permalink: /use-cases/UC-401-regulatory-change-intelligence/solution-design/

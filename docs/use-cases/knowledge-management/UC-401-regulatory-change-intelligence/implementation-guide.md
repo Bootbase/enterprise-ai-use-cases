@@ -6,6 +6,9 @@ uc_title: "Autonomous Regulatory Change Intelligence and Compliance Orchestratio
 detail_type: "implementation-guide"
 detail_title: "Implementation Guide"
 category: "Knowledge Management"
+category_icon: "book-open"
+industry: "Cross-Industry (Financial Services, Pharmaceutical, Healthcare, Energy, Insurance)"
+complexity: "High"
 status: "detailed"
 slug: "UC-401-regulatory-change-intelligence"
 permalink: /use-cases/UC-401-regulatory-change-intelligence/implementation-guide/

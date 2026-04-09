@@ -1,0 +1,34 @@
+title: Enterprise AI Use Cases
+description: A curated catalog of real-world agentic AI use cases — researched, designed, and documented end-to-end.
+url: ""
+baseurl: "/enterprise-ai-use-cases"
+
+# Build
+markdown: kramdown
+highlighter: rouge
+
+kramdown:
+  input: GFM
+  auto_ids: true
+  syntax_highlighter: rouge
+
+# Collections
+collections:
+  use_cases:
+    output: true
+    permalink: /use-cases/:path/
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "use_cases"
+    values:
+      layout: "use-case"
+
+# Exclude
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor

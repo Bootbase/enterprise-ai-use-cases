@@ -22,19 +22,55 @@ def _reader(stream: Any, stream_name: str, target_queue: queue.Queue[tuple[str, 
         target_queue.put((stream_name, ""))
 
 
-def _walk_text(payload: Any) -> list[str]:
-    texts: list[str] = []
-    if isinstance(payload, dict):
-        if payload.get("type") == "text" and isinstance(payload.get("text"), str):
-            texts.append(payload["text"])
-        elif isinstance(payload.get("content"), str):
-            texts.append(payload["content"])
-        for value in payload.values():
-            texts.extend(_walk_text(value))
-    elif isinstance(payload, list):
-        for item in payload:
-            texts.extend(_walk_text(item))
-    return texts
+def _tool_start_message(tool_name: str) -> str:
+    if tool_name == "TodoWrite":
+        return "Updating todo list..."
+    if tool_name == "Write":
+        return "Writing file..."
+    return f"Running {tool_name}..."
+
+
+def _render_tool_start(payload: dict[str, Any]) -> str:
+    if payload.get("type") != "stream_event":
+        return ""
+    event = payload.get("event")
+    if not isinstance(event, dict) or event.get("type") != "content_block_start":
+        return ""
+    content_block = event.get("content_block")
+    if not isinstance(content_block, dict) or content_block.get("type") != "tool_use":
+        return ""
+    tool_name = content_block.get("name")
+    if not isinstance(tool_name, str) or not tool_name:
+        return ""
+    return _tool_start_message(tool_name)
+
+
+def _render_message(payload: dict[str, Any]) -> str:
+    if payload.get("type") not in {"assistant", "user"}:
+        return ""
+    message = payload.get("message")
+    if not isinstance(message, dict):
+        return ""
+    content_blocks = message.get("content")
+    if not isinstance(content_blocks, list):
+        return ""
+
+    rendered_parts: list[str] = []
+    for block in content_blocks:
+        if not isinstance(block, dict):
+            continue
+        block_type = block.get("type")
+        if block_type == "text":
+            text = block.get("text")
+            if isinstance(text, str) and text.strip():
+                rendered_parts.append(text.strip())
+            continue
+        if block_type == "tool_result":
+            content = block.get("content")
+            if isinstance(content, str) and content.strip():
+                rendered_parts.append(content.strip())
+            continue
+    return "\n".join(rendered_parts)
 
 
 def _render_line(raw_line: str) -> str:
@@ -45,8 +81,12 @@ def _render_line(raw_line: str) -> str:
         payload = json.loads(stripped)
     except json.JSONDecodeError:
         return stripped
-    texts = [segment.strip() for segment in _walk_text(payload) if segment.strip()]
-    return "\n".join(texts)
+    if not isinstance(payload, dict):
+        return ""
+    tool_start = _render_tool_start(payload)
+    if tool_start:
+        return tool_start
+    return _render_message(payload)
 
 
 def _extract_session_id(raw_line: str) -> str | None:

@@ -1,6 +1,6 @@
 # Claude Research Runner
 
-`claude_research_runner` is a small Python CLI for this repository that drives the local subscription-backed `claude` CLI through the `research-new` and `research-complete` workflow in a loop.
+`claude_research_runner` is a small Python CLI for this repository that drives the local subscription-backed `claude` CLI through either the `research-new` plus `research-complete` workflow or a recursive `detail-next` loop for existing use cases.
 
 It does not use the Claude API. It shells out to your local `claude` binary with `--dangerously-skip-permissions`, runs in the repository root, persists workflow state, and commits/pushes the generated use-case files after each phase.
 
@@ -10,20 +10,21 @@ The tool will:
 
 1. verify that `claude` is installed and authenticated with a Claude account
 2. start or resume a Claude session in print/stream-json mode
-3. run the equivalent of:
+3. run one of these recursive workflows:
    - `/effort max`
-   - `/research-new`
-   - `/research-complete <topicId>`
-4. infer the `topicId` from Claude output and the new use-case directory
+   - `new-and-complete`: `/research-new`, then `/research-complete <topicId>`
+   - `detail-next`: find the next lowest-numbered use case whose `use-case.md` is not `detailed`, then run `/research-complete <topicId>`
+4. infer the `topicId` from Claude output and the new use-case directory when needed
 5. verify the generated files
 6. commit and optionally push:
    - repository index files such as `README.md` and `use-cases/README.md`
-   - the generated `use-cases/.../UC-...` directory
+   - the generated or updated `use-cases/.../UC-...` directory
 7. if Claude hits a resettable usage limit, wait and retry the unfinished phase
-8. after a successful `research-complete`, start the full process again
+8. after a successful cycle, start the next cycle in the selected workflow mode
 9. stop only when:
    - you stop the process
    - Claude hits a weekly limit
+   - `detail-next` has no remaining use cases to detail
    - the configured max runtime is reached
 
 ## Prerequisites
@@ -82,6 +83,12 @@ Run with default settings:
 claude-research-runner run --root .
 ```
 
+Recursively detail the next existing non-`detailed` use case:
+
+```bash
+claude-research-runner run --root . --workflow-mode detail-next
+```
+
 Commit locally but do not push:
 
 ```bash
@@ -130,6 +137,8 @@ claude-research-runner run --root . --max-runtime-hours 8
   Remote to push to. If omitted, the tracked upstream remote is used.
 - `--no-push`
   Commit locally without pushing.
+- `--workflow-mode`
+  `new-and-complete` to create and complete new use cases, or `detail-next` to recursively complete the next existing use case that is not yet `detailed`.
 - `--resume-state`
   Alternate path for the persisted state file.
 
@@ -145,7 +154,7 @@ If a run stops partway through because of an interruption or a resettable Claude
 
 For Claude print-mode resume, the runner recovers the real Claude session UUID from the saved logs and uses that for `--resume`.
 
-After a fully successful cycle, the runner resets its internal phase state and starts a brand-new cycle until one of the stop conditions is hit.
+After a fully successful cycle, the runner resets its internal phase state and starts the next cycle for the same workflow mode until one of the stop conditions is hit.
 
 ## Logs And Artifacts
 
@@ -168,7 +177,7 @@ Important files:
 
 ## Git Behavior
 
-After a successful `research-new`, the runner commits and pushes:
+In `new-and-complete` mode, after a successful `research-new`, the runner commits and pushes:
 
 - the generated `UC-...` directory
 - any generated delta in `README.md`
@@ -181,7 +190,9 @@ Commit messages are:
 - `chore(research): add UC-XXX via claude runner`
 - `chore(research): complete UC-XXX via claude runner`
 
-Then, unless stopped by a runtime ceiling or a weekly limit, it starts the next `research-new` cycle automatically.
+In `detail-next` mode, each cycle skips `research-new`, selects the next lowest-numbered existing use case whose `use-case.md` is not `detailed`, and runs `research-complete` for that topic. When no such use case remains, the runner stops cleanly.
+
+Then, unless stopped by a runtime ceiling, a weekly limit, or exhausted `detail-next` work, it starts the next cycle automatically.
 
 ## Dirty Index Files
 

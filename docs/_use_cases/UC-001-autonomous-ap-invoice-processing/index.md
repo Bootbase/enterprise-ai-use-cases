@@ -8,7 +8,7 @@ category_icon: "file-text"
 industry: "Cross-Industry (Real Estate, Retail, Manufacturing, Professional Services, Hospitality)"
 complexity: "High"
 status: "research"
-summary: "Autonomous AP invoice processing system handling vendor invoice intake, verification, GL coding, approval routing, and ERP posting with 70%+ no-touch processing rates, replacing 300+ accountants and 50,000+ hours of annual manual work at scale."
+summary: "Every enterprise that buys goods or services runs an Accounts Payable (AP) function whose job is to receive vendor invoices, verify they correspond to a legitimate purchase, code them to the correct general ledger (GL) account and cost center, route them through a policy-driven approval chain, and post the payment into a core ERP — typically SAP S/4HANA, Oracle Fusion Cloud, NetSuite, or Microsoft Dynamics. The work is high-volume, mostly repetitive, and dominated by data entry, document chasing, and reconciliation."
 slug: "UC-001-autonomous-ap-invoice-processing"
 has_solution_design: false
 has_implementation_guide: false

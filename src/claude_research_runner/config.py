@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 
+from .models import WorkflowMode
+
 
 @dataclass(slots=True)
 class AppConfig:
@@ -16,6 +18,7 @@ class AppConfig:
     logs_dir: Path
     baselines_dir: Path
     no_push: bool
+    workflow_mode: WorkflowMode
     git_remote: str | None = None
 
 
@@ -35,6 +38,7 @@ def build_config(
     no_push: bool,
     state_path: str | None = None,
     max_runtime_hours: float = 24,
+    workflow_mode: str = WorkflowMode.NEW_AND_COMPLETE.value,
 ) -> AppConfig:
     resolved_root = Path(root or ".").resolve()
     _, effective_session_name = build_session_name(session_name)
@@ -50,5 +54,6 @@ def build_config(
         logs_dir=logs_dir,
         baselines_dir=effective_state_path.parent / "baselines",
         no_push=no_push,
+        workflow_mode=WorkflowMode(workflow_mode),
         git_remote=git_remote,
     )

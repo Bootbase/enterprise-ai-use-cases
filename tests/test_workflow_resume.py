@@ -10,7 +10,7 @@ from unittest.mock import patch
 
 from claude_research_runner.app import _recover_session_id_from_log, run_workflow
 from claude_research_runner.config import build_config
-from claude_research_runner.models import ClaudeRunResult, LimitHit, Phase
+from claude_research_runner.models import ClaudeRunResult, LimitHit, Phase, WorkflowMode
 from claude_research_runner.state import load_state
 
 
@@ -46,7 +46,14 @@ class WorkflowResumeTests(unittest.TestCase):
                 "fdbbf8c0-bd59-4a71-bed7-5440da411e26",
             )
 
-    def _run_workflow(self, *, dirty_readme: bool, readme_path: str = "README.md") -> tuple[int, Path]:
+    def _run_workflow(
+        self,
+        *,
+        dirty_readme: bool,
+        readme_path: str = "README.md",
+        workflow_mode: WorkflowMode = WorkflowMode.NEW_AND_COMPLETE,
+        topic_id: str = "UC-024",
+    ) -> tuple[int, Path]:
         with tempfile.TemporaryDirectory() as tmp_dir:
             root = Path(tmp_dir) / "repo"
             remote = Path(tmp_dir) / "remote.git"
@@ -74,10 +81,11 @@ class WorkflowResumeTests(unittest.TestCase):
                 session_name="runner-test",
                 git_remote="origin",
                 no_push=False,
+                workflow_mode=workflow_mode.value,
             )
 
             original = os.environ.copy()
-            os.environ["FAKE_CLAUDE_TOPIC_ID"] = "UC-024"
+            os.environ["FAKE_CLAUDE_TOPIC_ID"] = topic_id
             os.environ["FAKE_CLAUDE_README_PATH"] = readme_path
 
             try:
@@ -146,6 +154,111 @@ class WorkflowResumeTests(unittest.TestCase):
         exit_code, _ = self._run_workflow(dirty_readme=False, readme_path="use-cases/README.md")
         self.assertEqual(exit_code, 0)
 
+    def test_end_to_end_detail_next_mode(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            root = Path(tmp_dir) / "repo"
+            remote = Path(tmp_dir) / "remote.git"
+            root.mkdir()
+            _run(root, "git", "init", "-b", "main")
+            _run(root, "git", "config", "user.name", "Test User")
+            _run(root, "git", "config", "user.email", "test@example.com")
+            _run(root, "git", "init", "--bare", str(remote))
+            _run(root, "git", "remote", "add", "origin", str(remote))
+            (root / "README.md").write_text("| UC-021 | [Title](foo) | Workflow Automation | Cross | High | `research` |\n", encoding="utf-8")
+            base = root / "use-cases/workflow-automation/UC-021-example"
+            base.mkdir(parents=True, exist_ok=True)
+            (base / "use-case.md").write_text("| **Status**       | `research`                   |\n", encoding="utf-8")
+            _run(root, "git", "add", "README.md", "use-cases/workflow-automation/UC-021-example/use-case.md")
+            _run(root, "git", "commit", "-m", "init")
+            _run(root, "git", "push", "-u", "origin", "main")
+
+            fake_claude = Path(__file__).parent / "support" / "fake_claude.py"
+            config = build_config(
+                root=str(root),
+                claude_bin="python3",
+                sleep_hours=0,
+                max_runtime_hours=24,
+                session_name="runner-test",
+                git_remote="origin",
+                no_push=False,
+                workflow_mode=WorkflowMode.DETAIL_NEXT.value,
+            )
+
+            with patch("claude_research_runner.app._read_claude_auth_status", return_value="Login method: Claude Max Account\n"):
+                with patch(
+                    "claude_research_runner.app._runtime_limit_reached",
+                    side_effect=lambda _config, state: state.current_phase == Phase.COMPLETED,
+                ):
+                    with patch("claude_research_runner.app.run_claude") as mocked_run:
+
+                        def _side_effect(**kwargs):
+                            prompt = kwargs["command_text"]
+                            env = os.environ.copy()
+                            env["FAKE_CLAUDE_TOPIC_ID"] = prompt.rsplit(" ", 1)[-1]
+                            completed = subprocess.run(
+                                ["python3", str(fake_claude), "--dangerously-skip-permissions", prompt],
+                                cwd=root,
+                                text=True,
+                                encoding="utf-8",
+                                capture_output=True,
+                                env=env,
+                                check=False,
+                            )
+                            kwargs["log_path"].parent.mkdir(parents=True, exist_ok=True)
+                            rendered = completed.stdout.strip()
+                            payload = json.dumps({"rendered": rendered, "raw": rendered}) + "\n"
+                            kwargs["log_path"].write_text(payload, encoding="utf-8")
+                            return ClaudeRunResult(
+                                exit_code=completed.returncode,
+                                rendered_text=completed.stdout,
+                                raw_output=completed.stdout,
+                                stderr_text=completed.stderr,
+                                limit_hit=None,
+                            )
+
+                        mocked_run.side_effect = _side_effect
+                        exit_code = run_workflow(config)
+
+            self.assertEqual(exit_code, 0)
+            committed_readme = _run(root, "git", "show", "HEAD:README.md")
+            self.assertIn("`detailed`", committed_readme)
+            self.assertTrue((base / "solution-design.md").exists())
+
+    def test_detail_next_stops_when_nothing_remains(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            root = Path(tmp_dir) / "repo"
+            root.mkdir()
+            _run(root, "git", "init", "-b", "main")
+            _run(root, "git", "config", "user.name", "Test User")
+            _run(root, "git", "config", "user.email", "test@example.com")
+            (root / "README.md").write_text("", encoding="utf-8")
+            detailed_dir = root / "use-cases/workflow-automation/UC-021-example"
+            detailed_dir.mkdir(parents=True, exist_ok=True)
+            (detailed_dir / "use-case.md").write_text("| **Status**       | `detailed`                   |\n", encoding="utf-8")
+            _run(root, "git", "add", "README.md", "use-cases/workflow-automation/UC-021-example/use-case.md")
+            _run(root, "git", "commit", "-m", "init")
+
+            config = build_config(
+                root=str(root),
+                claude_bin="python3",
+                sleep_hours=0,
+                max_runtime_hours=24,
+                session_name="runner-test",
+                git_remote=None,
+                no_push=True,
+                workflow_mode=WorkflowMode.DETAIL_NEXT.value,
+            )
+
+            with patch("claude_research_runner.app._read_claude_auth_status", return_value="Login method: Claude Max Account\n"):
+                exit_code = run_workflow(config)
+
+            self.assertEqual(exit_code, 0)
+            state = load_state(root / ".claude-research-runner" / "state.json")
+            self.assertIsNotNone(state)
+            assert state is not None
+            self.assertEqual(state.current_phase, Phase.STOPPED)
+            self.assertEqual(state.stop_reason, "No use cases remain that are not detailed")
+
     def test_stops_on_weekly_limit(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             root = Path(tmp_dir) / "repo"
@@ -165,6 +278,7 @@ class WorkflowResumeTests(unittest.TestCase):
                 session_name="runner-test",
                 git_remote=None,
                 no_push=True,
+                workflow_mode=WorkflowMode.NEW_AND_COMPLETE.value,
             )
 
             with patch("claude_research_runner.app._read_claude_auth_status", return_value="Login method: Claude Max Account\n"):
@@ -207,6 +321,7 @@ class WorkflowResumeTests(unittest.TestCase):
                 session_name="runner-test",
                 git_remote=None,
                 no_push=True,
+                workflow_mode=WorkflowMode.NEW_AND_COMPLETE.value,
             )
 
             calls = 0
@@ -258,6 +373,87 @@ class WorkflowResumeTests(unittest.TestCase):
             assert state is not None
             self.assertEqual(state.current_phase, Phase.STOPPED)
             self.assertEqual(state.stop_reason, "Stopped by user")
+
+    def test_detail_next_starts_second_existing_cycle_before_user_interrupt(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            root = Path(tmp_dir) / "repo"
+            root.mkdir()
+            _run(root, "git", "init", "-b", "main")
+            _run(root, "git", "config", "user.name", "Test User")
+            _run(root, "git", "config", "user.email", "test@example.com")
+            (root / "README.md").write_text(
+                (
+                    "| UC-021 | [Title](foo) | Workflow Automation | Cross | High | `research` |\n"
+                    "| UC-022 | [Title](bar) | Workflow Automation | Cross | High | `research` |\n"
+                ),
+                encoding="utf-8",
+            )
+            for topic_id in ("UC-021", "UC-022"):
+                use_case_dir = root / f"use-cases/workflow-automation/{topic_id}-example"
+                use_case_dir.mkdir(parents=True, exist_ok=True)
+                (use_case_dir / "use-case.md").write_text(
+                    "| **Status**       | `research`                   |\n",
+                    encoding="utf-8",
+                )
+            _run(root, "git", "add", "README.md", "use-cases")
+            _run(root, "git", "commit", "-m", "init")
+
+            fake_claude = Path(__file__).parent / "support" / "fake_claude.py"
+            config = build_config(
+                root=str(root),
+                claude_bin="python3",
+                sleep_hours=0,
+                max_runtime_hours=24,
+                session_name="runner-test",
+                git_remote=None,
+                no_push=True,
+                workflow_mode=WorkflowMode.DETAIL_NEXT.value,
+            )
+
+            calls = 0
+
+            def _side_effect(**kwargs):
+                nonlocal calls
+                calls += 1
+                if calls == 2:
+                    raise KeyboardInterrupt
+
+                prompt = kwargs["command_text"]
+                env = os.environ.copy()
+                env["FAKE_CLAUDE_TOPIC_ID"] = prompt.rsplit(" ", 1)[-1]
+                completed = subprocess.run(
+                    ["python3", str(fake_claude), "--dangerously-skip-permissions", prompt],
+                    cwd=root,
+                    text=True,
+                    encoding="utf-8",
+                    capture_output=True,
+                    env=env,
+                    check=False,
+                )
+                kwargs["log_path"].parent.mkdir(parents=True, exist_ok=True)
+                rendered = completed.stdout.strip()
+                payload = json.dumps({"rendered": rendered, "raw": rendered}) + "\n"
+                kwargs["log_path"].write_text(payload, encoding="utf-8")
+                return ClaudeRunResult(
+                    exit_code=completed.returncode,
+                    rendered_text=completed.stdout,
+                    raw_output=completed.stdout,
+                    stderr_text=completed.stderr,
+                    limit_hit=None,
+                )
+
+            with patch("claude_research_runner.app._read_claude_auth_status", return_value="Login method: Claude Max Account\n"):
+                with patch("claude_research_runner.app.run_claude", side_effect=_side_effect):
+                    exit_code = run_workflow(config)
+
+            self.assertEqual(exit_code, 130)
+            self.assertEqual(calls, 2)
+            state = load_state(root / ".claude-research-runner" / "state.json")
+            self.assertIsNotNone(state)
+            assert state is not None
+            self.assertEqual(state.current_phase, Phase.STOPPED)
+            self.assertEqual(state.stop_reason, "Stopped by user")
+            self.assertEqual(state.topic_id, "UC-022")
 
 
 if __name__ == "__main__":

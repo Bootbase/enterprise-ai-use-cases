@@ -5,14 +5,14 @@ from dataclasses import replace
 from datetime import datetime, timezone
 from pathlib import Path
 
-from .models import Phase, RunState
+from .models import Phase, RunState, WorkflowMode
 
 
 def now_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
 
 
-def default_state(root: Path, session_name: str, sleep_hours: int) -> RunState:
+def default_state(root: Path, session_name: str, sleep_hours: int, workflow_mode: WorkflowMode) -> RunState:
     run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     state = RunState(
         version=1,
@@ -21,6 +21,7 @@ def default_state(root: Path, session_name: str, sleep_hours: int) -> RunState:
         session_name=session_name,
         current_phase=Phase.PREFLIGHT,
         sleep_hours=sleep_hours,
+        workflow_mode=workflow_mode,
     )
     state.timestamps.started_at = now_iso()
     state.timestamps.updated_at = state.timestamps.started_at
@@ -43,4 +44,3 @@ def save_state(path: Path, state: RunState) -> None:
 
 def update_state(state: RunState, **changes: object) -> RunState:
     return replace(state, **changes)
-

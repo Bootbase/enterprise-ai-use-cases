@@ -5,6 +5,11 @@ from enum import StrEnum
 from typing import Any
 
 
+class WorkflowMode(StrEnum):
+    NEW_AND_COMPLETE = "new-and-complete"
+    DETAIL_NEXT = "detail-next"
+
+
 class Phase(StrEnum):
     PREFLIGHT = "preflight"
     RESEARCH_NEW_RUNNING = "research_new_running"
@@ -46,6 +51,7 @@ class RunState:
     root: str
     session_name: str
     current_phase: Phase
+    workflow_mode: WorkflowMode = WorkflowMode.NEW_AND_COMPLETE
     session_id: str | None = None
     topic_id: str | None = None
     last_command: str | None = None
@@ -63,6 +69,7 @@ class RunState:
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
         payload["current_phase"] = self.current_phase.value
+        payload["workflow_mode"] = self.workflow_mode.value
         payload["resume_phase"] = self.resume_phase.value if self.resume_phase else None
         return payload
 
@@ -78,6 +85,7 @@ class RunState:
             session_name=str(payload["session_name"]),
             session_id=payload.get("session_id"),
             current_phase=Phase(payload["current_phase"]),
+            workflow_mode=WorkflowMode(payload.get("workflow_mode", WorkflowMode.NEW_AND_COMPLETE.value)),
             topic_id=payload.get("topic_id"),
             last_command=payload.get("last_command"),
             resume_phase=Phase(payload["resume_phase"]) if payload.get("resume_phase") else None,

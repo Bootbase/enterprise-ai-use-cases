@@ -7,6 +7,7 @@ from .models import VerificationResult
 
 
 STATUS_ROW_RE = re.compile(r"\|\s*\*\*Status\*\*\s*\|\s*`(?P<status>[^`]+)`")
+TOPIC_ID_RE = re.compile(r"^(?P<topic_id>UC-\d+)-")
 INDEX_READMES = ("README.md", "use-cases/README.md")
 
 
@@ -32,6 +33,31 @@ def use_case_status(use_case_md: Path) -> str | None:
     if not match:
         return None
     return match.group("status")
+
+
+def topic_id_from_use_case_dir(use_case_dir: Path) -> str | None:
+    match = TOPIC_ID_RE.match(use_case_dir.name)
+    if not match:
+        return None
+    return match.group("topic_id")
+
+
+def find_next_topic_needing_detail(root: Path) -> VerificationResult | None:
+    candidates: list[tuple[int, str, str]] = []
+    for use_case_md in root.glob("use-cases/*/UC-*/use-case.md"):
+        status = use_case_status(use_case_md)
+        if status == "detailed":
+            continue
+        topic_id = topic_id_from_use_case_dir(use_case_md.parent)
+        if topic_id is None:
+            continue
+        candidates.append((int(topic_id.split("-", 1)[1]), topic_id, str(use_case_md.parent.relative_to(root))))
+
+    if not candidates:
+        return None
+
+    _, topic_id, use_case_dir = min(candidates)
+    return VerificationResult(topic_id=topic_id, use_case_dir=use_case_dir)
 
 
 def verify_research_new(root: Path, topic_id: str) -> VerificationResult:

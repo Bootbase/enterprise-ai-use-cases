@@ -8,7 +8,7 @@ category_icon: "file-text"
 industry: "Financial Services (Mortgage Lending)"
 complexity: "High"
 status: "research"
-summary: "Agentic AI system automating mortgage document classification, data extraction, validation, condition generation, and clearing across 200+ document types and 700+ possible formats with 95%+ accuracy and 40-50% cycle time reduction."
+summary: "Mortgage loan origination is one of the most document-intensive processes in financial services. Each loan file contains 200+ documents spanning 700+ possible document types — income verification (W-2s, pay stubs, tax returns), asset statements (bank and brokerage accounts), credit reports, property appraisals, title reports, insurance certificates, and regulatory disclosures. Underwriters and loan processors must manually review, classify, cross-reference, and validate every document against borrower claims and GSE/agency guidelines before a loan can close."
 slug: "UC-002-autonomous-mortgage-loan-document-processing"
 has_solution_design: false
 has_implementation_guide: false

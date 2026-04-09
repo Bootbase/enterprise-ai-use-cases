@@ -26,10 +26,10 @@ from .git_ops import (
     show_head_file,
     upstream_ref,
 )
-from .models import Phase, RunState
+from .models import Phase, RunState, WorkflowMode
 from .state import default_state, load_state, save_state
 from .topic_inference import extract_topic_ids
-from .verification import find_use_case_dirs, verify_research_complete, verify_research_new
+from .verification import find_next_topic_needing_detail, find_use_case_dirs, verify_research_complete, verify_research_new
 
 
 class RunnerError(RuntimeError):
@@ -72,12 +72,16 @@ def _load_or_create_state(config: AppConfig) -> tuple[RunState, bool]:
     if state and state.current_phase not in {Phase.COMPLETED, Phase.STOPPED, Phase.FAILED}:
         if Path(state.root).resolve() != config.root.resolve():
             raise RunnerError(f"State file root {state.root} does not match requested root {config.root}")
+        if state.workflow_mode != config.workflow_mode:
+            raise RunnerError(
+                f"State file workflow_mode {state.workflow_mode.value} does not match requested mode {config.workflow_mode.value}"
+            )
         info(f"Resuming workflow from {config.state_path}")
         state.sleep_hours = config.sleep_hours
         return state, True
 
     shutil.rmtree(config.state_path.parent, ignore_errors=True)
-    return default_state(config.root, config.session_name, config.sleep_hours), False
+    return default_state(config.root, config.session_name, config.sleep_hours, config.workflow_mode), False
 
 
 def _phase_log_path(config: AppConfig, state: RunState, phase_name: str) -> Path:
@@ -176,10 +180,26 @@ def _fresh_preflight(config: AppConfig, state: RunState) -> None:
     state.git.upstream = upstream
     state.git.push_remote = config.git_remote or (upstream.split("/", 1)[0] if upstream else None)
     state.artifacts.logs_dir = str(config.logs_dir)
+
+    if config.workflow_mode == WorkflowMode.DETAIL_NEXT:
+        next_topic = find_next_topic_needing_detail(config.root)
+        if next_topic is None:
+            state.current_phase = Phase.STOPPED
+            state.stop_reason = "No use cases remain that are not detailed"
+            save_state(config.state_path, state)
+            return
+        state.topic_id = next_topic.topic_id
+        state.artifacts.research_new_folder = next_topic.use_case_dir
+        state.current_phase = Phase.RESEARCH_COMPLETE_RUNNING
+        info(f"Selected {state.topic_id} as the next use case to detail")
+    else:
+        state.topic_id = None
+        state.artifacts.research_new_folder = None
+        state.current_phase = Phase.RESEARCH_NEW_RUNNING
+
     _prepare_index_files_for_run(config)
     _snapshot_existing_use_case_dirs(config)
     _snapshot_index_baselines(config)
-    state.current_phase = Phase.RESEARCH_NEW_RUNNING
     save_state(config.state_path, state)
 
 
@@ -238,11 +258,29 @@ def _runtime_remaining_seconds(config: AppConfig, state: RunState) -> float | No
 def _next_cycle_state(config: AppConfig, previous_state: RunState) -> RunState:
     started_at = previous_state.timestamps.started_at
     shutil.rmtree(config.state_path.parent, ignore_errors=True)
-    state = default_state(config.root, config.session_name, config.sleep_hours)
+    state = default_state(config.root, config.session_name, config.sleep_hours, config.workflow_mode)
     if started_at is not None:
         state.timestamps.started_at = started_at
     state.timestamps.updated_at = state.timestamps.started_at
     return state
+
+
+def _recover_session_id_for_phase(config: AppConfig, state: RunState, phase_name: str) -> str | None:
+    candidate_phase_names = [phase_name]
+    if phase_name != "research-complete":
+        candidate_phase_names.append("research-complete")
+    if phase_name != "research-new":
+        candidate_phase_names.append("research-new")
+
+    seen: set[str] = set()
+    for candidate_phase_name in candidate_phase_names:
+        if candidate_phase_name in seen:
+            continue
+        seen.add(candidate_phase_name)
+        recovered = _recover_session_id_from_log(_phase_log_path(config, state, candidate_phase_name))
+        if recovered:
+            return recovered
+    return None
 
 
 def _stop_run(config: AppConfig, state: RunState, reason: str, *, exit_code: int = 0, warning: bool = False) -> int:
@@ -402,17 +440,17 @@ def _stage_index_delta(config: AppConfig, relative_path: str) -> None:
 
 
 def _run_phase(config: AppConfig, state: RunState, phase: Phase, command_text: str) -> bool | None:
+    phase_name = "research-new" if phase == Phase.RESEARCH_NEW_RUNNING else "research-complete"
     resume_session = state.session_started
-    if phase == Phase.RESEARCH_NEW_RUNNING and not state.session_started:
+    if not state.session_started:
         state.session_started = True
     if resume_session and state.session_id is None:
-        state.session_id = _recover_session_id_from_log(_phase_log_path(config, state, "research-new"))
+        state.session_id = _recover_session_id_for_phase(config, state, phase_name)
 
     state.current_phase = phase
     state.last_command = command_text
     save_state(config.state_path, state)
 
-    phase_name = "research-new" if phase == Phase.RESEARCH_NEW_RUNNING else "research-complete"
     log_path = _phase_log_path(config, state, phase_name)
     result = run_claude(
         claude_bin=config.claude_bin,
@@ -606,7 +644,10 @@ def run_workflow(config: AppConfig) -> int:
                         state,
                         f"Stopped after reaching the max runtime of {config.max_runtime_hours:g} hours",
                     )
-                info("Starting the next workflow cycle")
+                if state.workflow_mode == WorkflowMode.DETAIL_NEXT:
+                    info("Starting the next detail-next cycle")
+                else:
+                    info("Starting the next workflow cycle")
                 state = _next_cycle_state(config, state)
                 save_state(config.state_path, state)
                 continue

@@ -18,14 +18,30 @@ def _emit(text: str) -> None:
     print(json.dumps(payload), flush=True)
 
 
+def _upsert_readme_row(root: Path, topic_id: str, status: str) -> None:
+    readme = root / "README.md"
+    existing = readme.read_text(encoding="utf-8") if readme.exists() else ""
+    lines = existing.splitlines()
+    target_prefix = f"| {topic_id} "
+    replacement = f"| {topic_id} | [Title](foo) | Workflow Automation | Cross | High | `{status}` |"
+    replaced = False
+    updated: list[str] = []
+    for line in lines:
+        if line.startswith(target_prefix):
+            updated.append(replacement)
+            replaced = True
+        else:
+            updated.append(line)
+    if not replaced:
+        updated.append(replacement)
+    readme.write_text("\n".join(updated).rstrip() + "\n", encoding="utf-8")
+
+
 def _ensure_research_new(root: Path, topic_id: str) -> None:
     folder = root / f"use-cases/workflow-automation/{topic_id}-example"
     folder.mkdir(parents=True, exist_ok=True)
     (folder / "use-case.md").write_text("| **Status**       | `research`                   |\n", encoding="utf-8")
-    (root / "README.md").write_text(
-        f"| {topic_id} | [Title](foo) | Workflow Automation | Cross | High | `research` |\n",
-        encoding="utf-8",
-    )
+    _upsert_readme_row(root, topic_id, "research")
 
 
 def _ensure_research_complete(root: Path, topic_id: str) -> None:
@@ -34,10 +50,7 @@ def _ensure_research_complete(root: Path, topic_id: str) -> None:
     (folder / "use-case.md").write_text("| **Status**       | `detailed`                   |\n", encoding="utf-8")
     for name in ("solution-design.md", "implementation-guide.md", "evaluation.md", "references.md"):
         (folder / name).write_text("# ok\n", encoding="utf-8")
-    (root / "README.md").write_text(
-        f"| {topic_id} | [Title](foo) | Workflow Automation | Cross | High | `detailed` |\n",
-        encoding="utf-8",
-    )
+    _upsert_readme_row(root, topic_id, "detailed")
 
 
 def main() -> int:

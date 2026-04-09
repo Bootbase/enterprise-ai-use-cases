@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 import subprocess
 import tempfile
@@ -7,8 +8,9 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from claude_research_runner.app import run_workflow
+from claude_research_runner.app import _recover_session_id_from_log, run_workflow
 from claude_research_runner.config import build_config
+from claude_research_runner.models import ClaudeRunResult
 
 
 def _run(cwd: Path, *args: str) -> str:
@@ -24,7 +26,26 @@ def _run(cwd: Path, *args: str) -> str:
 
 
 class WorkflowResumeTests(unittest.TestCase):
-    def test_end_to_end_success(self) -> None:
+    def test_recover_session_id_from_realistic_log_event(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            log_path = Path(tmp_dir) / "research-new.ndjson"
+            outer_event = {
+                "timestamp": "2026-04-09T18:16:31.038943+02:00",
+                "stream": "stdout",
+                "raw": (
+                    "{\"type\":\"stream_event\",\"event\":{\"type\":\"content_block_stop\",\"index\":0},"
+                    "\"session_id\":\"fdbbf8c0-bd59-4a71-bed7-5440da411e26\","
+                    "\"parent_tool_use_id\":null,\"uuid\":\"d95d0340-fde2-40aa-878d-1e59fd0da836\"}"
+                ),
+                "rendered": "",
+            }
+            log_path.write_text(json.dumps(outer_event) + "\n", encoding="utf-8")
+            self.assertEqual(
+                _recover_session_id_from_log(log_path),
+                "fdbbf8c0-bd59-4a71-bed7-5440da411e26",
+            )
+
+    def _run_workflow(self, *, dirty_readme: bool) -> tuple[int, Path]:
         with tempfile.TemporaryDirectory() as tmp_dir:
             root = Path(tmp_dir) / "repo"
             remote = Path(tmp_dir) / "remote.git"
@@ -34,10 +55,13 @@ class WorkflowResumeTests(unittest.TestCase):
             _run(root, "git", "config", "user.email", "test@example.com")
             _run(root, "git", "init", "--bare", str(remote))
             _run(root, "git", "remote", "add", "origin", str(remote))
-            (root / "README.md").write_text("", encoding="utf-8")
+            initial_readme = "preexisting note\n" if dirty_readme else ""
+            (root / "README.md").write_text(initial_readme, encoding="utf-8")
             _run(root, "git", "add", "README.md")
             _run(root, "git", "commit", "-m", "init")
             _run(root, "git", "push", "-u", "origin", "main")
+            if dirty_readme:
+                (root / "README.md").write_text("preexisting note\nuser draft change\n", encoding="utf-8")
 
             fake_claude = Path(__file__).parent / "support" / "fake_claude.py"
             config = build_config(
@@ -55,7 +79,6 @@ class WorkflowResumeTests(unittest.TestCase):
             try:
                 with patch("claude_research_runner.app._read_claude_auth_status", return_value="Login method: Claude Max Account\n"):
                     with patch("claude_research_runner.app.run_claude") as mocked_run:
-                        from claude_research_runner.models import ClaudeRunResult
 
                         def _side_effect(**kwargs):
                             prompt = kwargs["command_text"]
@@ -70,11 +93,9 @@ class WorkflowResumeTests(unittest.TestCase):
                                 check=False,
                             )
                             kwargs["log_path"].parent.mkdir(parents=True, exist_ok=True)
-                            kwargs["log_path"].write_text(
-                                '{"rendered": "%s", "raw": "%s"}\n'
-                                % (completed.stdout.strip().replace('"', '\\"'), completed.stdout.strip().replace('"', '\\"')),
-                                encoding="utf-8",
-                            )
+                            rendered = completed.stdout.strip()
+                            payload = json.dumps({"rendered": rendered, "raw": rendered}) + "\n"
+                            kwargs["log_path"].write_text(payload, encoding="utf-8")
                             return ClaudeRunResult(
                                 exit_code=completed.returncode,
                                 rendered_text=completed.stdout,
@@ -85,12 +106,33 @@ class WorkflowResumeTests(unittest.TestCase):
 
                         mocked_run.side_effect = _side_effect
                         exit_code = run_workflow(config)
-                self.assertEqual(exit_code, 0)
+
+                if dirty_readme:
+                    committed_readme = _run(root, "git", "show", "HEAD:README.md")
+                    self.assertNotIn("user draft change", committed_readme)
+                    self.assertIn("UC-024", committed_readme)
+                    working_readme = (root / "README.md").read_text(encoding="utf-8")
+                    self.assertIn("user draft change", working_readme)
+                    self.assertIn("UC-024", working_readme)
+
                 state_path = root / ".claude-research-runner" / "state.json"
                 self.assertTrue(state_path.exists())
+                copied_state_dir = Path(tmp_dir) / "state-copy"
+                copied_state_dir.mkdir(parents=True, exist_ok=True)
+                copied_state_path = copied_state_dir / "state.json"
+                copied_state_path.write_text(state_path.read_text(encoding="utf-8"), encoding="utf-8")
+                return exit_code, copied_state_path
             finally:
                 os.environ.clear()
                 os.environ.update(original)
+
+    def test_end_to_end_success(self) -> None:
+        exit_code, _ = self._run_workflow(dirty_readme=False)
+        self.assertEqual(exit_code, 0)
+
+    def test_end_to_end_with_dirty_readme(self) -> None:
+        exit_code, _ = self._run_workflow(dirty_readme=True)
+        self.assertEqual(exit_code, 0)
 
 
 if __name__ == "__main__":

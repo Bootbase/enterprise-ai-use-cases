@@ -2,13 +2,17 @@ from __future__ import annotations
 
 import shutil
 import time
+from difflib import unified_diff
 from datetime import datetime, timedelta
 from pathlib import Path
+from tempfile import NamedTemporaryFile
+from subprocess import run
 
 from .claude_exec import run_claude
 from .config import AppConfig
 from .console import banner, error, info, warn
 from .git_ops import (
+    apply_patch_to_index,
     GitError,
     commit,
     current_branch,
@@ -16,7 +20,10 @@ from .git_ops import (
     ensure_repo_root,
     has_path_changes,
     push,
+    restore_staged_from_head,
+    restore_worktree_from_head,
     stage_paths,
+    show_head_file,
     upstream_ref,
 )
 from .models import Phase, RunState
@@ -74,7 +81,34 @@ def _phase_log_path(config: AppConfig, state: RunState, phase_name: str) -> Path
     return config.logs_dir / f"{phase_name}.ndjson"
 
 
-def _infer_topic_id_from_log(log_path: Path, root: Path) -> str:
+def _recover_session_id_from_log(log_path: Path) -> str | None:
+    if not log_path.exists():
+        return None
+    for line in reversed(log_path.read_text(encoding="utf-8").splitlines()):
+        try:
+            import json
+
+            payload = json.loads(line)
+        except Exception:
+            continue
+        outer_session_id = payload.get("session_id")
+        if isinstance(outer_session_id, str) and outer_session_id:
+            return outer_session_id
+        for field_name in ("raw", "rendered"):
+            field_value = payload.get(field_name)
+            if not isinstance(field_value, str) or not field_value.strip():
+                continue
+            try:
+                embedded = json.loads(field_value)
+            except Exception:
+                continue
+            embedded_session_id = embedded.get("session_id")
+            if isinstance(embedded_session_id, str) and embedded_session_id:
+                return embedded_session_id
+    return None
+
+
+def _infer_topic_id_from_log(log_path: Path, root: Path, excluded_ids: set[str] | None = None) -> str:
     if not log_path.exists():
         raise RunnerError(f"Log file does not exist: {log_path}")
     texts: list[str] = []
@@ -95,6 +129,15 @@ def _infer_topic_id_from_log(log_path: Path, root: Path) -> str:
     candidates = extract_topic_ids("\n".join(texts))
     if not candidates:
         raise RunnerError("Could not infer a topic ID from Claude output")
+
+    if excluded_ids:
+        new_candidates = [
+            candidate
+            for candidate in candidates
+            if candidate not in excluded_ids and find_use_case_dirs(root, candidate)
+        ]
+        if len(new_candidates) == 1:
+            return new_candidates[0]
 
     valid = [candidate for candidate in candidates if find_use_case_dirs(root, candidate)]
     if len(valid) == 1:
@@ -121,10 +164,6 @@ def _fresh_preflight(config: AppConfig, state: RunState) -> None:
     if not login_method or not login_method.startswith("Claude "):
         raise RunnerError(f"Unsupported Claude auth mode: {login_method or 'unknown'}")
 
-    readme_dirty = dirty_paths(config.root, "README.md")
-    if readme_dirty:
-        raise RunnerError("README.md is already dirty; refusing to start unsafe automated staging")
-
     branch = current_branch(config.root)
     upstream = upstream_ref(config.root)
     if not config.no_push and not (config.git_remote or upstream):
@@ -134,6 +173,9 @@ def _fresh_preflight(config: AppConfig, state: RunState) -> None:
     state.git.upstream = upstream
     state.git.push_remote = config.git_remote or (upstream.split("/", 1)[0] if upstream else None)
     state.artifacts.logs_dir = str(config.logs_dir)
+    _prepare_readme_for_run(config)
+    _snapshot_existing_use_case_dirs(config)
+    _snapshot_readme_baseline(config)
     state.current_phase = Phase.RESEARCH_NEW_RUNNING
     save_state(config.state_path, state)
 
@@ -165,10 +207,145 @@ def _schedule_retry(config: AppConfig, state: RunState, phase: Phase, message: s
     save_state(config.state_path, state)
 
 
+def _readme_baseline_path(config: AppConfig) -> Path:
+    return config.baselines_dir / "README.md"
+
+
+def _existing_use_case_dirs_path(config: AppConfig) -> Path:
+    return config.baselines_dir / "existing-use-case-dirs.txt"
+
+
+def _user_readme_snapshot_path(config: AppConfig) -> Path:
+    return config.baselines_dir / "README.user.md"
+
+
+def _head_readme_snapshot_path(config: AppConfig) -> Path:
+    return config.baselines_dir / "README.head.md"
+
+
+def _prepare_readme_for_run(config: AppConfig) -> None:
+    if not dirty_paths(config.root, "README.md"):
+        return
+
+    readme_path = config.root / "README.md"
+    config.baselines_dir.mkdir(parents=True, exist_ok=True)
+    _user_readme_snapshot_path(config).write_text(readme_path.read_text(encoding="utf-8"), encoding="utf-8")
+    _head_readme_snapshot_path(config).write_text(show_head_file(config.root, "README.md"), encoding="utf-8")
+    restore_worktree_from_head(config.root, "README.md")
+    warn("README.md is already dirty; local README edits were snapshotted and temporarily hidden during the run")
+
+
+def _snapshot_existing_use_case_dirs(config: AppConfig) -> None:
+    existing = sorted(
+        str(path.relative_to(config.root))
+        for path in config.root.glob("use-cases/*/UC-*")
+        if path.is_dir()
+    )
+    target = _existing_use_case_dirs_path(config)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text("\n".join(existing) + ("\n" if existing else ""), encoding="utf-8")
+
+
+def _existing_use_case_dirs(config: AppConfig) -> set[str]:
+    path = _existing_use_case_dirs_path(config)
+    if not path.exists():
+        return set()
+    return {line.strip() for line in path.read_text(encoding="utf-8").splitlines() if line.strip()}
+
+
+def _existing_topic_ids(config: AppConfig) -> set[str]:
+    topic_ids: set[str] = set()
+    for relative_dir in _existing_use_case_dirs(config):
+        name = Path(relative_dir).name
+        if name.startswith("UC-"):
+            topic_ids.add(name.split("-", 2)[0] + "-" + name.split("-", 2)[1])
+    return topic_ids
+
+
+def _restore_user_readme_overlay(config: AppConfig) -> None:
+    user_snapshot = _user_readme_snapshot_path(config)
+    head_snapshot = _head_readme_snapshot_path(config)
+    readme_path = config.root / "README.md"
+    if not user_snapshot.exists() or not head_snapshot.exists() or not readme_path.exists():
+        return
+
+    with NamedTemporaryFile("w+", encoding="utf-8", delete=False) as current_file:
+        current_file.write(readme_path.read_text(encoding="utf-8"))
+        current_file.flush()
+        current_path = current_file.name
+
+    try:
+        completed = run(
+            ["git", "merge-file", "-p", current_path, str(head_snapshot), str(user_snapshot)],
+            cwd=config.root,
+            text=True,
+            encoding="utf-8",
+            capture_output=True,
+            check=False,
+        )
+        if completed.returncode not in (0, 1):
+            raise RunnerError(
+                "Failed to restore pre-existing README.md edits after the run: "
+                f"{completed.stderr.strip() or completed.stdout.strip()}"
+            )
+        readme_path.write_text(completed.stdout, encoding="utf-8")
+        if completed.returncode == 1:
+            warn("README.md was restored with merge conflicts against pre-existing local edits")
+    finally:
+        Path(current_path).unlink(missing_ok=True)
+
+
+def _snapshot_readme_baseline(config: AppConfig) -> None:
+    baseline_path = _readme_baseline_path(config)
+    baseline_path.parent.mkdir(parents=True, exist_ok=True)
+    source = config.root / "README.md"
+    if source.exists():
+        baseline_path.write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
+
+
+def _stage_readme_delta(config: AppConfig) -> None:
+    readme_path = config.root / "README.md"
+    baseline_path = _readme_baseline_path(config)
+    if not readme_path.exists():
+        raise RunnerError("README.md is missing from the repository root")
+    if not baseline_path.exists():
+        stage_paths(config.root, ["README.md"])
+        return
+
+    baseline_text = baseline_path.read_text(encoding="utf-8")
+    current_text = readme_path.read_text(encoding="utf-8")
+    if baseline_text == current_text:
+        restore_staged_from_head(config.root, "README.md")
+        return
+
+    patch_text = "".join(
+        unified_diff(
+            baseline_text.splitlines(keepends=True),
+            current_text.splitlines(keepends=True),
+            fromfile="a/README.md",
+            tofile="b/README.md",
+        )
+    )
+    if not patch_text:
+        restore_staged_from_head(config.root, "README.md")
+        return
+
+    restore_staged_from_head(config.root, "README.md")
+    try:
+        apply_patch_to_index(config.root, patch_text)
+    except GitError as exc:
+        raise RunnerError(
+            "Could not isolate README.md changes from pre-existing edits; "
+            f"the generated delta overlaps with earlier uncommitted changes: {exc}"
+        ) from exc
+
+
 def _run_phase(config: AppConfig, state: RunState, phase: Phase, command_text: str) -> bool:
     resume_session = state.session_started
     if phase == Phase.RESEARCH_NEW_RUNNING and not state.session_started:
         state.session_started = True
+    if resume_session and state.session_id is None:
+        state.session_id = _recover_session_id_from_log(_phase_log_path(config, state, "research-new"))
 
     state.current_phase = phase
     state.last_command = command_text
@@ -180,10 +357,13 @@ def _run_phase(config: AppConfig, state: RunState, phase: Phase, command_text: s
         claude_bin=config.claude_bin,
         root=config.root,
         session_name=state.session_name,
+        session_id=state.session_id,
         command_text=command_text,
         log_path=log_path,
         resume_session=resume_session,
     )
+    if result.session_id:
+        state.session_id = result.session_id
 
     if result.limit_hit is not None:
         _schedule_retry(config, state, phase, f"Claude usage limit hit: {result.limit_hit.matched_text}")
@@ -199,7 +379,11 @@ def _run_phase(config: AppConfig, state: RunState, phase: Phase, command_text: s
 
 
 def _commit_phase(config: AppConfig, state: RunState, *, message: str, paths: list[str]) -> None:
-    stage_paths(config.root, paths)
+    stage_targets = [path for path in paths if path != "README.md"]
+    if "README.md" in paths:
+        _stage_readme_delta(config)
+    if stage_targets:
+        stage_paths(config.root, stage_targets)
     commit_sha = commit(config.root, message)
     if commit_sha:
         info(f"Created commit {commit_sha}")
@@ -224,6 +408,7 @@ def _commit_phase(config: AppConfig, state: RunState, *, message: str, paths: li
                     time.sleep(attempt)
         if last_error is not None:
             raise last_error
+    _snapshot_readme_baseline(config)
     save_state(config.state_path, state)
 
 
@@ -252,8 +437,17 @@ def run_workflow(config: AppConfig) -> int:
             if state.current_phase == Phase.RESEARCH_NEW_VERIFYING:
                 banner("Verify Research New")
                 if state.topic_id is None:
-                    state.topic_id = _infer_topic_id_from_log(_phase_log_path(config, state, "research-new"), config.root)
+                    state.topic_id = _infer_topic_id_from_log(
+                        _phase_log_path(config, state, "research-new"),
+                        config.root,
+                        excluded_ids=_existing_topic_ids(config),
+                    )
                 verification = verify_research_new(config.root, state.topic_id)
+                if verification.use_case_dir in _existing_use_case_dirs(config):
+                    raise RunnerError(
+                        f"{verification.use_case_dir} already existed before the run; "
+                        "refusing to commit a pre-existing use-case directory"
+                    )
                 state.artifacts.research_new_folder = verification.use_case_dir
                 state.current_phase = Phase.RESEARCH_NEW_GIT
                 save_state(config.state_path, state)
@@ -308,6 +502,7 @@ def run_workflow(config: AppConfig) -> int:
                 )
                 state.current_phase = Phase.COMPLETED
                 save_state(config.state_path, state)
+                _restore_user_readme_overlay(config)
                 info(f"Workflow completed successfully. State saved to {config.state_path}")
                 return 0
 
@@ -321,4 +516,9 @@ def run_workflow(config: AppConfig) -> int:
             raise RunnerError(f"Unhandled phase: {state.current_phase}")
 
     except (RunnerError, GitError) as exc:
+        if state.current_phase != Phase.WAITING_FOR_LIMIT_RESET:
+            try:
+                _restore_user_readme_overlay(config)
+            except RunnerError as restore_exc:
+                warn(str(restore_exc))
         return _mark_failed(config, state, str(exc))

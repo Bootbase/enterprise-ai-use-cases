@@ -68,3 +68,28 @@ def commit(root: Path, message: str) -> str | None:
 def push(root: Path, remote: str, branch: str) -> None:
     _run_git(root, "push", remote, branch)
 
+
+def restore_staged_from_head(root: Path, path: str) -> None:
+    _run_git(root, "restore", "--staged", "--source=HEAD", "--", path)
+
+
+def restore_worktree_from_head(root: Path, path: str) -> None:
+    _run_git(root, "restore", "--worktree", "--source=HEAD", "--", path)
+
+
+def show_head_file(root: Path, path: str) -> str:
+    return _run_git(root, "show", f"HEAD:{path}").stdout
+
+
+def apply_patch_to_index(root: Path, patch_text: str) -> None:
+    completed = subprocess.run(
+        ["git", "apply", "--cached", "--whitespace=nowarn", "-"],
+        cwd=root,
+        text=True,
+        encoding="utf-8",
+        input=patch_text,
+        capture_output=True,
+        check=False,
+    )
+    if completed.returncode != 0:
+        raise GitError(completed.stderr.strip() or completed.stdout.strip() or "git apply --cached failed")

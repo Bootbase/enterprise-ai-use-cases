@@ -13,6 +13,7 @@ class AppConfig:
     session_name: str
     state_path: Path
     logs_dir: Path
+    baselines_dir: Path
     no_push: bool
     git_remote: str | None = None
 
@@ -44,6 +45,7 @@ def build_config(
         session_name=effective_session_name,
         state_path=effective_state_path,
         logs_dir=logs_dir,
+        baselines_dir=effective_state_path.parent / "baselines",
         no_push=no_push,
         git_remote=git_remote,
     )

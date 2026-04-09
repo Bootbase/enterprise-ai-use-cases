@@ -49,6 +49,18 @@ def _render_line(raw_line: str) -> str:
     return "\n".join(texts)
 
 
+def _extract_session_id(raw_line: str) -> str | None:
+    stripped = raw_line.strip()
+    if not stripped:
+        return None
+    try:
+        payload = json.loads(stripped)
+    except json.JSONDecodeError:
+        return None
+    session_id = payload.get("session_id")
+    return session_id if isinstance(session_id, str) and session_id else None
+
+
 def _log_event(log_path: Path, stream_name: str, raw_line: str, rendered_line: str) -> None:
     event = {
         "timestamp": datetime.now().astimezone().isoformat(),
@@ -71,6 +83,7 @@ def run_claude(
     claude_bin: str,
     root: Path,
     session_name: str,
+    session_id: str | None,
     command_text: str,
     log_path: Path,
     resume_session: bool,
@@ -81,13 +94,16 @@ def run_claude(
         "--dangerously-skip-permissions",
         "--effort",
         "max",
+        "--verbose",
         "--print",
         "--output-format",
         "stream-json",
         "--include-partial-messages",
     ]
     if resume_session:
-        args.extend(["--resume", session_name])
+        if not session_id:
+            raise RuntimeError("Claude session_id is required to resume in print mode")
+        args.extend(["--resume", session_id])
     else:
         args.extend(["--name", session_name])
     args.append(command_text)
@@ -120,6 +136,7 @@ def run_claude(
     stderr_lines: list[str] = []
     closed = {"stdout": False, "stderr": False}
     limit_hit: LimitHit | None = None
+    observed_session_id: str | None = session_id
 
     while not all(closed.values()):
         stream_name, line = q.get()
@@ -128,6 +145,9 @@ def run_claude(
             continue
         raw_lines.append(line)
         rendered = _render_line(line)
+        observed_from_line = _extract_session_id(line)
+        if observed_from_line:
+            observed_session_id = observed_from_line
         _log_event(log_path, stream_name, line, rendered)
 
         if stream_name == "stderr":
@@ -149,6 +169,6 @@ def run_claude(
         rendered_text="\n".join(rendered_lines),
         raw_output="".join(raw_lines),
         stderr_text="\n".join(stderr_lines),
+        session_id=observed_session_id,
         limit_hit=limit_hit,
     )
-

@@ -45,6 +45,7 @@ class RunState:
     root: str
     session_name: str
     current_phase: Phase
+    session_id: str | None = None
     topic_id: str | None = None
     last_command: str | None = None
     resume_phase: Phase | None = None
@@ -73,6 +74,7 @@ class RunState:
             run_id=str(payload["run_id"]),
             root=str(payload["root"]),
             session_name=str(payload["session_name"]),
+            session_id=payload.get("session_id"),
             current_phase=Phase(payload["current_phase"]),
             topic_id=payload.get("topic_id"),
             last_command=payload.get("last_command"),
@@ -101,6 +103,7 @@ class ClaudeRunResult:
     rendered_text: str
     raw_output: str
     stderr_text: str
+    session_id: str | None = None
     limit_hit: LimitHit | None = None
 
 

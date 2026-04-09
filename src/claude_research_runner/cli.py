@@ -1,0 +1,44 @@
+from __future__ import annotations
+
+import argparse
+
+from .app import run_workflow
+from .config import build_config
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(prog="claude-research-runner")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    run_parser = subparsers.add_parser("run", help="Run or resume the Claude research workflow.")
+    run_parser.add_argument("--root", default=".", help="Repository root. Defaults to the current directory.")
+    run_parser.add_argument("--claude-bin", default="claude", help="Claude binary to execute.")
+    run_parser.add_argument("--sleep-hours", type=int, default=4, help="Hours to wait before retrying after a limit hit.")
+    run_parser.add_argument("--session-name", help="Explicit Claude session name. Defaults to a generated name.")
+    run_parser.add_argument("--git-remote", help="Explicit Git remote to push to. Defaults to the tracked upstream remote.")
+    run_parser.add_argument("--no-push", action="store_true", help="Commit locally without pushing.")
+    run_parser.add_argument(
+        "--resume-state",
+        help="Alternate state-file path. Defaults to .claude-research-runner/state.json under the repo root.",
+    )
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = build_parser()
+    args = parser.parse_args(argv)
+
+    if args.command == "run":
+        config = build_config(
+            root=args.root,
+            claude_bin=args.claude_bin,
+            sleep_hours=args.sleep_hours,
+            session_name=args.session_name,
+            git_remote=args.git_remote,
+            no_push=args.no_push,
+            state_path=args.resume_state,
+        )
+        return run_workflow(config)
+
+    parser.error(f"Unsupported command: {args.command}")
+    return 2

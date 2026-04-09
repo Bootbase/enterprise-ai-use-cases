@@ -1,0 +1,6 @@
+interface:
+  display_name: "Complete Use Case Research"
+  short_description: "Expand a research-stage use case into the full detailed write-up."
+  default_prompt: "Complete the next research-stage use case and produce the remaining detailed deliverables."
+policy:
+  allow_implicit_invocation: true

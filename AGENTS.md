@@ -6,18 +6,18 @@ This repo is a catalog of real-world enterprise AI use cases — each researched
 
 ## Navigation
 
-| I need to...                              | Action                                                                          |
-| ----------------------------------------- | ------------------------------------------------------------------------------- |
-| Add a new use case                        | `/research-new`                                                                 |
-| Detail an existing `research` use case    | `/research-complete`                                                            |
-| Browse the use case index                 | Read [use-cases/README.md](use-cases/README.md)                                 |
-| Understand the file structure             | Read [use-cases/_templates/](use-cases/_templates/)                             |
-| See reusable prompts (copy-paste format)  | Read [use-cases/PROMPT.md](use-cases/PROMPT.md)                                 |
+| I need to...                              | Action                                                                                         |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Add a new use case                        | Read [.agents/skills/research-new/SKILL.md](.agents/skills/research-new/SKILL.md)             |
+| Detail an existing `research` use case    | Read [.agents/skills/research-complete/SKILL.md](.agents/skills/research-complete/SKILL.md)   |
+| Browse the use case index                 | Read [use-cases/README.md](use-cases/README.md)                                                |
+| Understand the file structure             | Read [use-cases/_templates/](use-cases/_templates/)                                            |
+| See reusable prompts (copy-paste format)  | Read [use-cases/PROMPT.md](use-cases/PROMPT.md)                                                |
 
 ## Use Case Lifecycle
 
 ```
-/research-new                    /research-complete
+research-new                     research-complete
       │                                │
       ▼                                ▼
 ┌──────────┐                   ┌──────────────┐
@@ -35,5 +35,6 @@ This repo is a catalog of real-world enterprise AI use cases — each researched
 ## Loading Priority
 
 1. Load this file at session start.
-2. Check the navigation table before starting work — invoke the matching skill.
-3. Load templates and PROMPT.md on demand.
+2. Check the navigation table before starting work — load the matching skill from `.agents/skills/`.
+3. `.claude/skills/` mirrors `.agents/skills/` via symlink.
+4. Load templates and PROMPT.md on demand.

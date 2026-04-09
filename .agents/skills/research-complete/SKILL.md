@@ -1,4 +1,5 @@
 ---
+name: research-complete
 description: >-
   Takes an existing use case at 'research' status and produces the full
   solution-design.md, implementation-guide.md, evaluation.md, and
@@ -7,7 +8,7 @@ description: >-
   the remaining files, expand a use case, or says 'detail next', 'complete
   research', 'fill in solution design', 'expand use case'. Also trigger when
   the user references a specific UC-NNN and asks for the full write-up. Do
-  NOT use for creating new use cases — use /research-new instead.
+  NOT use for creating new use cases — use the `research-new` skill instead.
 ---
 
 # Detail an Existing Use Case

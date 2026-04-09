@@ -1,4 +1,5 @@
 ---
+name: research-new
 description: >-
   Discovers and documents a new agentic AI use case by researching real-world
   deployments, then creates use-case.md with concrete companies, metrics, and
@@ -6,7 +7,7 @@ description: >-
   case, research a new enterprise AI scenario, or says 'new use case', 'add
   use case', 'discover use case', 'find another use case'. Also trigger when
   the user provides a topic and wants it turned into a use case entry. Do NOT
-  use for detailing an existing use case — use /research-complete instead.
+  use for detailing an existing use case — use the `research-complete` skill instead.
 ---
 
 # Discover & Document a New Use Case
@@ -49,7 +50,7 @@ Add a row to the Use Case Index table in `use-cases/README.md`, matching the exi
 
 ## Gotchas
 
-- **Do NOT create solution-design.md, implementation-guide.md, evaluation.md, or references.md** — only use-case.md. Use `/research-complete` later to populate those.
+- **Do NOT create solution-design.md, implementation-guide.md, evaluation.md, or references.md** — only use-case.md. Use the `research-complete` skill later to populate those.
 - **Use REAL company names, products, tools, and metrics** — not made-up ones. Cite sources inline (e.g., "700K reports/year (FDA FAERS)").
 - **If solid real-world data is scarce**, state that explicitly and use the best available estimates.
 - **Every template placeholder must be replaced** — no `{curly brace}` text may remain in the output.

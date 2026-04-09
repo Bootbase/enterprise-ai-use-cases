@@ -8,7 +8,7 @@
 | **Category**     | Workflow Automation           |
 | **Industry**     | Logistics / Transportation   |
 | **Complexity**   | High                         |
-| **Status**       | `research`                   |
+| **Status**       | `detailed`                   |
 
 ---
 

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Research New Use Case"
+  short_description: "Discover and document a new enterprise AI use case from real-world evidence."
+  default_prompt: "Research a distinct enterprise AI use case and create the initial research-stage entry."
+policy:
+  allow_implicit_invocation: true

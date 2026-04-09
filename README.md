@@ -37,9 +37,21 @@ All use cases follow the same 5-file structure. Templates are in [`_templates/`]
 
 | ID      | Title | Category | Industry | Complexity | Status |
 |---------|-------|----------|----------|------------|--------|
-| UC-020  | [Autonomous Freight Logistics Orchestration with Agentic AI](workflow-automation/UC-020-freight-logistics-automation/use-case.md) | Workflow Automation | Logistics / Transportation | High | `research` |
+| UC-001  | [Autonomous Accounts Payable Invoice Processing with Multi-Agent AI](document-processing/UC-001-autonomous-ap-invoice-processing/use-case.md) | Document Processing | Cross-Industry (Real Estate, Retail, Manufacturing, Professional Services, Hospitality) | High | `research` |
+| UC-010  | [Autonomous Customer Service Resolution with Agentic AI](customer-service/UC-010-autonomous-customer-service-resolution/use-case.md) | Customer Service | Cross-Industry (FinTech, SaaS, E-Commerce) | High | `research` |
+| UC-020  | [Autonomous Freight Logistics Orchestration with Agentic AI](workflow-automation/UC-020-freight-logistics-automation/use-case.md) | Workflow Automation | Logistics / Transportation | High | `detailed` |
+| UC-021  | [Autonomous Supplier Negotiation with Agentic Procurement AI](workflow-automation/UC-021-autonomous-procurement-negotiation-agentic-ai/use-case.md) | Workflow Automation | Cross-Industry (Retail, Logistics, Industrial Distribution, Utilities, Manufacturing) | High | `research` |
+| UC-022  | [Autonomous Talent Acquisition and Candidate Screening with Agentic AI](workflow-automation/UC-022-autonomous-talent-acquisition-agentic-ai/use-case.md) | Workflow Automation | Cross-Industry (Retail, Food Service, Technology, Financial Services, Manufacturing) | High | `research` |
+| UC-030  | [Autonomous Incident Investigation with Agentic AI Site Reliability Engineers](code-and-devops/UC-030-autonomous-incident-investigation-ai-sre/use-case.md) | Code & DevOps | Cross-Industry (SaaS, Internet Platforms, FinTech, Travel, E-Commerce) | High | `research` |
+| UC-031  | [Autonomous SOC Alert Triage and Incident Response with Agentic AI](code-and-devops/UC-031-autonomous-soc-ai-alert-triage-response/use-case.md) | Code & DevOps | Cross-Industry (Financial Services, Technology, Healthcare, Retail, Energy, Government) | High | `research` |
+| UC-040  | [Autonomous Knowledge Synthesis and Research Copilot for Management Consultants with Agentic AI](knowledge-management/UC-040-autonomous-knowledge-synthesis-consulting-copilot/use-case.md) | Knowledge Management | Professional Services (Management Consulting, Strategy, Audit & Advisory) | High | `research` |
 | UC-050  | [Autonomous Adverse Event Report Processing in Pharmacovigilance](industry-specific/UC-050-pharma-adverse-event-processing/use-case.md) | Industry-Specific | Pharmaceutical | High | `detailed` |
 | UC-051  | [Autonomous Insurance Claims Processing with Multi-Agent AI](industry-specific/UC-051-insurance-claims-multi-agent-processing/use-case.md) | Industry-Specific | Insurance / Financial Services | High | `research` |
+| UC-052  | [Autonomous M&A Due Diligence and Contract Review with Agentic Legal AI](industry-specific/UC-052-legal-ma-due-diligence-agentic-ai/use-case.md) | Industry-Specific | Legal / Professional Services | High | `research` |
+| UC-053  | [Autonomous AML Alert Investigation with Agentic AI in Banking](industry-specific/UC-053-banking-aml-investigation-agentic-ai/use-case.md) | Industry-Specific | Banking / Financial Services | High | `research` |
+| UC-054  | [Autonomous Energy Grid Optimization and DER Orchestration with Agentic AI](industry-specific/UC-054-energy-grid-autonomous-optimization-agentic-ai/use-case.md) | Industry-Specific | Energy / Utilities | High | `research` |
+| UC-055  | [Autonomous Clinical Documentation and Medical Coding with Agentic AI](industry-specific/UC-055-healthcare-autonomous-clinical-documentation-coding/use-case.md) | Industry-Specific | Healthcare | High | `research` |
+| UC-056  | [Autonomous Telecom Network Operations and Self-Healing with Agentic AI](industry-specific/UC-056-telecom-autonomous-network-operations-agentic-ai/use-case.md) | Industry-Specific | Telecommunications | High | `research` |
 
 ## Numbering Convention
 

@@ -25,14 +25,6 @@ layout: default
       <span class="badge badge-complexity badge-complexity-{{ page.complexity | downcase }}">
         {{ page.complexity }} Complexity
       </span>
-      <span class="badge badge-status badge-status-{{ page.status }}">
-        {% if page.status == 'detailed' %}
-          <i data-lucide="check-circle"></i>
-        {% else %}
-          <i data-lucide="flask-conical"></i>
-        {% endif %}
-        {{ page.status | capitalize }}
-      </span>
     </div>
   </div>
 </div>

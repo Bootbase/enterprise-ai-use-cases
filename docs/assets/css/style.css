@@ -26,12 +26,6 @@
   --gray-800: #1e293b;
   --gray-900: #0f172a;
 
-  /* Status colors */
-  --status-detailed: #10b981;
-  --status-detailed-bg: #ecfdf5;
-  --status-research: #f59e0b;
-  --status-research-bg: #fffbeb;
-
   /* Spacing */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -433,31 +427,6 @@ img {
   border-radius: var(--radius-sm);
 }
 
-.card-status {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: var(--space-1) var(--space-2);
-  border-radius: 999px;
-}
-
-.card-status i {
-  width: 12px;
-  height: 12px;
-}
-
-.card-status-detailed {
-  color: var(--status-detailed);
-  background: var(--status-detailed-bg);
-}
-
-.card-status-research {
-  color: var(--status-research);
-  background: var(--status-research-bg);
-}
-
 .card-title {
   font-size: 1.1rem;
   font-weight: 600;
@@ -629,18 +598,6 @@ img {
   background: rgba(0, 180, 216, 0.15);
   border-color: rgba(0, 180, 216, 0.3);
   color: var(--bb-teal-light);
-}
-
-.badge-status-detailed {
-  background: rgba(16, 185, 129, 0.15);
-  border-color: rgba(16, 185, 129, 0.3);
-  color: #6ee7b7;
-}
-
-.badge-status-research {
-  background: rgba(245, 158, 11, 0.15);
-  border-color: rgba(245, 158, 11, 0.3);
-  color: #fcd34d;
 }
 
 .badge-complexity-high {

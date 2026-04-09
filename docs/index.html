@@ -7,19 +7,14 @@ title: Enterprise AI Use Cases Catalog
   <div class="container">
     <div class="hero-content">
       <h1 class="hero-title">How AI Solves Real Problems<br>at Enterprise Scale</h1>
-      <p class="hero-subtitle">Documented use cases showing how agentic AI is applied to complex business processes — from research through solution design, implementation, and evaluation.</p>
+      <p class="hero-subtitle">Documented use cases showing how agentic AI is applied to complex business processes — covering solution design, implementation, and evaluation.</p>
       <div class="hero-stats">
-        {% assign all_uc = site.pages | where: "layout", "use-case" %}
+        {% assign all_uc = site.pages | where: "layout", "use-case" | where: "status", "detailed" %}
         {% assign total = all_uc | size %}
-        {% assign detailed = all_uc | where: "status", "detailed" | size %}
         {% assign categories_list = all_uc | map: "category" | uniq %}
         <div class="stat">
           <span class="stat-number">{{ total }}</span>
           <span class="stat-label">Use Cases</span>
-        </div>
-        <div class="stat">
-          <span class="stat-number">{{ detailed }}</span>
-          <span class="stat-label">Fully Detailed</span>
         </div>
         <div class="stat">
           <span class="stat-number">{{ categories_list | size }}</span>
@@ -44,18 +39,6 @@ title: Enterprise AI Use Cases Catalog
         </div>
       </div>
       <div class="filter-group">
-        <label class="filter-label">Status</label>
-        <div class="filter-chips" id="status-filters">
-          <button class="chip chip-active" data-filter="all">All</button>
-          <button class="chip" data-filter="detailed">
-            <i data-lucide="check-circle"></i> Detailed
-          </button>
-          <button class="chip" data-filter="research">
-            <i data-lucide="flask-conical"></i> Research
-          </button>
-        </div>
-      </div>
-      <div class="filter-group">
         <div class="search-box">
           <i data-lucide="search"></i>
           <input type="text" id="search-input" placeholder="Search use cases..." autocomplete="off">
@@ -72,20 +55,11 @@ title: Enterprise AI Use Cases Catalog
       {% for uc in use_cases %}
       <a href="{{ uc.url | relative_url }}" class="uc-card"
          data-category="{{ uc.category }}"
-         data-status="{{ uc.status }}"
          data-industry="{{ uc.industry }}"
          data-title="{{ uc.title | downcase }}"
          data-id="{{ uc.uc_id | downcase }}">
         <div class="card-header">
           <span class="card-id">{{ uc.uc_id }}</span>
-          <span class="card-status card-status-{{ uc.status }}">
-            {% if uc.status == 'detailed' %}
-              <i data-lucide="check-circle"></i>
-            {% else %}
-              <i data-lucide="flask-conical"></i>
-            {% endif %}
-            {{ uc.status | capitalize }}
-          </span>
         </div>
         <h3 class="card-title">{{ uc.title }}</h3>
         <p class="card-summary">{{ uc.summary }}</p>
@@ -98,14 +72,12 @@ title: Enterprise AI Use Cases Catalog
             {{ uc.industry }}
           </span>
         </div>
-        {% if uc.status == 'detailed' %}
         <div class="card-docs">
           {% if uc.has_solution_design %}<span class="doc-indicator"><i data-lucide="puzzle"></i></span>{% endif %}
           {% if uc.has_implementation_guide %}<span class="doc-indicator"><i data-lucide="wrench"></i></span>{% endif %}
           {% if uc.has_evaluation %}<span class="doc-indicator"><i data-lucide="bar-chart-3"></i></span>{% endif %}
           {% if uc.has_references %}<span class="doc-indicator"><i data-lucide="bookmark"></i></span>{% endif %}
         </div>
-        {% endif %}
       </a>
       {% endfor %}
     </div>
@@ -124,22 +96,12 @@ document.addEventListener('DOMContentLoaded', function() {
   const searchInput = document.getElementById('search-input');
   const noResults = document.getElementById('no-results');
   let activeCategory = 'all';
-  let activeStatus = 'all';
 
   document.querySelectorAll('#category-filters .chip').forEach(btn => {
     btn.addEventListener('click', function() {
       document.querySelectorAll('#category-filters .chip').forEach(b => b.classList.remove('chip-active'));
       this.classList.add('chip-active');
       activeCategory = this.dataset.filter;
-      filterCards();
-    });
-  });
-
-  document.querySelectorAll('#status-filters .chip').forEach(btn => {
-    btn.addEventListener('click', function() {
-      document.querySelectorAll('#status-filters .chip').forEach(b => b.classList.remove('chip-active'));
-      this.classList.add('chip-active');
-      activeStatus = this.dataset.filter;
       filterCards();
     });
   });
@@ -151,13 +113,12 @@ document.addEventListener('DOMContentLoaded', function() {
     let visible = 0;
     cards.forEach(card => {
       const matchCategory = activeCategory === 'all' || card.dataset.category === activeCategory;
-      const matchStatus = activeStatus === 'all' || card.dataset.status === activeStatus;
       const matchSearch = !query ||
         card.dataset.title.includes(query) ||
         card.dataset.id.includes(query) ||
         card.dataset.industry.toLowerCase().includes(query) ||
         card.dataset.category.toLowerCase().includes(query);
-      if (matchCategory && matchStatus && matchSearch) {
+      if (matchCategory && matchSearch) {
         card.style.display = '';
         visible++;
       } else {
@@ -170,7 +131,6 @@ document.addEventListener('DOMContentLoaded', function() {
   window.resetFilters = function() {
     searchInput.value = '';
     activeCategory = 'all';
-    activeStatus = 'all';
     document.querySelectorAll('.chip').forEach(b => b.classList.remove('chip-active'));
     document.querySelectorAll('.chip[data-filter="all"]').forEach(b => b.classList.add('chip-active'));
     filterCards();

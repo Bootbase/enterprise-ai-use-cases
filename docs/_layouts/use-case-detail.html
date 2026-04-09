@@ -35,15 +35,6 @@ layout: default
         {{ complexity }} Complexity
       </span>
       {% endif %}
-      <span class="badge badge-status badge-status-{{ parent.status | default: page.status }}">
-        {% assign st = parent.status | default: page.status %}
-        {% if st == 'detailed' %}
-          <i data-lucide="check-circle"></i>
-        {% else %}
-          <i data-lucide="flask-conical"></i>
-        {% endif %}
-        {{ st | capitalize }}
-      </span>
     </div>
   </div>
 </div>

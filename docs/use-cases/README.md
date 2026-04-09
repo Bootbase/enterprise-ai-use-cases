@@ -70,7 +70,7 @@ docs/use-cases/
 | UC-202 | Autonomous Talent Acquisition and Candidate Screening | Workflow Automation | Cross-Industry | research | `workflow-automation/UC-202-talent-acquisition/` |
 | UC-203 | Autonomous B2B Sales Development | Workflow Automation | Cross-Industry | research | `workflow-automation/UC-203-b2b-sales-development/` |
 | UC-204 | Autonomous Financial Close and Reconciliation | Workflow Automation | Cross-Industry | research | `workflow-automation/UC-204-financial-close-reconciliation/` |
-| UC-205 | Autonomous Multi-Jurisdiction Tax Compliance | Workflow Automation | Cross-Industry | detailed | `workflow-automation/UC-205-tax-compliance/` |
+| UC-205 | Autonomous Multi-Jurisdiction Tax Compliance | Workflow Automation | Cross-Industry | research | `workflow-automation/UC-205-tax-compliance/` |
 | UC-206 | Autonomous Financial Audit and Controls Testing | Workflow Automation | Cross-Industry | research | `workflow-automation/UC-206-financial-audit-testing/` |
 | UC-300 | Autonomous Incident Investigation (AI SRE) | Code & DevOps | Cross-Industry | research | `code-and-devops/UC-300-incident-investigation-sre/` |
 | UC-301 | Autonomous SOC Alert Triage and Response | Code & DevOps | Cross-Industry | research | `code-and-devops/UC-301-soc-alert-triage/` |
@@ -86,7 +86,7 @@ docs/use-cases/
 | UC-506 | Autonomous Telecom Network Operations | Industry-Specific | Telecommunications | research | `industry-specific/UC-506-telecom-network-operations/` |
 | UC-507 | Autonomous Manufacturing Quality Inspection | Industry-Specific | Manufacturing | research | `industry-specific/UC-507-manufacturing-quality-inspection/` |
 | UC-508 | Autonomous Dynamic Pricing and Revenue Optimization | Industry-Specific | Retail / E-Commerce | research | `industry-specific/UC-508-dynamic-pricing-optimization/` |
-| UC-509 | Autonomous Clinical Trial Patient Matching | Industry-Specific | Pharmaceutical | detailed | `industry-specific/UC-509-clinical-trial-patient-matching/` |
+| UC-509 | Autonomous Clinical Trial Patient Matching | Industry-Specific | Pharmaceutical | research | `industry-specific/UC-509-clinical-trial-patient-matching/` |
 
 ---
 

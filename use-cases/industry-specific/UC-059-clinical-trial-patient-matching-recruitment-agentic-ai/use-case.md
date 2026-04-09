@@ -8,7 +8,7 @@
 | **Category**     | Industry-Specific            |
 | **Industry**     | Pharmaceutical / Life Sciences |
 | **Complexity**   | High                         |
-| **Status**       | `research`                   |
+| **Status**       | `detailed`                   |
 
 ---
 

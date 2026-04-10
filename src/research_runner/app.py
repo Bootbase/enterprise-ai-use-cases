@@ -8,7 +8,6 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 from subprocess import run
 
-from .claude_exec import run_claude
 from .config import AppConfig
 from .console import banner, error, info, warn
 from .git_ops import (
@@ -26,7 +25,7 @@ from .git_ops import (
     show_head_file,
     upstream_ref,
 )
-from .models import Phase, RunState, WorkflowMode
+from .models import AgentRunResult, Phase, RunState, WorkflowMode
 from .state import default_state, load_state, save_state
 from .topic_inference import extract_topic_ids
 from .verification import find_next_topic_needing_detail, find_use_case_dirs, verify_research_complete, verify_research_new
@@ -36,35 +35,7 @@ class RunnerError(RuntimeError):
     pass
 
 
-INDEX_FILES = ("README.md", "use-cases/README.md")
-
-
-def _read_claude_auth_status(root: Path, claude_bin: str) -> str:
-    from subprocess import run
-
-    completed = run(
-        [claude_bin, "auth", "status", "--text"],
-        cwd=root,
-        text=True,
-        encoding="utf-8",
-        capture_output=True,
-        check=False,
-    )
-    if completed.returncode != 0:
-        raise RunnerError(completed.stderr.strip() or completed.stdout.strip() or "Failed to read Claude auth status")
-    return completed.stdout
-
-
-def _ensure_claude_available(claude_bin: str) -> None:
-    if shutil.which(claude_bin) is None and not Path(claude_bin).exists():
-        raise RunnerError(f"Claude binary not found: {claude_bin}")
-
-
-def _parse_login_method(status_text: str) -> str | None:
-    for line in status_text.splitlines():
-        if line.lower().startswith("login method:"):
-            return line.split(":", 1)[1].strip()
-    return None
+INDEX_FILES = ("README.md", "docs/use-cases/README.md")
 
 
 def _load_or_create_state(config: AppConfig) -> tuple[RunState, bool]:
@@ -88,54 +59,18 @@ def _phase_log_path(config: AppConfig, state: RunState, phase_name: str) -> Path
     return config.logs_dir / f"{phase_name}.ndjson"
 
 
-def _recover_session_id_from_log(log_path: Path) -> str | None:
-    if not log_path.exists():
-        return None
-    for line in reversed(log_path.read_text(encoding="utf-8").splitlines()):
-        try:
-            import json
-
-            payload = json.loads(line)
-        except Exception:
-            continue
-        outer_session_id = payload.get("session_id")
-        if isinstance(outer_session_id, str) and outer_session_id:
-            return outer_session_id
-        for field_name in ("raw", "rendered"):
-            field_value = payload.get(field_name)
-            if not isinstance(field_value, str) or not field_value.strip():
-                continue
-            try:
-                embedded = json.loads(field_value)
-            except Exception:
-                continue
-            embedded_session_id = embedded.get("session_id")
-            if isinstance(embedded_session_id, str) and embedded_session_id:
-                return embedded_session_id
-    return None
+def _recover_session_id_from_log(config: AppConfig, log_path: Path) -> str | None:
+    return config.backend.recover_session_id(log_path)
 
 
-def _infer_topic_id_from_log(log_path: Path, root: Path, excluded_ids: set[str] | None = None) -> str:
-    if not log_path.exists():
-        raise RunnerError(f"Log file does not exist: {log_path}")
-    texts: list[str] = []
-    for line in log_path.read_text(encoding="utf-8").splitlines():
-        if not line.strip():
-            continue
-        try:
-            import json
-
-            payload = json.loads(line)
-        except Exception:
-            continue
-        for key in ("rendered", "raw"):
-            value = payload.get(key)
-            if isinstance(value, str):
-                texts.append(value)
+def _infer_topic_id_from_log(config: AppConfig, log_path: Path, root: Path, excluded_ids: set[str] | None = None) -> str:
+    texts = config.backend.extract_log_texts(log_path)
+    if not texts:
+        raise RunnerError(f"Log file does not exist or is empty: {log_path}")
 
     candidates = extract_topic_ids("\n".join(texts))
     if not candidates:
-        raise RunnerError("Could not infer a topic ID from Claude output")
+        raise RunnerError("Could not infer a topic ID from agent output")
 
     if excluded_ids:
         new_candidates = [
@@ -163,13 +98,8 @@ def _mark_failed(config: AppConfig, state: RunState, message: str) -> int:
 
 
 def _fresh_preflight(config: AppConfig, state: RunState) -> None:
-    _ensure_claude_available(config.claude_bin)
+    config.backend.preflight(config.root)
     ensure_repo_root(config.root)
-
-    auth_text = _read_claude_auth_status(config.root, config.claude_bin)
-    login_method = _parse_login_method(auth_text)
-    if not login_method or not login_method.startswith("Claude "):
-        raise RunnerError(f"Unsupported Claude auth mode: {login_method or 'unknown'}")
 
     branch = current_branch(config.root)
     upstream = upstream_ref(config.root)
@@ -266,6 +196,9 @@ def _next_cycle_state(config: AppConfig, previous_state: RunState) -> RunState:
 
 
 def _recover_session_id_for_phase(config: AppConfig, state: RunState, phase_name: str) -> str | None:
+    if not config.backend.supports_sessions:
+        return None
+
     candidate_phase_names = [phase_name]
     if phase_name != "research-complete":
         candidate_phase_names.append("research-complete")
@@ -277,7 +210,7 @@ def _recover_session_id_for_phase(config: AppConfig, state: RunState, phase_name
         if candidate_phase_name in seen:
             continue
         seen.add(candidate_phase_name)
-        recovered = _recover_session_id_from_log(_phase_log_path(config, state, candidate_phase_name))
+        recovered = _recover_session_id_from_log(config, _phase_log_path(config, state, candidate_phase_name))
         if recovered:
             return recovered
     return None
@@ -335,7 +268,7 @@ def _prepare_index_files_for_run(config: AppConfig) -> None:
 def _snapshot_existing_use_case_dirs(config: AppConfig) -> None:
     existing = sorted(
         str(path.relative_to(config.root))
-        for path in config.root.glob("use-cases/*/UC-*")
+        for path in config.root.glob("docs/use-cases/*/UC-*")
         if path.is_dir()
     )
     target = _existing_use_case_dirs_path(config)
@@ -439,27 +372,27 @@ def _stage_index_delta(config: AppConfig, relative_path: str) -> None:
         ) from exc
 
 
-def _run_phase(config: AppConfig, state: RunState, phase: Phase, command_text: str) -> bool | None:
+def _run_phase(config: AppConfig, state: RunState, phase: Phase, skill_name: str, skill_args: str | None = None) -> bool | None:
     phase_name = "research-new" if phase == Phase.RESEARCH_NEW_RUNNING else "research-complete"
-    resume_session = state.session_started
+    resume_session = state.session_started and config.backend.supports_sessions
     if not state.session_started:
         state.session_started = True
     if resume_session and state.session_id is None:
         state.session_id = _recover_session_id_for_phase(config, state, phase_name)
 
+    command_text = config.backend.build_prompt(config.root, skill_name, skill_args)
     state.current_phase = phase
     state.last_command = command_text
     save_state(config.state_path, state)
 
     log_path = _phase_log_path(config, state, phase_name)
-    result = run_claude(
-        claude_bin=config.claude_bin,
+    result = config.backend.run(
         root=config.root,
+        command=command_text,
+        log_path=log_path,
         session_name=state.session_name,
         session_id=state.session_id,
-        command_text=command_text,
-        log_path=log_path,
-        resume_session=resume_session,
+        resume=resume_session,
     )
     if result.session_id:
         state.session_id = result.session_id
@@ -468,13 +401,13 @@ def _run_phase(config: AppConfig, state: RunState, phase: Phase, command_text: s
         if result.limit_hit.kind == "weekly":
             state.current_phase = Phase.STOPPED
             state.resume_phase = phase
-            state.stop_reason = f"Claude weekly limit hit: {result.limit_hit.matched_text}"
+            state.stop_reason = f"Agent weekly limit hit: {result.limit_hit.matched_text}"
             save_state(config.state_path, state)
             return None
-        _schedule_retry(config, state, phase, f"Claude usage limit hit: {result.limit_hit.matched_text}")
+        _schedule_retry(config, state, phase, f"Agent usage limit hit: {result.limit_hit.matched_text}")
         return False
     if result.exit_code != 0:
-        raise RunnerError(f"Claude exited with code {result.exit_code}: {result.stderr_text or result.raw_output}")
+        raise RunnerError(f"Agent exited with code {result.exit_code}: {result.stderr_text or result.raw_output}")
 
     state.current_phase = (
         Phase.RESEARCH_NEW_VERIFYING if phase == Phase.RESEARCH_NEW_RUNNING else Phase.RESEARCH_COMPLETE_VERIFYING
@@ -547,13 +480,13 @@ def run_workflow(config: AppConfig) -> int:
 
             if state.current_phase == Phase.RESEARCH_NEW_RUNNING:
                 banner("Research New")
-                phase_result = _run_phase(config, state, Phase.RESEARCH_NEW_RUNNING, "/research-new")
+                phase_result = _run_phase(config, state, Phase.RESEARCH_NEW_RUNNING, "research-new")
                 if phase_result is None:
                     try:
                         _restore_user_index_overlays(config)
                     except RunnerError as restore_exc:
                         warn(str(restore_exc))
-                    return _stop_run(config, state, state.stop_reason or "Claude stopped the workflow")
+                    return _stop_run(config, state, state.stop_reason or "Agent stopped the workflow")
                 if not phase_result:
                     continue
                 continue
@@ -562,6 +495,7 @@ def run_workflow(config: AppConfig) -> int:
                 banner("Verify Research New")
                 if state.topic_id is None:
                     state.topic_id = _infer_topic_id_from_log(
+                        config,
                         _phase_log_path(config, state, "research-new"),
                         config.root,
                         excluded_ids=_existing_topic_ids(config),
@@ -584,8 +518,8 @@ def run_workflow(config: AppConfig) -> int:
                 _commit_phase(
                     config,
                     state,
-                    message=f"chore(research): add {state.topic_id} via claude runner",
-                    paths=["README.md", "use-cases/README.md", state.artifacts.research_new_folder],
+                    message=f"chore(research): add {state.topic_id} via research runner",
+                    paths=["README.md", "docs/use-cases/README.md", state.artifacts.research_new_folder],
                 )
                 state.current_phase = Phase.RESEARCH_COMPLETE_RUNNING
                 save_state(config.state_path, state)
@@ -599,14 +533,15 @@ def run_workflow(config: AppConfig) -> int:
                     config,
                     state,
                     Phase.RESEARCH_COMPLETE_RUNNING,
-                    f"/research-complete {state.topic_id}",
+                    "research-complete",
+                    state.topic_id,
                 )
                 if phase_result is None:
                     try:
                         _restore_user_index_overlays(config)
                     except RunnerError as restore_exc:
                         warn(str(restore_exc))
-                    return _stop_run(config, state, state.stop_reason or "Claude stopped the workflow")
+                    return _stop_run(config, state, state.stop_reason or "Agent stopped the workflow")
                 if not phase_result:
                     continue
                 continue
@@ -628,8 +563,8 @@ def run_workflow(config: AppConfig) -> int:
                 _commit_phase(
                     config,
                     state,
-                    message=f"chore(research): complete {state.topic_id} via claude runner",
-                    paths=["README.md", "use-cases/README.md", state.artifacts.research_new_folder],
+                    message=f"chore(research): complete {state.topic_id} via research runner",
+                    paths=["README.md", "docs/use-cases/README.md", state.artifacts.research_new_folder],
                 )
                 state.current_phase = Phase.COMPLETED
                 save_state(config.state_path, state)

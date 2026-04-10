@@ -15,4 +15,3 @@ def extract_topic_ids(text: str) -> list[str]:
             ordered.append(topic_id)
             seen.add(topic_id)
     return ordered
-

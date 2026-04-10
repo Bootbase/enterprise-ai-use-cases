@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from claude_research_runner.git_ops import commit, current_branch, ensure_repo_root, has_path_changes, push, stage_paths, upstream_ref
+from research_runner.git_ops import commit, current_branch, ensure_repo_root, has_path_changes, push, stage_paths, upstream_ref
 
 
 def _run(cwd: Path, *args: str) -> str:
@@ -50,4 +50,3 @@ class GitOpsTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

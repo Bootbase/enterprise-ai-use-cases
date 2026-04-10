@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unittest
 
-from claude_research_runner.topic_inference import extract_topic_ids
+from research_runner.topic_inference import extract_topic_ids
 
 
 class TopicInferenceTests(unittest.TestCase):
@@ -13,4 +13,3 @@ class TopicInferenceTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

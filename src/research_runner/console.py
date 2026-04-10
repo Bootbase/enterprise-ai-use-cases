@@ -21,4 +21,3 @@ def warn(message: str) -> None:
 
 def error(message: str) -> None:
     print(f"[{_stamp()}] ERROR: {message}")
-

@@ -33,9 +33,21 @@ research-new                     research-complete
 └──────────┘                   └──────────────┘
 ```
 
+## Automated Runner
+
+The `research-runner` CLI can drive any supported agent backend through the case study workflow in a loop. See [src/research_runner/README.md](src/research_runner/README.md).
+
+```bash
+# Claude (default)
+research-runner run --root . --sleep-hours 4 --max-runtime-hours 24
+
+# Codex
+research-runner run --root . --backend codex --max-runtime-hours 24
+```
+
 ## Loading Priority
 
 1. Load this file at session start.
 2. Check the navigation table before starting work — load the matching skill from `.agents/skills/`.
-3. `.claude/skills/` mirrors `.agents/skills/` via symlink.
+3. `.claude/skills/` mirrors `.agents/skills/` via symlink (for Claude Code).
 4. Load templates and PROMPT.md on demand.

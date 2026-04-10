@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import unittest
 
-from claude_research_runner.claude_exec import _render_line
+from research_runner.backends.claude import _render_line
 
 
 class ClaudeExecRenderTests(unittest.TestCase):

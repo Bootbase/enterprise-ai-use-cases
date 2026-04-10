@@ -25,7 +25,7 @@ def default_state(root: Path, session_name: str, sleep_hours: int, workflow_mode
     )
     state.timestamps.started_at = now_iso()
     state.timestamps.updated_at = state.timestamps.started_at
-    state.artifacts.logs_dir = str(root / ".claude-research-runner" / "logs")
+    state.artifacts.logs_dir = str(root / ".research-runner" / "logs")
     return state
 
 

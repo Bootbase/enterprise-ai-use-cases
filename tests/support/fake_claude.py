@@ -40,16 +40,16 @@ def _upsert_readme_row(root: Path, topic_id: str, status: str) -> None:
 
 
 def _ensure_research_new(root: Path, topic_id: str) -> None:
-    folder = root / f"use-cases/workflow-automation/{topic_id}-example"
+    folder = root / f"docs/use-cases/workflow-automation/{topic_id}-example"
     folder.mkdir(parents=True, exist_ok=True)
-    (folder / "use-case.md").write_text("| **Status**       | `research`                   |\n", encoding="utf-8")
+    (folder / "index.md").write_text('---\nstatus: "research"\n---\n', encoding="utf-8")
     _upsert_readme_row(root, topic_id, "research")
 
 
 def _ensure_research_complete(root: Path, topic_id: str) -> None:
-    folder = root / f"use-cases/workflow-automation/{topic_id}-example"
+    folder = root / f"docs/use-cases/workflow-automation/{topic_id}-example"
     folder.mkdir(parents=True, exist_ok=True)
-    (folder / "use-case.md").write_text("| **Status**       | `detailed`                   |\n", encoding="utf-8")
+    (folder / "index.md").write_text('---\nstatus: "detailed"\n---\n', encoding="utf-8")
     for name in ("solution-design.md", "implementation-guide.md", "evaluation.md", "references.md"):
         (folder / name).write_text("# ok\n", encoding="utf-8")
     _upsert_readme_row(root, topic_id, "detailed")
@@ -66,7 +66,7 @@ def main() -> int:
     state_file.write_text(str(attempt + 1), encoding="utf-8")
 
     if scenario == "limit-then-success" and attempt == 0:
-        _emit("5-hour limit reached ∙ resets 12pm")
+        _emit("5-hour limit reached \u2219 resets 12pm")
         return 0
 
     if prompt == "/research-new":

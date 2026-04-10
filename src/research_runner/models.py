@@ -109,7 +109,7 @@ class LimitHit:
 
 
 @dataclass(slots=True)
-class ClaudeRunResult:
+class AgentRunResult:
     exit_code: int
     rendered_text: str
     raw_output: str

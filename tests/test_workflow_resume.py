@@ -8,10 +8,11 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from claude_research_runner.app import _recover_session_id_from_log, run_workflow
-from claude_research_runner.config import build_config
-from claude_research_runner.models import ClaudeRunResult, LimitHit, Phase, WorkflowMode
-from claude_research_runner.state import load_state
+from research_runner.app import _recover_session_id_from_log, run_workflow
+from research_runner.backends.claude import ClaudeBackend
+from research_runner.config import build_config
+from research_runner.models import AgentRunResult, LimitHit, Phase, WorkflowMode
+from research_runner.state import load_state
 
 
 def _run(cwd: Path, *args: str) -> str:
@@ -41,8 +42,10 @@ class WorkflowResumeTests(unittest.TestCase):
                 "rendered": "",
             }
             log_path.write_text(json.dumps(outer_event) + "\n", encoding="utf-8")
+            backend = ClaudeBackend(agent_bin="claude")
+            config_stub = type("Stub", (), {"backend": backend})()
             self.assertEqual(
-                _recover_session_id_from_log(log_path),
+                _recover_session_id_from_log(config_stub, log_path),
                 "fdbbf8c0-bd59-4a71-bed7-5440da411e26",
             )
 
@@ -73,9 +76,10 @@ class WorkflowResumeTests(unittest.TestCase):
                 (root / readme_path).write_text("preexisting note\nuser draft change\n", encoding="utf-8")
 
             fake_claude = Path(__file__).parent / "support" / "fake_claude.py"
+            backend = ClaudeBackend(agent_bin="python3")
             config = build_config(
                 root=str(root),
-                claude_bin="python3",
+                backend=backend,
                 sleep_hours=0,
                 max_runtime_hours=24,
                 session_name="runner-test",
@@ -89,15 +93,15 @@ class WorkflowResumeTests(unittest.TestCase):
             os.environ["FAKE_CLAUDE_README_PATH"] = readme_path
 
             try:
-                with patch("claude_research_runner.app._read_claude_auth_status", return_value="Login method: Claude Max Account\n"):
+                with patch.object(ClaudeBackend, "preflight"):
                     with patch(
-                        "claude_research_runner.app._runtime_limit_reached",
+                        "research_runner.app._runtime_limit_reached",
                         side_effect=lambda _config, state: state.current_phase == Phase.COMPLETED,
                     ):
-                        with patch("claude_research_runner.app.run_claude") as mocked_run:
+                        with patch.object(ClaudeBackend, "run") as mocked_run:
 
                             def _side_effect(**kwargs):
-                                prompt = kwargs["command_text"]
+                                prompt = kwargs["command"]
                                 env = os.environ.copy()
                                 completed = subprocess.run(
                                     ["python3", str(fake_claude), "--dangerously-skip-permissions", prompt],
@@ -112,7 +116,7 @@ class WorkflowResumeTests(unittest.TestCase):
                                 rendered = completed.stdout.strip()
                                 payload = json.dumps({"rendered": rendered, "raw": rendered}) + "\n"
                                 kwargs["log_path"].write_text(payload, encoding="utf-8")
-                                return ClaudeRunResult(
+                                return AgentRunResult(
                                     exit_code=completed.returncode,
                                     rendered_text=completed.stdout,
                                     raw_output=completed.stdout,
@@ -131,7 +135,7 @@ class WorkflowResumeTests(unittest.TestCase):
                     self.assertIn("user draft change", working_readme)
                     self.assertIn("UC-024", working_readme)
 
-                state_path = root / ".claude-research-runner" / "state.json"
+                state_path = root / ".research-runner" / "state.json"
                 self.assertTrue(state_path.exists())
                 copied_state_dir = Path(tmp_dir) / "state-copy"
                 copied_state_dir.mkdir(parents=True, exist_ok=True)
@@ -151,7 +155,7 @@ class WorkflowResumeTests(unittest.TestCase):
         self.assertEqual(exit_code, 0)
 
     def test_end_to_end_with_use_cases_readme_only(self) -> None:
-        exit_code, _ = self._run_workflow(dirty_readme=False, readme_path="use-cases/README.md")
+        exit_code, _ = self._run_workflow(dirty_readme=False, readme_path="docs/use-cases/README.md")
         self.assertEqual(exit_code, 0)
 
     def test_end_to_end_detail_next_mode(self) -> None:
@@ -165,17 +169,18 @@ class WorkflowResumeTests(unittest.TestCase):
             _run(root, "git", "init", "--bare", str(remote))
             _run(root, "git", "remote", "add", "origin", str(remote))
             (root / "README.md").write_text("| UC-021 | [Title](foo) | Workflow Automation | Cross | High | `research` |\n", encoding="utf-8")
-            base = root / "use-cases/workflow-automation/UC-021-example"
+            base = root / "docs/use-cases/workflow-automation/UC-021-example"
             base.mkdir(parents=True, exist_ok=True)
-            (base / "use-case.md").write_text("| **Status**       | `research`                   |\n", encoding="utf-8")
-            _run(root, "git", "add", "README.md", "use-cases/workflow-automation/UC-021-example/use-case.md")
+            (base / "index.md").write_text('---\nstatus: "research"\n---\n', encoding="utf-8")
+            _run(root, "git", "add", "README.md", "docs/use-cases/workflow-automation/UC-021-example/index.md")
             _run(root, "git", "commit", "-m", "init")
             _run(root, "git", "push", "-u", "origin", "main")
 
             fake_claude = Path(__file__).parent / "support" / "fake_claude.py"
+            backend = ClaudeBackend(agent_bin="python3")
             config = build_config(
                 root=str(root),
-                claude_bin="python3",
+                backend=backend,
                 sleep_hours=0,
                 max_runtime_hours=24,
                 session_name="runner-test",
@@ -184,15 +189,15 @@ class WorkflowResumeTests(unittest.TestCase):
                 workflow_mode=WorkflowMode.DETAIL_NEXT.value,
             )
 
-            with patch("claude_research_runner.app._read_claude_auth_status", return_value="Login method: Claude Max Account\n"):
+            with patch.object(ClaudeBackend, "preflight"):
                 with patch(
-                    "claude_research_runner.app._runtime_limit_reached",
+                    "research_runner.app._runtime_limit_reached",
                     side_effect=lambda _config, state: state.current_phase == Phase.COMPLETED,
                 ):
-                    with patch("claude_research_runner.app.run_claude") as mocked_run:
+                    with patch.object(ClaudeBackend, "run") as mocked_run:
 
                         def _side_effect(**kwargs):
-                            prompt = kwargs["command_text"]
+                            prompt = kwargs["command"]
                             env = os.environ.copy()
                             env["FAKE_CLAUDE_TOPIC_ID"] = prompt.rsplit(" ", 1)[-1]
                             completed = subprocess.run(
@@ -208,7 +213,7 @@ class WorkflowResumeTests(unittest.TestCase):
                             rendered = completed.stdout.strip()
                             payload = json.dumps({"rendered": rendered, "raw": rendered}) + "\n"
                             kwargs["log_path"].write_text(payload, encoding="utf-8")
-                            return ClaudeRunResult(
+                            return AgentRunResult(
                                 exit_code=completed.returncode,
                                 rendered_text=completed.stdout,
                                 raw_output=completed.stdout,
@@ -232,15 +237,16 @@ class WorkflowResumeTests(unittest.TestCase):
             _run(root, "git", "config", "user.name", "Test User")
             _run(root, "git", "config", "user.email", "test@example.com")
             (root / "README.md").write_text("", encoding="utf-8")
-            detailed_dir = root / "use-cases/workflow-automation/UC-021-example"
+            detailed_dir = root / "docs/use-cases/workflow-automation/UC-021-example"
             detailed_dir.mkdir(parents=True, exist_ok=True)
-            (detailed_dir / "use-case.md").write_text("| **Status**       | `detailed`                   |\n", encoding="utf-8")
-            _run(root, "git", "add", "README.md", "use-cases/workflow-automation/UC-021-example/use-case.md")
+            (detailed_dir / "index.md").write_text('---\nstatus: "detailed"\n---\n', encoding="utf-8")
+            _run(root, "git", "add", "README.md", "docs/use-cases/workflow-automation/UC-021-example/index.md")
             _run(root, "git", "commit", "-m", "init")
 
+            backend = ClaudeBackend(agent_bin="python3")
             config = build_config(
                 root=str(root),
-                claude_bin="python3",
+                backend=backend,
                 sleep_hours=0,
                 max_runtime_hours=24,
                 session_name="runner-test",
@@ -249,11 +255,11 @@ class WorkflowResumeTests(unittest.TestCase):
                 workflow_mode=WorkflowMode.DETAIL_NEXT.value,
             )
 
-            with patch("claude_research_runner.app._read_claude_auth_status", return_value="Login method: Claude Max Account\n"):
+            with patch.object(ClaudeBackend, "preflight"):
                 exit_code = run_workflow(config)
 
             self.assertEqual(exit_code, 0)
-            state = load_state(root / ".claude-research-runner" / "state.json")
+            state = load_state(root / ".research-runner" / "state.json")
             self.assertIsNotNone(state)
             assert state is not None
             self.assertEqual(state.current_phase, Phase.STOPPED)
@@ -270,9 +276,10 @@ class WorkflowResumeTests(unittest.TestCase):
             _run(root, "git", "add", "README.md")
             _run(root, "git", "commit", "-m", "init")
 
+            backend = ClaudeBackend(agent_bin="python3")
             config = build_config(
                 root=str(root),
-                claude_bin="python3",
+                backend=backend,
                 sleep_hours=0,
                 max_runtime_hours=24,
                 session_name="runner-test",
@@ -281,10 +288,11 @@ class WorkflowResumeTests(unittest.TestCase):
                 workflow_mode=WorkflowMode.NEW_AND_COMPLETE.value,
             )
 
-            with patch("claude_research_runner.app._read_claude_auth_status", return_value="Login method: Claude Max Account\n"):
-                with patch(
-                    "claude_research_runner.app.run_claude",
-                    return_value=ClaudeRunResult(
+            with patch.object(ClaudeBackend, "preflight"):
+                with patch.object(
+                    ClaudeBackend,
+                    "run",
+                    return_value=AgentRunResult(
                         exit_code=0,
                         rendered_text="weekly limit reached",
                         raw_output="weekly limit reached",
@@ -295,7 +303,7 @@ class WorkflowResumeTests(unittest.TestCase):
                     exit_code = run_workflow(config)
 
             self.assertEqual(exit_code, 0)
-            state = load_state(root / ".claude-research-runner" / "state.json")
+            state = load_state(root / ".research-runner" / "state.json")
             self.assertIsNotNone(state)
             assert state is not None
             self.assertEqual(state.current_phase, Phase.STOPPED)
@@ -313,9 +321,10 @@ class WorkflowResumeTests(unittest.TestCase):
             _run(root, "git", "commit", "-m", "init")
 
             fake_claude = Path(__file__).parent / "support" / "fake_claude.py"
+            backend = ClaudeBackend(agent_bin="python3")
             config = build_config(
                 root=str(root),
-                claude_bin="python3",
+                backend=backend,
                 sleep_hours=0,
                 max_runtime_hours=24,
                 session_name="runner-test",
@@ -334,7 +343,7 @@ class WorkflowResumeTests(unittest.TestCase):
                 if calls == 3:
                     raise KeyboardInterrupt
 
-                prompt = kwargs["command_text"]
+                prompt = kwargs["command"]
                 if prompt == "/research-new":
                     current_topic_id = f"UC-{next_topic_number:03d}"
                     next_topic_number += 1
@@ -354,7 +363,7 @@ class WorkflowResumeTests(unittest.TestCase):
                 rendered = completed.stdout.strip()
                 payload = json.dumps({"rendered": rendered, "raw": rendered}) + "\n"
                 kwargs["log_path"].write_text(payload, encoding="utf-8")
-                return ClaudeRunResult(
+                return AgentRunResult(
                     exit_code=completed.returncode,
                     rendered_text=completed.stdout,
                     raw_output=completed.stdout,
@@ -362,13 +371,13 @@ class WorkflowResumeTests(unittest.TestCase):
                     limit_hit=None,
                 )
 
-            with patch("claude_research_runner.app._read_claude_auth_status", return_value="Login method: Claude Max Account\n"):
-                with patch("claude_research_runner.app.run_claude", side_effect=_side_effect):
+            with patch.object(ClaudeBackend, "preflight"):
+                with patch.object(ClaudeBackend, "run", side_effect=_side_effect):
                     exit_code = run_workflow(config)
 
             self.assertEqual(exit_code, 130)
             self.assertEqual(calls, 3)
-            state = load_state(root / ".claude-research-runner" / "state.json")
+            state = load_state(root / ".research-runner" / "state.json")
             self.assertIsNotNone(state)
             assert state is not None
             self.assertEqual(state.current_phase, Phase.STOPPED)
@@ -389,19 +398,20 @@ class WorkflowResumeTests(unittest.TestCase):
                 encoding="utf-8",
             )
             for topic_id in ("UC-021", "UC-022"):
-                use_case_dir = root / f"use-cases/workflow-automation/{topic_id}-example"
+                use_case_dir = root / f"docs/use-cases/workflow-automation/{topic_id}-example"
                 use_case_dir.mkdir(parents=True, exist_ok=True)
-                (use_case_dir / "use-case.md").write_text(
-                    "| **Status**       | `research`                   |\n",
+                (use_case_dir / "index.md").write_text(
+                    '---\nstatus: "research"\n---\n',
                     encoding="utf-8",
                 )
-            _run(root, "git", "add", "README.md", "use-cases")
+            _run(root, "git", "add", "README.md", "docs")
             _run(root, "git", "commit", "-m", "init")
 
             fake_claude = Path(__file__).parent / "support" / "fake_claude.py"
+            backend = ClaudeBackend(agent_bin="python3")
             config = build_config(
                 root=str(root),
-                claude_bin="python3",
+                backend=backend,
                 sleep_hours=0,
                 max_runtime_hours=24,
                 session_name="runner-test",
@@ -418,7 +428,7 @@ class WorkflowResumeTests(unittest.TestCase):
                 if calls == 2:
                     raise KeyboardInterrupt
 
-                prompt = kwargs["command_text"]
+                prompt = kwargs["command"]
                 env = os.environ.copy()
                 env["FAKE_CLAUDE_TOPIC_ID"] = prompt.rsplit(" ", 1)[-1]
                 completed = subprocess.run(
@@ -434,7 +444,7 @@ class WorkflowResumeTests(unittest.TestCase):
                 rendered = completed.stdout.strip()
                 payload = json.dumps({"rendered": rendered, "raw": rendered}) + "\n"
                 kwargs["log_path"].write_text(payload, encoding="utf-8")
-                return ClaudeRunResult(
+                return AgentRunResult(
                     exit_code=completed.returncode,
                     rendered_text=completed.stdout,
                     raw_output=completed.stdout,
@@ -442,13 +452,13 @@ class WorkflowResumeTests(unittest.TestCase):
                     limit_hit=None,
                 )
 
-            with patch("claude_research_runner.app._read_claude_auth_status", return_value="Login method: Claude Max Account\n"):
-                with patch("claude_research_runner.app.run_claude", side_effect=_side_effect):
+            with patch.object(ClaudeBackend, "preflight"):
+                with patch.object(ClaudeBackend, "run", side_effect=_side_effect):
                     exit_code = run_workflow(config)
 
             self.assertEqual(exit_code, 130)
             self.assertEqual(calls, 2)
-            state = load_state(root / ".claude-research-runner" / "state.json")
+            state = load_state(root / ".research-runner" / "state.json")
             self.assertIsNotNone(state)
             assert state is not None
             self.assertEqual(state.current_phase, Phase.STOPPED)

@@ -3,7 +3,7 @@ from __future__ import annotations
 import unittest
 from datetime import datetime
 
-from claude_research_runner.limit_detection import detect_limit_hit, parse_reset_text
+from research_runner.backends.claude import detect_limit_hit, parse_reset_text
 
 
 class LimitDetectionTests(unittest.TestCase):
@@ -15,7 +15,7 @@ class LimitDetectionTests(unittest.TestCase):
         self.assertIsNotNone(hit.reset_at)
 
     def test_detects_human_readable_limit(self) -> None:
-        hit = detect_limit_hit("5-hour limit reached ∙ resets 12pm")
+        hit = detect_limit_hit("5-hour limit reached \u2219 resets 12pm")
         self.assertIsNotNone(hit)
         assert hit is not None
         self.assertEqual(hit.kind, "five_hour")
@@ -30,4 +30,3 @@ class LimitDetectionTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

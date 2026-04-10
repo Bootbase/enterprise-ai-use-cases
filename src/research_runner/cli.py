@@ -3,17 +3,24 @@ from __future__ import annotations
 import argparse
 
 from .app import run_workflow
+from .backends import BACKENDS, get_backend
 from .config import build_config
 from .models import WorkflowMode
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="claude-research-runner")
+    parser = argparse.ArgumentParser(prog="research-runner")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    run_parser = subparsers.add_parser("run", help="Run or resume the Claude research workflow.")
+    run_parser = subparsers.add_parser("run", help="Run or resume the research workflow.")
     run_parser.add_argument("--root", default=".", help="Repository root. Defaults to the current directory.")
-    run_parser.add_argument("--claude-bin", default="claude", help="Claude binary to execute.")
+    run_parser.add_argument(
+        "--backend",
+        choices=sorted(BACKENDS),
+        default="claude",
+        help="Agent backend to use. Defaults to 'claude'.",
+    )
+    run_parser.add_argument("--agent-bin", default=None, help="Agent binary to execute. Defaults based on --backend.")
     run_parser.add_argument("--sleep-hours", type=int, default=4, help="Hours to wait before retrying after a limit hit.")
     run_parser.add_argument(
         "--max-runtime-hours",
@@ -21,7 +28,7 @@ def build_parser() -> argparse.ArgumentParser:
         default=24,
         help="Maximum total runtime for the looping app before it stops cleanly. Defaults to 24 hours.",
     )
-    run_parser.add_argument("--session-name", help="Explicit Claude session name. Defaults to a generated name.")
+    run_parser.add_argument("--session-name", help="Explicit session name. Defaults to a generated name.")
     run_parser.add_argument("--git-remote", help="Explicit Git remote to push to. Defaults to the tracked upstream remote.")
     run_parser.add_argument("--no-push", action="store_true", help="Commit locally without pushing.")
     run_parser.add_argument(
@@ -35,7 +42,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     run_parser.add_argument(
         "--resume-state",
-        help="Alternate state-file path. Defaults to .claude-research-runner/state.json under the repo root.",
+        help="Alternate state-file path. Defaults to .research-runner/state.json under the repo root.",
     )
     return parser
 
@@ -45,9 +52,10 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     if args.command == "run":
+        backend = get_backend(args.backend, args.agent_bin)
         config = build_config(
             root=args.root,
-            claude_bin=args.claude_bin,
+            backend=backend,
             sleep_hours=args.sleep_hours,
             max_runtime_hours=args.max_runtime_hours,
             session_name=args.session_name,

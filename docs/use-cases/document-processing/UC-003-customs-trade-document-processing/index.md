@@ -7,13 +7,13 @@ category_dir: "document-processing"
 category_icon: "file-text"
 industry: "Logistics / Global Trade"
 complexity: "High"
-status: "research"
+status: "detailed"
 summary: "International shipments require customs declarations built from bills of lading, commercial invoices, packing lists, and certificates of origin. Brokers manually classify goods, calculate duties, and file entries across dozens of national systems. Misclassification rates run as high as 40%, costing importers billions in penalties, overpaid duties, and container demurrage."
 slug: "UC-003-customs-trade-document-processing"
-has_solution_design: false
-has_implementation_guide: false
-has_evaluation: false
-has_references: false
+has_solution_design: true
+has_implementation_guide: true
+has_evaluation: true
+has_references: true
 permalink: /use-cases/UC-003-customs-trade-document-processing/
 ---
 

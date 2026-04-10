@@ -1,57 +1,122 @@
 ---
 name: research-new
 description: >-
-  Discovers and documents a new agentic AI use case by researching real-world
-  deployments, then creates use-case.md with concrete companies, metrics, and
-  systems. Use when the user wants to add a new use case, find a new AI use
-  case, research a new enterprise AI scenario, or says 'new use case', 'add
-  use case', 'discover use case', 'find another use case'. Also trigger when
-  the user provides a topic and wants it turned into a use case entry. Do NOT
-  use for detailing an existing use case — use the `research-complete` skill instead.
+  Discovers and documents a new enterprise AI use case from real-world
+  evidence, then creates the research-stage `index.md` brief. Use when the
+  user wants to add a new use case, find a new AI use case, research a new
+  enterprise AI scenario, or says 'new use case', 'add use case', 'discover
+  use case', 'find another use case'. Do NOT use for detailing an existing use
+  case — use `research-complete` instead.
 ---
 
-# Discover & Document a New Use Case
+# Discover And Document A New Use Case
 
-## Quick Reference
+## Goal
 
-| Step | Action | Output |
-|------|--------|--------|
-| 1. Inventory | Parse README.md index | List of existing use cases |
-| 2. Discover | Web search for distinct real-world AI deployments | Candidate use case |
-| 3. Assign ID | Pick category + lowest available ID | Folder path |
-| 4. Write | Populate use-case.md from template | Completed use-case.md |
-| 5. Index | Add row to README.md table | Updated index |
+Produce a concise research-stage `index.md` that works as a business brief:
+
+- grounded in named deployments and real metrics
+- short enough to scan quickly
+- specific enough to justify why the use case deserves a full detailed write-up later
+
+The output is not a whitepaper. It is the decision-ready brief that the rest of the workflow builds on.
+
+## Required Inputs
+
+Read:
+
+- `docs/use-cases/README.md`
+- `.agents/templates/use-case.md`
+
+Follow the section order in the template exactly. Do not invent extra top-level sections.
 
 ## Workflow
 
 ### Step 1 — Inventory
 
-Read `docs/use-cases/README.md` and `.agents/templates/use-case.md`.
+Parse the Use Case Index table in `docs/use-cases/README.md`.
 
-Parse the Use Case Index table. List every existing use case by ID, title, category, and industry. Identify which categories and industries are already covered.
+- List the existing use cases by ID, title, category, and industry.
+- Identify categories and industries that are already crowded.
+- Avoid adding a use case that materially overlaps with an existing problem statement.
 
 ### Step 2 — Discover
 
-Search the web for real-world agentic AI use cases that are DISTINCTLY different from every existing entry — different problem domain, different industry, or a fundamentally different operational angle.
+Search for a distinct enterprise AI use case with real deployment evidence.
 
-Prioritize use cases with published production deployments, concrete metrics, and named companies. Avoid overlapping with any existing entry's problem space.
+Prioritize:
 
-### Step 3 — Assign ID & Category
+- named companies or public-sector organizations
+- production deployments or clearly documented pilots
+- concrete metrics, operating constraints, and system details
+- use cases that fit the repository goal: end-to-end enterprise workflows, not generic chatbot ideas
 
-Pick the correct category from README.md's category table. Use the LOWEST available ID in that category's range (001–099 for Document Processing, 100–199 for Customer Service, 200–299 for Workflow Automation, 300–399 for Code & DevOps, 400–499 for Knowledge Management, 500–999 for Industry-Specific). Create the folder: `docs/use-cases/{category-dir}/UC-{NNN}-{slug}/` where `{category-dir}` is the kebab-case category name (e.g., `document-processing`, `customer-service`, `workflow-automation`, `code-and-devops`, `knowledge-management`, `industry-specific`).
+Avoid:
 
-### Step 4 — Write index.md
+- speculative future use cases
+- vendor feature pages with no customer evidence
+- categories already covered unless the operational problem is clearly different
 
-Use the template in `.agents/templates/use-case.md` (note: file is now called `index.md`, not `use-case.md`). Fill in EVERY section with concrete, researched content: real companies, real numbers, real pain points, real systems. Set status to `research`. No `{placeholder}` text may remain.
+### Step 3 — Assign ID And Category
 
-### Step 5 — Update index
+Pick the correct category from the README table and use the lowest available ID in that range:
 
-Add a row to the Use Case Index table in `docs/use-cases/README.md`, matching the existing table format exactly.
+- `001–099` Document Processing
+- `100–199` Customer Service
+- `200–299` Workflow Automation
+- `300–399` Code & DevOps
+- `400–499` Knowledge Management
+- `500–999` Industry-Specific
+
+Create:
+
+`docs/use-cases/{category-dir}/UC-{NNN}-{slug}/index.md`
+
+### Step 4 — Write `index.md`
+
+Use `.agents/templates/use-case.md`.
+
+The brief must:
+
+- stay within the template section order exactly
+- be concise: target roughly `700–1,200` words excluding front matter and tables
+- use direct business language, not hype, not generic AI phrasing
+- include real source cues inline for quantitative claims where helpful
+- include an `Evidence Base` table with `3–6` high-value sources or deployments
+- keep numbered workflows to `4–6` steps unless the domain genuinely requires more
+- keep friction lists and scope lists short and specific
+
+### Step 5 — Update The Index
+
+Add one row to `docs/use-cases/README.md`, matching the existing table format exactly.
+
+## Writing Rules
+
+- Prefer short declarative sentences.
+- Use concrete nouns: team names, systems, documents, regulators, transaction types.
+- Do not write like a model explaining itself.
+- Do not use rhetorical framing such as "the key insight is", "the market is telling us", or "this is not X, it is Y".
+- Do not pad with exhaustive examples once the point is clear.
+- If a number is estimated or directional, say so.
+
+## Output Contract
+
+The generated `index.md` must include these top-level headings exactly:
+
+- `## Problem Statement`
+- `## Business Case`
+- `## Current Workflow`
+- `## Target State`
+- `## Stakeholders`
+- `## Constraints`
+- `## Evidence Base`
+- `## Scope Boundaries`
+
+No `{placeholder}` text may remain.
 
 ## Gotchas
 
-- **Do NOT create solution-design.md, implementation-guide.md, evaluation.md, or references.md** — only index.md. Use the `research-complete` skill later to populate those.
-- **Use REAL company names, products, tools, and metrics** — not made-up ones. Cite sources inline (e.g., "700K reports/year (FDA FAERS)").
-- **If solid real-world data is scarce**, state that explicitly and use the best available estimates.
-- **Every template placeholder must be replaced** — no `{curly brace}` text may remain in the output.
-- **Use case folders are organized by category**: `docs/use-cases/{category-dir}/UC-NNN-slug/`. The category subdirectory must match the `category_dir` in front matter.
+- Create only `index.md`. Do not create detailed artifacts.
+- Use real company names, tools, and metrics. Never fabricate them.
+- Keep the brief readable on the site. If a section feels like an appendix, cut it.
+- The goal is a high-signal brief that earns a future `research-complete`, not a complete solution design.

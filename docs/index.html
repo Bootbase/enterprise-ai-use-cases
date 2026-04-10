@@ -27,26 +27,11 @@ title: Catalog
         </div>
       </div>
     </div>
-    <aside class="hero-panel" aria-label="Included in each case study">
-      <span class="hero-panel-label">Inside each case study</span>
-      <ul class="hero-panel-list">
-        <li>
-          <strong>Business context</strong>
-          <span>The operational problem, constraints, and target outcomes.</span>
-        </li>
-        <li>
-          <strong>System design</strong>
-          <span>Architecture, agent patterns, tooling, and workflow design.</span>
-        </li>
-        <li>
-          <strong>Implementation detail</strong>
-          <span>Practical build guidance, integration points, and delivery steps.</span>
-        </li>
-        <li>
-          <strong>Evidence and references</strong>
-          <span>Evaluation criteria, results, and the primary sources behind each study.</span>
-        </li>
-      </ul>
+    <aside class="hero-panel" aria-label="Enterprise AI illustration">
+      <img src="{{ '/assets/img/hero-illustration.png' | relative_url }}"
+           alt="Interconnected documents, AI, and enterprise systems"
+           class="hero-illustration"
+           loading="eager" width="900" height="600">
     </aside>
   </div>
 </section>
@@ -93,6 +78,9 @@ title: Catalog
           <span class="card-id">{{ uc.uc_id }}</span>
           <span class="card-depth">{{ doc_count }} sections</span>
         </div>
+        {% assign cat_slug = uc.category | downcase | replace: " & ", "-" | replace: " ", "-" %}
+        <img src="{{ '/assets/img/cat-' | append: cat_slug | append: '.png' | relative_url }}"
+             alt="" class="card-cat-img" loading="lazy" width="200" height="200">
         <h3 class="card-title">{{ uc.title }}</h3>
         <p class="card-summary">{{ uc.summary }}</p>
         <div class="card-footer">

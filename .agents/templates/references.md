@@ -14,72 +14,22 @@ slug: "UC-{NNN}-{slug}"
 permalink: /use-cases/UC-{NNN}-{slug}/references/
 ---
 
-## Case Studies
+## Source Quality Notes
 
-| Company / Project      | Industry    | Relevance                          | Link                   |
-|------------------------|------------|-------------------------------------|------------------------|
-| {Company name}          | {Industry} | {What they did that's similar}      | {URL}                  |
-| {Company name}          | {Industry} | {What they did that's similar}      | {URL}                  |
+{State which sources are primary, which are vendor claims, which are technical documentation, and where the evidence base is thin.}
 
----
+## Source Register
 
-## Technical Documentation
+| ID | Type | Source | Why It Was Used | Link |
+|----|------|--------|-----------------|------|
+| {S1} | {Primary deployment / Official docs / Domain standard / Analysis} | {Source title} | {What it supports} | {URL} |
+| {S2} | {Primary deployment / Official docs / Domain standard / Analysis} | {Source title} | {What it supports} | {URL} |
+| {S3} | {Primary deployment / Official docs / Domain standard / Analysis} | {Source title} | {What it supports} | {URL} |
 
-| Resource                            | Type          | What It Covers                    | Link                   |
-|-------------------------------------|--------------|-----------------------------------|------------------------|
-| {e.g., Azure OpenAI Function Calling}| Official Docs | {Tool/function calling patterns}  | {URL}                  |
-| {e.g., LangGraph Agent Tutorial}     | Tutorial      | {Agent orchestration}             | {URL}                  |
-| {e.g., Semantic Kernel Cookbook}      | Guide         | {Enterprise agent patterns}       | {URL}                  |
+## Claim Map
 
----
-
-## Architecture References
-
-| Resource                            | Type          | What It Covers                    | Link                   |
-|-------------------------------------|--------------|-----------------------------------|------------------------|
-| {e.g., Azure AI Architecture Center} | Reference Arch| {RAG patterns on Azure}           | {URL}                  |
-| {e.g., Microsoft AI Design Patterns} | Design Guide  | {Agentic design patterns}         | {URL}                  |
-
----
-
-## Code Repositories & Examples
-
-| Repository                          | Language    | What It Demonstrates              | Link                   |
-|-------------------------------------|-----------|-----------------------------------|------------------------|
-| {e.g., azure-openai-samples}        | {Python}   | {Function calling with Azure}     | {URL}                  |
-| {e.g., langchain-examples}          | {Python}   | {RAG pipeline implementation}     | {URL}                  |
-
----
-
-## Conference Talks & Videos
-
-| Title                               | Event       | Speaker          | Date       | Link                   |
-|-------------------------------------|-----------|------------------|------------|------------------------|
-| {Talk title}                         | {Event}    | {Speaker}        | {Date}     | {URL}                  |
-
----
-
-## Related Use Cases
-
-| Use Case ID | Title                          | Relationship                        |
-|-------------|--------------------------------|-------------------------------------|
-| {UC-XXX}    | {Title}                        | {e.g., Shares the same RAG pattern} |
-| {UC-XXX}    | {Title}                        | {e.g., Upstream data source}        |
-
----
-
-## Tools & Framework Documentation
-
-| Tool / Framework        | Version    | Documentation                     | Link                   |
-|------------------------|-----------|-----------------------------------|------------------------|
-| {e.g., LangGraph}       | {0.2.x}   | {Official docs}                   | {URL}                  |
-| {e.g., Semantic Kernel}  | {1.x}     | {Official docs}                   | {URL}                  |
-| {e.g., Azure AI Search}  | {latest}  | {REST API reference}              | {URL}                  |
-
----
-
-## Research Papers
-
-| Title                               | Authors     | Year       | Relevance                | Link                   |
-|-------------------------------------|-----------|------------|--------------------------|------------------------|
-| {Paper title}                        | {Authors}  | {Year}     | {Why it's relevant}      | {URL}                  |
+| Claim Or Section | Source IDs |
+|------------------|------------|
+| {Major claim from solution design} | {S1, S2} |
+| {Major claim from implementation guide} | {S2, S3} |
+| {Major claim from evaluation} | {S1, S3} |

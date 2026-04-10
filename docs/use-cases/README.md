@@ -61,11 +61,11 @@ docs/use-cases/
 
 | ID | Title | Category | Industry | Status | Directory |
 |---|-------|----------|----------|--------|-----------|
-| UC-001 | Autonomous AP Invoice Processing | Document Processing | Cross-Industry | research | `document-processing/UC-001-ap-invoice-processing/` |
+| UC-001 | Autonomous AP Invoice Processing | Document Processing | Cross-Industry | detailed | `document-processing/UC-001-ap-invoice-processing/` |
 | UC-002 | Autonomous Mortgage Loan Document Processing | Document Processing | Financial Services | research | `document-processing/UC-002-mortgage-loan-processing/` |
 | UC-100 | Autonomous Customer Service Resolution | Customer Service | Cross-Industry | research | `customer-service/UC-100-customer-service-resolution/` |
 | UC-101 | Autonomous IT Service Desk Resolution | Customer Service | Cross-Industry | research | `customer-service/UC-101-it-service-desk-resolution/` |
-| UC-200 | Autonomous Freight Logistics Orchestration | Workflow Automation | Logistics / Transportation | detailed | `workflow-automation/UC-200-freight-logistics-orchestration/` |
+| UC-200 | Autonomous Freight Logistics Orchestration | Workflow Automation | Logistics / Transportation | research | `workflow-automation/UC-200-freight-logistics-orchestration/` |
 | UC-201 | Autonomous Supplier Negotiation | Workflow Automation | Cross-Industry | research | `workflow-automation/UC-201-supplier-negotiation/` |
 | UC-202 | Autonomous Talent Acquisition and Candidate Screening | Workflow Automation | Cross-Industry | research | `workflow-automation/UC-202-talent-acquisition/` |
 | UC-203 | Autonomous B2B Sales Development | Workflow Automation | Cross-Industry | research | `workflow-automation/UC-203-b2b-sales-development/` |
@@ -76,8 +76,8 @@ docs/use-cases/
 | UC-301 | Autonomous SOC Alert Triage and Response | Code & DevOps | Cross-Industry | research | `code-and-devops/UC-301-soc-alert-triage/` |
 | UC-302 | Autonomous Legacy Code Modernization | Code & DevOps | Cross-Industry | research | `code-and-devops/UC-302-legacy-code-modernization/` |
 | UC-400 | Autonomous Knowledge Synthesis (Consulting Copilot) | Knowledge Management | Consulting | research | `knowledge-management/UC-400-knowledge-synthesis-consulting/` |
-| UC-401 | Autonomous Regulatory Change Intelligence | Knowledge Management | Cross-Industry | detailed | `knowledge-management/UC-401-regulatory-change-intelligence/` |
-| UC-500 | Autonomous Pharma Adverse Event Processing | Industry-Specific | Pharmaceutical | detailed | `industry-specific/UC-500-pharma-adverse-event-processing/` |
+| UC-401 | Autonomous Regulatory Change Intelligence | Knowledge Management | Cross-Industry | research | `knowledge-management/UC-401-regulatory-change-intelligence/` |
+| UC-500 | Autonomous Pharma Adverse Event Processing | Industry-Specific | Pharmaceutical | research | `industry-specific/UC-500-pharma-adverse-event-processing/` |
 | UC-501 | Autonomous Insurance Claims Processing | Industry-Specific | Insurance | research | `industry-specific/UC-501-insurance-claims-processing/` |
 | UC-502 | Autonomous M&A Due Diligence (Legal AI) | Industry-Specific | Legal | research | `industry-specific/UC-502-legal-ma-due-diligence/` |
 | UC-503 | Autonomous AML Investigation in Banking | Industry-Specific | Banking / FinServ | research | `industry-specific/UC-503-banking-aml-investigation/` |

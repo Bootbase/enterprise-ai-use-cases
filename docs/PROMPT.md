@@ -15,7 +15,7 @@
 Discovers and documents a new use case automatically. Reads the index to avoid duplicates.
 
 ```
-Read docs/use-cases/README.md and .agents/templates/use-case.md.
+Read `docs/use-cases/README.md` and `.agents/templates/use-case.md`.
 
 Step 1 — Inventory:
 - Parse the Use Case Index table in README.md.
@@ -39,9 +39,12 @@ Step 3 — Assign ID & Category:
 - Create the folder: docs/use-cases/UC-{NNN}-{slug}/
 
 Step 4 — Write index.md:
-- Use the template in .agents/templates/use-case.md.
-- Fill in EVERY section with concrete, researched content:
-  real companies, real numbers, real pain points, real systems.
+- Use the template in `.agents/templates/use-case.md`.
+- Keep the section order exactly as written in the template.
+- Write a concise business brief, not a whitepaper.
+- Target roughly 700–1,200 words excluding front matter and tables.
+- Fill in every section with concrete, researched content:
+  real companies, real numbers, real pains, real systems.
 - Set status to `research`.
 - No {placeholder} text may remain.
 
@@ -53,10 +56,12 @@ Step 6 — Do NOT create solution-design.md, implementation-guide.md,
 evaluation.md, or references.md. Only index.md.
 
 Rules:
-- Use REAL company names, products, tools, and metrics — not made-up ones
-- Cite the source for quantitative claims inline (e.g., "700K reports/year (FDA FAERS)")
-- If solid real-world data is scarce, state that explicitly and use the best available estimates
-- Every template placeholder must be replaced
+- Use real company names, products, tools, and metrics — not made-up ones.
+- Keep the tone direct and business-oriented; avoid hype and generic AI phrasing.
+- Cite the source for quantitative claims inline where helpful.
+- Include `3–6` rows in the `Evidence Base` section.
+- If real-world data is scarce, say so directly and use the best available estimate.
+- Every template placeholder must be replaced.
 ```
 
 ---
@@ -66,7 +71,7 @@ Rules:
 Use this when you already know what use case you want. Replace `{DESCRIPTION}` with a short description.
 
 ```
-Read docs/use-cases/README.md and .agents/templates/use-case.md.
+Read `docs/use-cases/README.md` and `.agents/templates/use-case.md`.
 
 Research and document the following agentic AI use case:
 
@@ -90,8 +95,10 @@ Step 3 — Assign ID & Category:
 - Create the folder: docs/use-cases/UC-{NNN}-{slug}/
 
 Step 4 — Write index.md:
-- Use the template in .agents/templates/use-case.md.
-- Fill in EVERY section with concrete, researched content.
+- Use the template in `.agents/templates/use-case.md`.
+- Keep the section order exactly as written in the template.
+- Write a concise business brief, not a whitepaper.
+- Fill in every section with concrete, researched content.
 - Set status to `research`.
 - No {placeholder} text may remain.
 
@@ -102,9 +109,10 @@ Step 6 — Do NOT create solution-design.md, implementation-guide.md,
 evaluation.md, or references.md. Only index.md.
 
 Rules:
-- Use REAL company names, products, tools, and metrics — not made-up ones
-- Cite the source for quantitative claims inline
-- Every template placeholder must be replaced
+- Use real company names, products, tools, and metrics — not made-up ones.
+- Keep the tone direct and business-oriented; avoid hype and generic AI phrasing.
+- Cite the source for quantitative claims inline.
+- Every template placeholder must be replaced.
 ```
 
 ---
@@ -114,28 +122,28 @@ Rules:
 Picks up an existing `research` entry and fills in the remaining files.
 
 ```
-Read docs/use-cases/README.md.
+Read `docs/use-cases/README.md`.
 
 Step 1 — Select:
 - Find the FIRST row in the Use Case Index table with status `research`.
 - Read its index.md to understand the problem.
 
 Step 2 — Research deeper:
-- Search the web for architecture patterns, real implementations,
-  framework choices, code examples, and reported metrics for this use case.
-- Prioritize Azure-compatible and open-source solutions.
+- Search the web for real implementations, framework choices, integration seams,
+  official technical documentation, and reported metrics for this use case.
+- Prioritize primary sources and official documentation.
+- Prefer Azure-compatible and open-source solutions when the evidence supports them.
 
-Step 3 — Populate remaining files using templates in .agents/templates/:
-- solution-design.md — Architecture, component diagram, agent pattern
-  selection with rationale, integration points, tool/framework choices
-  with justification, security considerations, cost estimate.
-- implementation-guide.md — Step-by-step build guide with real code
-  snippets, project structure, configuration, testing strategy,
-  monitoring setup. Use real framework APIs (not pseudocode).
-- evaluation.md — Expected/reported metrics, ROI calculation, known
-  limitations, lessons learned from real implementations.
-- references.md — All case studies, documentation, repos, and talks
-  found during research. Every claim should be traceable.
+Step 3 — Populate remaining files using templates in `.agents/templates/`:
+- `solution-design.md` — Operating model, architecture, AI boundaries,
+  integration seams, control model, and key design decisions.
+- `implementation-guide.md` — Delivery blueprint, stack choices, core contracts,
+  orchestration pattern, prompt/guardrail pattern, integration notes,
+  evaluation harness, and rollout notes. Use real framework APIs, not pseudocode.
+- `evaluation.md` — Published evidence, explicit assumptions, scenario economics,
+  risks, rollout KPIs, and open questions. Label `published` vs `estimated`.
+- `references.md` — Annotated source register plus claim map. Every meaningful
+  claim should be traceable.
 
 Step 4 — Update status:
 - In index.md, change status from `research` to `detailed`.
@@ -144,14 +152,16 @@ Step 4 — Update status:
 - In docs/use-cases/README.md, update the same row's status to `detailed`.
 
 Rules:
-- Use REAL tools, APIs, and frameworks — not made-up names
-- Include actual code snippets from real framework SDKs
-- Cite sources for all claims about company implementations
-- If real-world examples are scarce, say so explicitly
-- Focus on Azure-first but include open-source alternatives
-- Every template placeholder must be replaced
-- All detail files must be in docs/use-cases/UC-NNN-slug/
-- Each file must include Jekyll front matter (layout: use-case-detail, etc.)
+- Use real tools, APIs, and frameworks — not made-up names.
+- Keep the split between files clean. Do not repeat the same content across tabs.
+- Include only focused code snippets from real SDKs or frameworks.
+- Cite sources for all claims about deployments and metrics.
+- If real-world examples are scarce, say so explicitly and narrow the recommendation.
+- Keep the tone direct and business-oriented; avoid generic AI phrasing.
+- Focus on Azure-first but include open-source alternatives where useful.
+- Every template placeholder must be replaced.
+- All detail files must be in `docs/use-cases/{category-dir}/UC-NNN-slug/`.
+- Each file must include Jekyll front matter.
 ```
 
 ---

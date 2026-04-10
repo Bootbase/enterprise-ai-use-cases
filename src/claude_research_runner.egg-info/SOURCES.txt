@@ -18,6 +18,7 @@ src/claude_research_runner.egg-info/SOURCES.txt
 src/claude_research_runner.egg-info/dependency_links.txt
 src/claude_research_runner.egg-info/entry_points.txt
 src/claude_research_runner.egg-info/top_level.txt
+tests/test_claude_exec.py
 tests/test_git_ops.py
 tests/test_limit_detection.py
 tests/test_topic_inference.py

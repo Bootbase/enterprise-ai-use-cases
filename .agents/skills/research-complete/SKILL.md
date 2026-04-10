@@ -1,130 +1,199 @@
 ---
 name: research-complete
 description: >-
-  Takes an existing use case at 'research' status and produces the full
-  solution-design.md, implementation-guide.md, evaluation.md, and
-  references.md with real-world AI architecture patterns, code, and metrics.
-  Use when the user wants to detail a use case, complete research, fill in
-  the remaining files, expand a use case, or says 'detail next', 'complete
-  research', 'fill in solution design', 'expand use case'. Also trigger when
-  the user references a specific UC-NNN and asks for the full write-up. Do
-  NOT use for creating new use cases — use the `research-new` skill instead.
+  Takes an existing use case at `research` status and produces the full
+  detailed write-up: `solution-design.md`, `implementation-guide.md`,
+  `evaluation.md`, and `references.md`. Use when the user wants to detail an
+  existing use case, complete research, fill in the remaining files, or expand
+  a research-stage entry. Do NOT use for creating a new use case — use
+  `research-new` instead.
 ---
 
-# Detail an Existing Use Case
+# Detail An Existing Use Case
 
-## Quick Reference
+## Goal
 
-| Step | Action | Output |
-|------|--------|--------|
-| 1. Find target | First `research` row in README.md index | Use case folder path |
-| 2. Read brief | Read use-case.md | Problem understanding |
-| 3. Read templates | Read all 4 templates in `_templates/` | Structure reference |
-| 4. Research | Extensive web search for real implementations | Sources and patterns |
-| 5. Write files | Populate 4 files with AI-focused content | Completed deliverables |
-| 6. Update status | Change `research` → `detailed` in README.md + use-case.md | Updated index |
+Turn a research-stage brief into a publishable case study that readers can learn from quickly.
 
-## File Emphasis
+The detailed output must be:
 
-| File | Focus | The reader wants to understand... |
-|------|-------|-----------------------------------|
-| solution-design.md | HOW the AI solves the problem | Agent pattern, LLM role, tools, prompts, human-in-the-loop |
-| implementation-guide.md | The AI integration code | Agent definition, tool implementations, orchestration, evaluation |
-| evaluation.md | What worked and what didn't | Real metrics, failure modes, lessons learned, ROI |
-| references.md | Every source cited | Case studies, vendor docs, repos, talks |
+- correct enough to trust, with source traceability
+- explicit about what is published fact versus design recommendation versus estimate
+- business-oriented in tone
+- split cleanly across files, with minimal duplication
 
----
+## Required Inputs
+
+Read:
+
+- `docs/use-cases/README.md`
+- the target `index.md`
+- all four templates in `.agents/templates/`
+
+Follow the section order in each template exactly. Do not invent extra top-level sections.
+
+## File Responsibilities
+
+Use the files for different jobs:
+
+- `solution-design.md`
+  Operating model, architecture, AI boundaries, integration seams, control model, and design decisions.
+- `implementation-guide.md`
+  Practical delivery blueprint: stack, contracts, orchestration pattern, prompts, evaluation harness, rollout notes.
+- `evaluation.md`
+  Published evidence, assumptions, economics, risks, rollout KPIs, and open questions.
+- `references.md`
+  Annotated source register plus claim map. Every meaningful claim in the other three files must be traceable here.
 
 ## Workflow
 
-### Step 1 — Find the next target
+### Step 1 — Select The Target
 
-Read `docs/use-cases/README.md` and find the FIRST row in the Use Case Index table with status `research`. If no rows have status `research`, report "No use cases pending research completion" and stop.
+Find the first use case in `docs/use-cases/README.md` with status `research`, unless a specific `UC-XXX` is provided as an argument.
 
-### Step 2 — Read the research brief
+### Step 2 — Read The Research Brief
 
-Navigate to that use case's folder (e.g., `docs/use-cases/{category-dir}/UC-NNN-slug/`) and read `index.md`. Understand the problem, domain, constraints, and success criteria. This is the research brief.
+Read that use case's `index.md` and extract:
 
-### Step 3 — Read the templates
+- the business problem
+- the incumbent systems
+- the operating constraints
+- the success metrics already implied by the brief
 
-Read all 4 templates in `.agents/templates/` for structure reference:
-- `solution-design.md`
-- `implementation-guide.md`
-- `evaluation.md`
-- `references.md`
+Do not rewrite the body of `index.md`. Later, only update the status and `has_*` flags in front matter.
 
-### Step 4 — Research
+### Step 3 — Research Deeply
 
-Search the web extensively for:
-- How real companies actually solved this problem with AI
-- Which agent patterns they chose and WHY (single-agent, multi-agent, RAG, hybrid)
-- Which LLM frameworks they used (Semantic Kernel, LangGraph, CrewAI, Azure AI Foundry, etc.) and why
-- How the AI connects to the domain-specific systems (the integration seam)
-- Prompt engineering approaches and tool definitions that made it work
-- What failed, what surprised them, what they'd do differently
-- Published metrics and ROI from real deployments
-- Case studies, blog posts, conference talks, GitHub repos
+Search for primary and high-value secondary sources covering:
 
-### Step 5 — Populate the 4 files
+- real deployments and published metrics
+- specific architecture choices and integration seams
+- official documentation for the AI stack and incumbent systems
+- domain-specific standards, regulations, or data contracts
 
-Use the templates for structure but shift the emphasis per the File Emphasis table above. Replace every placeholder — no `{curly brace}` placeholders may remain.
+Prioritize:
 
-#### solution-design.md
+- customer stories, case studies, official docs, public technical write-ups, standards documentation
 
-Place file at `docs/use-cases/{category-dir}/UC-NNN-slug/solution-design.md`. Emphasize:
-- **Agent pattern** — Which pattern (ReAct, plan-and-execute, multi-agent orchestrator-worker, RAG pipeline, hybrid) and WHY it fits this problem. Most important section.
-- **LLM role** — What the LLM does at each step: extraction, reasoning, classification, generation, decision-making. Be specific about which steps need AI and which don't.
-- **Tool/function design** — What tools the agent calls, what they return, how they connect to domain systems. This is where AI meets the real world.
-- **Prompt strategy** — System prompts, few-shot examples, chain-of-thought, structured output schemas. Include actual prompt snippets where possible.
-- **Human-in-the-loop** — Where humans stay in the loop, what triggers escalation, how confidence thresholds are set.
-- **Data flow through the AI** — Clear diagram showing what data enters the LLM, what comes out, what happens next.
-- Keep infra sections minimal — just name the services, don't elaborate.
-- Include Jekyll front matter at the top (layout: use-case-detail, etc.)
+Be cautious with:
 
-#### implementation-guide.md
+- analyst summaries
+- vendor marketing pages with no named deployment
+- claims that do not distinguish pilot from production
 
-Place file at `docs/use-cases/{category-dir}/UC-NNN-slug/implementation-guide.md`. Emphasize:
-- **LLM connection and configuration** — Model selection, temperature, token limits, structured output setup.
-- **Agent definition** — Actual agent code: system prompt, tool bindings, orchestration logic. Use real framework APIs (e.g., `ChatCompletionAgent()`, `StateGraph()`, `kernel.add_plugin()`).
-- **Tool implementations** — Functions the agent calls to interact with domain systems. Show the AI-to-real-world interface.
-- **Prompt templates** — Real prompt text showing domain knowledge injection, output format enforcement, edge case handling.
-- **Orchestration flow** — How multiple steps/agents coordinate: state management, handoffs, retry logic.
-- **Evaluation and testing of AI quality** — How to measure if AI output is correct (AI-specific, not generic unit tests).
-- Skip or minimize: Dockerfiles, CI/CD, monitoring dashboards, project scaffolding, infra setup.
-- Include Jekyll front matter at the top (layout: use-case-detail, etc.)
+### Step 4 — Write The Detailed Files
 
-#### evaluation.md
+Use the templates exactly.
 
-Place file at `docs/use-cases/{category-dir}/UC-NNN-slug/evaluation.md`. Emphasize:
-- Real metrics from published case studies (with citations)
-- Where the AI excels vs. where it still struggles
-- Failure modes specific to the AI approach (hallucination, edge cases, confidence calibration)
-- Lessons learned about prompt engineering, model selection, agent patterns
-- ROI calculation grounded in numbers from index.md
-- What surprised teams during implementation
-- Include Jekyll front matter at the top (layout: use-case-detail, etc.)
+Keep the files compact enough to read on the site:
 
-#### references.md
+- `solution-design.md`: target `900–1,400` words
+- `implementation-guide.md`: target `900–1,400` words
+- `evaluation.md`: target `700–1,200` words
+- `references.md`: as short as possible while still making claims traceable
 
-Place file at `docs/use-cases/{category-dir}/UC-NNN-slug/references.md`. Contents:
-- Every claim in the other 3 files must be traceable here
-- Prioritize: case studies, vendor docs for the AI tools used, GitHub repos with working code, conference talks
-- Verify URLs are real (do not fabricate)
-- Include Jekyll front matter at the top (layout: use-case-detail, etc.)
+#### Additional Rules For Each File
 
-### Step 6 — Update status
+`solution-design.md`
 
-In `docs/use-cases/README.md`, change the status from `research` to `detailed`. Also update the status field in `index.md` front matter and the `has_*` flags to `true` for each file you created.
+- emphasize the business operating model, not infrastructure inventory
+- explain where AI is appropriate and where deterministic logic or human review stays in charge
+- include one clear system diagram
 
----
+`implementation-guide.md`
+
+- show only the code or configuration patterns that materially teach the reader something
+- use real SDKs or framework APIs
+- keep code snippets focused; prefer `2–3` strong snippets over many shallow ones
+- do not turn this file into a scaffold dump, CI/CD guide, or Docker tutorial
+
+`evaluation.md`
+
+- clearly label `published` versus `estimated`
+- do not invent user quotes or survey data
+- do not present one company's result as if it were a universal benchmark
+
+`references.md`
+
+- include a source register with stable IDs such as `S1`, `S2`, `S3`
+- include a claim map that points major claims or sections back to those IDs
+- omit low-value source lists that are not used anywhere
+
+### Step 5 — Update Status
+
+Update:
+
+- `docs/use-cases/README.md`: `research` -> `detailed`
+- target `index.md` front matter:
+  - `status: detailed`
+  - `has_solution_design: true`
+  - `has_implementation_guide: true`
+  - `has_evaluation: true`
+  - `has_references: true`
+
+## Writing Rules
+
+- Write like an operator or architect explaining a real system to another operator or architect.
+- Prefer short declarative sentences over grand framing.
+- Keep claims specific and qualified.
+- Separate three things clearly:
+  - what a source explicitly says
+  - what the case study recommends
+  - what is estimated
+- Avoid generic "AI writing" language, especially:
+  - hype
+  - repetitive scene-setting
+  - abstract management phrasing with no systems or process detail
+
+## Output Contract
+
+The generated files must include these exact top-level headings:
+
+`solution-design.md`
+
+- `## What This Design Covers`
+- `## Recommended Operating Model`
+- `## Architecture`
+- `## End-to-End Flow`
+- `## AI Responsibilities and Boundaries`
+- `## Integration Seams`
+- `## Control Model`
+- `## Reference Technology Stack`
+- `## Key Design Decisions`
+
+`implementation-guide.md`
+
+- `## Build Goal`
+- `## Reference Stack`
+- `## Delivery Plan`
+- `## Core Contracts`
+- `## Orchestration Outline`
+- `## Prompt And Guardrail Pattern`
+- `## Integration Notes`
+- `## Evaluation Harness`
+- `## Deployment Notes`
+
+`evaluation.md`
+
+- `## Decision Summary`
+- `## Published Evidence`
+- `## Assumptions And Scenario Model`
+- `## Expected Economics`
+- `## Quality, Risk, And Failure Modes`
+- `## Rollout KPI Set`
+- `## Open Questions`
+
+`references.md`
+
+- `## Source Quality Notes`
+- `## Source Register`
+- `## Claim Map`
+
+No `{placeholder}` text may remain.
 
 ## Gotchas
 
-- **Focus on the AI, not the plumbing** — every section should teach how AI integration works for this problem. Infrastructure is context, not content.
-- **Use REAL tools, APIs, frameworks** — nothing made up. Code snippets must use real SDK methods.
-- **Prioritize Azure-first** but always mention open-source alternatives.
-- **Every metric must cite a source** in references.md. If real data isn't available, say "estimated" and explain the basis.
-- **Do not modify index.md content** beyond updating the status field and has_* flags in front matter.
-- **All detail files go in the same folder as index.md** (e.g., `docs/use-cases/{category-dir}/UC-NNN-slug/`). Each must have Jekyll front matter.
-- **Only edit README.md status** (except for creating the detail files).
-- **No `{curly brace}` placeholders may remain** in any output file.
+- Keep the split between files clean. Do not repeat the same table in multiple places.
+- If the evidence base is thin, say that directly and narrow the recommendation.
+- Focus on one strong reference architecture instead of listing every possible tool in the market.
+- The site publishes detailed case studies. Write for readers, not for the agent runtime.

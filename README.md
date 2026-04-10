@@ -4,21 +4,21 @@ A catalog of real-world enterprise AI case studies, each researched, designed, a
 
 ## How to Use
 
-1. **Browse** the index below to find case studies by category
-2. **Read** a case study folder to understand the problem, solution, implementation, and results
-3. **Add** a new case study by running the prompt in [PROMPT.md](PROMPT.md)
+1. **Browse** the canonical index in [docs/use-cases/README.md](docs/use-cases/README.md)
+2. **Read** published case studies on the site under `docs/use-cases/...`
+3. **Add or complete** a case study by using the skills and prompts in [.agents/skills/](.agents/skills/) and [docs/PROMPT.md](docs/PROMPT.md)
 
-## Templates
+## Artifacts
 
-All case studies follow the same 5-file structure. Templates are in [`_templates/`](./_templates/):
+Detailed case studies follow the same 5-file structure. Templates live in [.agents/templates/](.agents/templates/):
 
 | File                     | Purpose                                           |
 |--------------------------|---------------------------------------------------|
-| `use-case.md`            | Problem statement, business context, constraints  |
-| `solution-design.md`     | Architecture, tools, agent patterns, cost          |
-| `implementation-guide.md`| Step-by-step build guide with code                 |
-| `evaluation.md`          | Metrics, results, ROI, lessons learned             |
-| `references.md`          | Case studies, docs, repos, talks                   |
+| `index.md`               | Research-stage business brief and published context |
+| `solution-design.md`     | Operating model, architecture, controls, design decisions |
+| `implementation-guide.md`| Delivery blueprint, contracts, prompts, integration notes |
+| `evaluation.md`          | Evidence, economics, risks, rollout KPIs |
+| `references.md`          | Annotated source register and claim map |
 
 ## Categories
 

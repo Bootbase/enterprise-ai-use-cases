@@ -14,149 +14,83 @@ slug: "UC-{NNN}-{slug}"
 permalink: /use-cases/UC-{NNN}-{slug}/solution-design/
 ---
 
-## Solution Overview
+## What This Design Covers
 
-{2-3 paragraph high-level description of the solution. What does it do, how does it work at a conceptual level, and why was this approach chosen?}
+{One short paragraph. State the business problem, the recommended AI operating model, and the boundary of the design.}
 
----
+## Recommended Operating Model
+
+| Decision Area | Recommendation |
+|---------------|----------------|
+| **Autonomy Model** | {How autonomous the workflow should be} |
+| **System of Record** | {Which incumbent system remains authoritative} |
+| **Human Decision Points** | {Where humans approve, review, or override} |
+| **Primary Value Driver** | {What creates the economics} |
 
 ## Architecture
 
-### Architecture Diagram
+### System Diagram
 
-```
-{ASCII or Mermaid diagram showing the major components and data flow}
-```
-
-### Component Overview
-
-| # | Component              | Technology / Service         | Role                                      |
-|---|------------------------|-----------------------------|--------------------------------------------|
-| 1 | {e.g., Ingestion}      | {e.g., Azure Blob Storage}  | {Receives incoming documents}              |
-| 2 | {e.g., Orchestrator}   | {e.g., LangGraph}           | {Manages agent workflow and state}         |
-| 3 | {e.g., LLM}            | {e.g., Azure OpenAI GPT-4o} | {Reasoning, extraction, generation}        |
-| 4 | {e.g., Vector Store}   | {e.g., Azure AI Search}     | {Semantic search over knowledge base}      |
-| 5 | {e.g., Backend API}    | {e.g., FastAPI on AKS}      | {Exposes endpoints to existing systems}    |
-| 6 | ...                    | ...                         | ...                                        |
-
----
-
-## Data Flow
-
-{Step-by-step description of how data moves through the system from trigger to outcome.}
-
-```
-{Sequence or flow diagram}
-
-1. [Trigger] → {What initiates the process}
-2. [Ingest]  → {How data enters the system}
-3. [Process] → {What the AI does with the data}
-4. [Decide]  → {How decisions/outputs are produced}
-5. [Act]     → {What happens with the result}
-6. [Notify]  → {How humans are informed}
+```mermaid
+{Mermaid or ASCII diagram showing the main components and data flow}
 ```
 
----
+### Component Responsibilities
 
-## Agent Pattern
+| Component | Role | Notes |
+|-----------|------|-------|
+| {Component 1} | {Responsibility} | {Why it exists} |
+| {Component 2} | {Responsibility} | {Why it exists} |
+| {Component 3} | {Responsibility} | {Why it exists} |
+| {Component 4} | {Responsibility} | {Why it exists} |
 
-| Aspect               | Choice                                   |
-|----------------------|------------------------------------------|
-| **Pattern**          | {Single Agent / Multi-Agent / RAG / Tool-Calling / Hybrid} |
-| **Orchestration**    | {Sequential / Parallel / Graph-based / Event-driven} |
-| **Human-in-the-Loop**| {None / Approval Gate / Escalation / Review} |
-| **State Management** | {Stateless / Conversation Memory / Persistent State} |
-| **Autonomy Level**   | {Fully Autonomous / Semi-Autonomous / Augmentation} |
+## End-to-End Flow
 
-### Why This Pattern?
+| Step | What Happens | Owner |
+|------|---------------|-------|
+| 1 | {Trigger and intake} | {System or role} |
+| 2 | {AI analysis or extraction} | {System or role} |
+| 3 | {Deterministic validation or decisioning} | {System or role} |
+| 4 | {Writeback, action, or escalation} | {System or role} |
+| 5 | {Audit or follow-up} | {System or role} |
 
-{Explain the reasoning behind the pattern choice. What alternatives were considered and why were they rejected?}
+## AI Responsibilities and Boundaries
 
----
+| Workflow Area | AI Does | Deterministic System Does | Human Owns |
+|---------------|---------|---------------------------|------------|
+| {Area 1} | {AI task} | {System task} | {Human decision} |
+| {Area 2} | {AI task} | {System task} | {Human decision} |
+| {Area 3} | {AI task} | {System task} | {Human decision} |
 
-## Integration Points
+## Integration Seams
 
-| System                | Integration Method         | Direction     | Purpose                        |
-|-----------------------|---------------------------|---------------|--------------------------------|
-| {e.g., SAP ERP}       | {REST API}                | Bidirectional | {Read orders, write status}    |
-| {e.g., SharePoint}    | {Graph API}               | Read          | {Fetch documents}              |
-| {e.g., Email / SMTP}  | {Azure Logic Apps}        | Inbound       | {Receive requests}             |
-| {e.g., Database}      | {ODBC / SDK}              | Write         | {Store processed results}      |
-| ...                   | ...                       | ...           | ...                            |
+| System | Integration Method | Why It Matters |
+|--------|--------------------|----------------|
+| {Core system 1} | {API / event / file / SDK} | {Business reason} |
+| {Core system 2} | {API / event / file / SDK} | {Business reason} |
+| {Core system 3} | {API / event / file / SDK} | {Business reason} |
 
----
+## Control Model
 
-## Tools & Frameworks
+| Risk | Control |
+|------|---------|
+| {Hallucination or extraction risk} | {Schema, retrieval, validation, or threshold} |
+| {Operational or compliance risk} | {Approval gate, logging, segregation, or fallback} |
+| {Data or security risk} | {Isolation, redaction, scoped tools, or policy} |
 
-### AI / ML Stack
+## Reference Technology Stack
 
-| Component              | Technology                | Why Chosen                        |
-|------------------------|--------------------------|-----------------------------------|
-| **LLM Provider**       | {e.g., Azure OpenAI}     | {Enterprise compliance, latency}  |
-| **Model**              | {e.g., GPT-4o}           | {Reasoning capability, cost}      |
-| **Agent Framework**    | {e.g., Semantic Kernel}  | {.NET ecosystem, tool-calling}    |
-| **Vector Database**    | {e.g., Azure AI Search}  | {Managed, hybrid search}          |
-| **Embedding Model**    | {e.g., text-embedding-3-large} | {Dimension, accuracy}       |
+| Layer | Default Choice | Reason | Viable Alternative |
+|-------|----------------|--------|--------------------|
+| **Model layer** | {Primary choice} | {Why} | {Alternative} |
+| **Orchestration** | {Primary choice} | {Why} | {Alternative} |
+| **Retrieval / memory** | {Primary choice} | {Why} | {Alternative} |
+| **Observability** | {Primary choice} | {Why} | {Alternative} |
 
-### Infrastructure Stack
+## Key Design Decisions
 
-| Component              | Technology                | Why Chosen                        |
-|------------------------|--------------------------|-----------------------------------|
-| **Compute**            | {e.g., AKS / App Service}| {Scaling, existing infra}         |
-| **Storage**            | {e.g., ADLS Gen2}        | {Data lake integration}           |
-| **Message Queue**      | {e.g., Service Bus}      | {Async processing, reliability}   |
-| **Monitoring**         | {e.g., Application Insights} | {Existing observability stack} |
-| **CI/CD**              | {e.g., GitHub Actions}   | {Existing pipeline}               |
-
-### Open Source / Third Party
-
-| Component              | Technology                | Why Chosen                        |
-|------------------------|--------------------------|-----------------------------------|
-| ...                    | ...                       | ...                               |
-
----
-
-## Security & Compliance
-
-| Concern                | Approach                                  |
-|------------------------|-------------------------------------------|
-| **Authentication**     | {e.g., Managed Identity, OIDC}            |
-| **Authorization**      | {e.g., RBAC, scope restrictions}          |
-| **Data at Rest**       | {e.g., CMK encryption}                    |
-| **Data in Transit**    | {e.g., TLS 1.2+, Private Endpoints}       |
-| **PII Handling**       | {e.g., Redaction, no PII to LLM}          |
-| **Audit Trail**        | {e.g., Structured logging, immutable logs} |
-| **Model Governance**   | {e.g., Content filters, prompt guardrails} |
-
----
-
-## Scalability & Performance
-
-| Dimension              | Approach                                  |
-|------------------------|-------------------------------------------|
-| **Throughput**         | {Expected requests/sec or documents/hour} |
-| **Latency Target**    | {p50, p95, p99 targets}                   |
-| **Scaling Strategy**   | {Horizontal pod autoscaling, queue-based} |
-| **Rate Limits**        | {LLM API limits and how to handle them}   |
-| **Caching**            | {What is cached and where}                |
-
----
-
-## Cost Estimate
-
-| Component              | Unit Cost                 | Monthly Estimate            |
-|------------------------|--------------------------|------------------------------|
-| **LLM API Calls**      | {e.g., $X per 1M tokens} | {Based on expected volume}   |
-| **Compute**            | {e.g., AKS node cost}    | {Based on scaling profile}   |
-| **Storage**            | {e.g., per GB}            | {Based on data volume}       |
-| **Search / Vector DB** | {e.g., per unit}          | {Based on index size}        |
-| **Total**              |                           | **{Total estimate}**         |
-
----
-
-## Alternatives Considered
-
-| Alternative            | Pros                      | Cons                         | Why Not Chosen               |
-|------------------------|--------------------------|------------------------------|------------------------------|
-| {Option A}             | {pros}                    | {cons}                       | {reason}                     |
-| {Option B}             | {pros}                    | {cons}                       | {reason}                     |
+| Decision | Choice | Why It Fits This Use Case |
+|----------|--------|---------------------------|
+| {Decision 1} | {Choice} | {Reasoning} |
+| {Decision 2} | {Choice} | {Reasoning} |
+| {Decision 3} | {Choice} | {Reasoning} |

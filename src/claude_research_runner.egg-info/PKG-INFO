@@ -2,5 +2,4 @@ Metadata-Version: 2.4
 Name: claude-research-runner
 Version: 0.1.0
 Summary: Automate Claude Code research-new and research-complete runs for this repository.
-Author: Bootbase
 Requires-Python: >=3.11

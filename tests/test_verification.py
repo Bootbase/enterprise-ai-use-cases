@@ -13,7 +13,62 @@ def _write(path: Path, content: str) -> None:
 
 
 def _index_md(status: str) -> str:
-    return f'---\nstatus: "{status}"\n---\n'
+    return (
+        "---\n"
+        'layout: "use-case"\n'
+        f'status: "{status}"\n'
+        "---\n\n"
+        "## Problem Statement\n\nBody.\n\n"
+        "## Business Case\n\n| A | B | C |\n|---|---|---|\n| x | y | z |\n\n"
+        "## Current Workflow\n\n1. One\n\n"
+        "## Target State\n\nBody.\n\n"
+        "## Stakeholders\n\n| A | B |\n|---|---|\n| x | y |\n\n"
+        "## Constraints\n\n| A | B |\n|---|---|\n| x | y |\n\n"
+        "## Evidence Base\n\n| A | B | C |\n|---|---|---|\n| x | y | z |\n\n"
+        "## Scope Boundaries\n\n### In Scope\n\n- One\n\n### Out of Scope\n\n- Two\n"
+    )
+
+
+def _detail_md(name: str) -> str:
+    sections = {
+        "solution-design.md": (
+            "## What This Design Covers\n\nBody.\n\n"
+            "## Recommended Operating Model\n\nBody.\n\n"
+            "## Architecture\n\n### System Diagram\n\n```text\nok\n```\n\n"
+            "## End-to-End Flow\n\nBody.\n\n"
+            "## AI Responsibilities and Boundaries\n\nBody.\n\n"
+            "## Integration Seams\n\nBody.\n\n"
+            "## Control Model\n\nBody.\n\n"
+            "## Reference Technology Stack\n\nBody.\n\n"
+            "## Key Design Decisions\n\nBody.\n"
+        ),
+        "implementation-guide.md": (
+            "## Build Goal\n\nBody.\n\n"
+            "## Reference Stack\n\nBody.\n\n"
+            "## Delivery Plan\n\nBody.\n\n"
+            "## Core Contracts\n\nBody.\n\n"
+            "## Orchestration Outline\n\nBody.\n\n"
+            "## Prompt And Guardrail Pattern\n\nBody.\n\n"
+            "## Integration Notes\n\nBody.\n\n"
+            "## Evaluation Harness\n\nBody.\n\n"
+            "## Deployment Notes\n\nBody.\n"
+        ),
+        "evaluation.md": (
+            "## Decision Summary\n\nBody.\n\n"
+            "## Published Evidence\n\nBody.\n\n"
+            "## Assumptions And Scenario Model\n\nBody.\n\n"
+            "## Expected Economics\n\nBody.\n\n"
+            "## Quality, Risk, And Failure Modes\n\nBody.\n\n"
+            "## Rollout KPI Set\n\nBody.\n\n"
+            "## Open Questions\n\n- One\n"
+        ),
+        "references.md": (
+            "## Source Quality Notes\n\nBody.\n\n"
+            "## Source Register\n\nBody.\n\n"
+            "## Claim Map\n\nBody.\n"
+        ),
+    }
+    return f'---\nlayout: "use-case-detail"\nstatus: "detailed"\n---\n\n{sections[name]}'
 
 
 class VerificationTests(unittest.TestCase):
@@ -31,12 +86,23 @@ class VerificationTests(unittest.TestCase):
     def test_verify_research_new_from_use_cases_index(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             root = Path(tmp_dir)
-            _write(root / "docs/use-cases/README.md", "| UC-024 | [Title](foo) | Workflow Automation | Cross | High | `research` |\n")
+            _write(root / "docs/use-cases/README.md", "| UC-024 | Title | Workflow Automation | Cross | research | `workflow-automation/UC-024-test/` |\n")
             _write(
                 root / "docs/use-cases/workflow-automation/UC-024-test/index.md",
                 _index_md("research"),
             )
             result = verify_research_new(root, "UC-024")
+            self.assertEqual(result.topic_id, "UC-024")
+
+    def test_verify_research_complete_from_plain_status_row(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            root = Path(tmp_dir)
+            _write(root / "docs/use-cases/README.md", "| UC-024 | Title | Workflow Automation | Cross | detailed | `workflow-automation/UC-024-test/` |\n")
+            base = root / "docs/use-cases/workflow-automation/UC-024-test"
+            _write(base / "index.md", _index_md("detailed"))
+            for name in ("solution-design.md", "implementation-guide.md", "evaluation.md", "references.md"):
+                _write(base / name, _detail_md(name))
+            result = verify_research_complete(root, "UC-024")
             self.assertEqual(result.topic_id, "UC-024")
 
     def test_verify_research_complete(self) -> None:
@@ -46,7 +112,7 @@ class VerificationTests(unittest.TestCase):
             base = root / "docs/use-cases/workflow-automation/UC-024-test"
             _write(base / "index.md", _index_md("detailed"))
             for name in ("solution-design.md", "implementation-guide.md", "evaluation.md", "references.md"):
-                _write(base / name, "# ok\n")
+                _write(base / name, _detail_md(name))
             result = verify_research_complete(root, "UC-024")
             self.assertEqual(result.topic_id, "UC-024")
 

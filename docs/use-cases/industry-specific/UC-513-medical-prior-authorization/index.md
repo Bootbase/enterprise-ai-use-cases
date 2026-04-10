@@ -7,13 +7,13 @@ category_dir: "industry-specific"
 category_icon: "briefcase"
 industry: "Healthcare"
 complexity: "High"
-status: "research"
+status: "detailed"
 summary: "US physicians handle a median of 43 prior authorization requests per week, consuming 12 staff-hours and driving burnout while patients wait days for approvals. Agentic AI systems that ingest clinical documentation, match it against payer medical policies, and auto-adjudicate routine requests are reaching 85-90% real-time approval rates -- cutting submission times by 55-70%, reducing denial rates by up to 63%, and freeing clinical staff to focus on patient care."
 slug: "UC-513-medical-prior-authorization"
-has_solution_design: false
-has_implementation_guide: false
-has_evaluation: false
-has_references: false
+has_solution_design: true
+has_implementation_guide: true
+has_evaluation: true
+has_references: true
 permalink: /use-cases/UC-513-medical-prior-authorization/
 ---
 

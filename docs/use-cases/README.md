@@ -41,6 +41,7 @@ docs/use-cases/
     UC-507-manufacturing-quality-inspection/
     UC-508-dynamic-pricing-optimization/
     UC-509-clinical-trial-patient-matching/
+    UC-510-agriculture-crop-protection/
 ```
 
 ---
@@ -89,6 +90,7 @@ docs/use-cases/
 | UC-507 | Autonomous Manufacturing Quality Inspection | Industry-Specific | Manufacturing | research | `industry-specific/UC-507-manufacturing-quality-inspection/` |
 | UC-508 | Autonomous Dynamic Pricing and Revenue Optimization | Industry-Specific | Retail / E-Commerce | research | `industry-specific/UC-508-dynamic-pricing-optimization/` |
 | UC-509 | Autonomous Clinical Trial Patient Matching | Industry-Specific | Pharmaceutical | research | `industry-specific/UC-509-clinical-trial-patient-matching/` |
+| UC-510 | Autonomous Agricultural Crop Protection and Precision Treatment | Industry-Specific | Agriculture | research | `industry-specific/UC-510-agriculture-crop-protection/` |
 
 ---
 

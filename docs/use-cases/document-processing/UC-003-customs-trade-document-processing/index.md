@@ -75,8 +75,8 @@ Human brokers shift from data entry and lookup to exception resolution, ruling r
 
 ## Constraints
 
-| Constraint | Detail |
-|------------|--------|
+| Area | Constraint |
+|------|------------|
 | **Data / Privacy** | Commercial invoices and trade data contain sensitive pricing and supplier information; data residency requirements vary by jurisdiction |
 | **Systems** | Must integrate with national customs filing systems (US ACE, UK CDS, EU ICS2, etc.) via certified EDI/API channels |
 | **Compliance** | Licensed customs broker must remain the filer of record; regulatory accountability cannot be delegated to software |

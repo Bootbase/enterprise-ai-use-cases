@@ -21,21 +21,16 @@ permalink: /use-cases/UC-100-customer-service-resolution/
 
 Enterprise customer service organizations face a compounding crisis: rising ticket volumes, growing customer expectations for instant resolution, and a shrinking labor pool willing to work in support roles. Traditional chatbots deflect simple FAQ queries but fail on anything requiring multi-step reasoning, cross-system lookups, or transactional actions (refunds, plan changes, account modifications). The result is that 60-80% of customer interactions still require human agents, creating a cost structure that scales linearly with customer growth. Companies like Klarna, Ramp, and others have demonstrated that agentic AI — systems that autonomously reason, access backend systems, and execute actions — can resolve the majority of customer service interactions end-to-end without human involvement, fundamentally changing the cost curve of customer support.
 
----
+## Business Case
 
-## Business Impact
+| Dimension | Current State | Why It Matters |
+|-----------|---------------|----------------|
+| **Volume / Scale** | Klarna's AI assistant handled 2.3 million conversations in its first month — two-thirds of all customer chats. Intercom Fin is involved in 99% of conversations across its customer base. Sierra AI powers hundreds of millions of conversations annually across 40% of Fortune 50 companies. | 60-80% of interactions still require human agents, creating a cost structure that scales linearly with customer growth. Every new customer requires proportionally more support agents. |
+| **Cycle Time** | Average resolution time for human agents is 11-15 minutes per interaction. Queue wait times average 3-10 minutes before an agent even picks up. Complex escalations add another 24-48 hours. | Klarna's AI agent resolves in under 2 minutes (82% improvement). Sierra/Ramp achieves 90% resolution without human handoff, eliminating queue wait times entirely. Slow resolution drives 67% of preventable churn (Harvard Business Review). |
+| **Cost / Effort** | Average cost per customer service interaction is $5-12 for human agents (Gartner). At scale, enterprises spend $50-200M/year on support labor alone. New agents take 4-8 weeks to ramp; annual contact center turnover averages 30-45%. | Klarna reduced cost per interaction from $0.32 to $0.19 — a 40% reduction — saving a projected $40M annually. AI breaks the linear cost-to-volume relationship. |
+| **Risk / Quality** | Human agents make errors in 10-15% of interactions (wrong refund amounts, incorrect policy application, missed follow-ups). Policy application varies by agent experience, mood, and workload. | Klarna reported a 25% drop in repeat inquiries after AI deployment, indicating higher first-contact resolution quality. However, Klarna also observed quality degradation with over-reliance on AI for complex queries, requiring rebalancing. Compliance risk from inconsistent policy application; brand risk from AI hallucinations or unauthorized actions. |
 
-| Dimension       | Description                               |
-|-----------------|-------------------------------------------|
-| **Cost**        | Average cost per customer service interaction is $5-12 for human agents (Gartner). Klarna reduced cost per interaction from $0.32 to $0.19 — a 40% reduction — saving a projected $40M annually. At scale, enterprises spend $50-200M/year on support labor alone. |
-| **Time**        | Average resolution time for human agents is 11-15 minutes per interaction. Klarna's AI agent resolves in under 2 minutes (82% improvement). Sierra/Ramp achieves 90% resolution without human handoff, eliminating queue wait times entirely. |
-| **Error Rate**  | Human agents make errors in 10-15% of interactions (wrong refund amounts, incorrect policy application, missed follow-ups). Klarna reported a 25% drop in repeat inquiries after AI deployment, indicating higher first-contact resolution quality. However, Klarna also observed quality degradation with over-reliance on AI for complex queries, requiring rebalancing. |
-| **Scale**       | Klarna's AI assistant handled 2.3 million conversations in its first month — two-thirds of all customer chats. Intercom Fin is involved in 99% of conversations across its customer base, resolving up to 65% end-to-end. Sierra AI powers hundreds of millions of conversations annually across 40% of Fortune 50 companies. |
-| **Risk**        | Customer churn from slow resolution (67% of churn is preventable with first-contact resolution — Harvard Business Review). Compliance risk from inconsistent policy application across human agents. Brand risk from AI hallucinations or unauthorized actions on customer accounts. |
-
----
-
-## Current Process (Before AI)
+## Current Workflow
 
 1. Customer contacts support via chat, email, or phone
 2. Request enters a queue and waits for an available human agent (average wait: 3-10 minutes)
@@ -49,7 +44,7 @@ Enterprise customer service organizations face a compounding crisis: rising tick
 10. Agent updates the ticket with resolution notes for compliance and analytics
 11. If the issue is complex, agent escalates to a specialist (Tier 2/3), adding another 24-48 hours
 
-### Bottlenecks & Pain Points
+### Main Frictions
 
 - **Linear cost scaling**: Every new customer requires proportionally more support agents — headcount grows 1:1 with volume
 - **Agent ramp time**: New support agents take 4-8 weeks to become proficient; annual turnover in contact centers averages 30-45%
@@ -58,52 +53,53 @@ Enterprise customer service organizations face a compounding crisis: rising tick
 - **Peak hour bottlenecks**: Support volume follows predictable daily/weekly patterns, but staffing for peaks means overstaffing during troughs (or understaffing peaks and degrading SLAs)
 - **Knowledge base staleness**: Internal wikis and policy documents go stale; agents develop tribal knowledge that doesn't transfer when they leave
 
----
-
-## Desired Outcome (After AI)
+## Target State
 
 An agentic AI system that autonomously handles 60-90% of customer service interactions end-to-end — not just answering questions, but taking actions on behalf of customers: processing refunds, modifying subscriptions, updating account details, resolving billing disputes, and tracking orders. The system reasons over customer context, accesses backend systems via APIs, applies business policies consistently, and escalates to human agents only when confidence is low or the situation requires judgment beyond its scope. Human agents shift from handling routine queries to focusing on complex, high-value, or emotionally sensitive interactions.
 
-### Success Criteria
+### Success Metrics
 
-| Metric                   | Target                              |
-|--------------------------|-------------------------------------|
-| Autonomous resolution rate | > 60% of all interactions resolved without human handoff |
-| Average resolution time  | < 3 minutes for AI-resolved interactions |
-| Customer satisfaction (CSAT) | >= parity with human agents (within 5%) |
-| Cost per interaction     | 40-60% reduction vs. human-only baseline |
-| First-contact resolution | > 80% (vs. industry average of 70%) |
-| Escalation accuracy      | > 95% of escalated cases genuinely require human judgment |
-| Policy compliance        | 100% consistent policy application across all AI-resolved interactions |
-
----
+| Metric | Baseline | Target |
+|--------|----------|--------|
+| Autonomous resolution rate | 0% (all interactions require human agents) | > 60% of all interactions resolved without human handoff |
+| Average resolution time | 11-15 minutes per interaction | < 3 minutes for AI-resolved interactions |
+| Customer satisfaction (CSAT) | Human-agent CSAT benchmark | >= parity with human agents (within 5%) |
+| Cost per interaction | $5-12 per interaction (human agents) | 40-60% reduction vs. human-only baseline |
+| First-contact resolution | ~70% (industry average) | > 80% |
+| Escalation accuracy | Not measured (all cases go to humans) | > 95% of escalated cases genuinely require human judgment |
+| Policy compliance | Variable by agent experience and workload | 100% consistent policy application across all AI-resolved interactions |
 
 ## Stakeholders
 
-| Role                        | Interest                                    |
-|-----------------------------|---------------------------------------------|
-| VP of Customer Experience   | Improve CSAT and NPS while reducing costs   |
-| Head of Support Operations  | Reduce headcount pressure and agent burnout  |
-| IT / Platform Engineering   | System integration, security, uptime        |
-| Compliance / Legal          | Consistent policy application, audit trails, data privacy |
-| Finance / CFO               | Cost reduction, ROI demonstration            |
-| Product Team                | Feedback loop from support data to product improvements |
-| Human Support Agents        | Role evolution from routine resolution to complex case handling |
-
----
+| Role | What They Need |
+|------|----------------|
+| VP of Customer Experience | Improve CSAT and NPS while reducing costs |
+| Head of Support Operations | Reduce headcount pressure and agent burnout |
+| IT / Platform Engineering | System integration, security, uptime |
+| Compliance / Legal | Consistent policy application, audit trails, data privacy |
+| Finance / CFO | Cost reduction, ROI demonstration |
+| Product Team | Feedback loop from support data to product improvements |
+| Human Support Agents | Role evolution from routine resolution to complex case handling |
 
 ## Constraints
 
-| Constraint              | Detail                          |
-|-------------------------|---------------------------------|
-| **Data Privacy**        | Customer PII handled in every interaction; GDPR/CCPA compliance required; data residency requirements for EU/UK customers; AI must not log or retain sensitive financial data beyond session scope |
-| **Latency**             | Real-time conversational response required (< 3 seconds per message); backend API calls to billing/order systems must complete within 5 seconds; degraded performance must fall back to human queue, not fail silently |
-| **Budget**              | LLM inference costs at scale are significant — Klarna-scale (2.3M conversations/month) at $0.01-0.05 per interaction still means $23K-115K/month in inference alone; must demonstrate ROI within 6 months |
-| **Existing Systems**    | Must integrate with existing CRM (Salesforce, Zendesk, Intercom), order management, billing/payment systems, and knowledge base; cannot require wholesale platform replacement |
-| **Compliance**          | Financial services interactions require audit trails; refund/credit actions above thresholds need human approval; AI must disclose its non-human nature where legally required (EU AI Act, state-level laws) |
-| **Scale**               | Must handle 10K-500K conversations/month depending on company size; peak loads during sales events (Black Friday, product launches) can be 5-10x normal volume; graceful degradation required |
+| Area | Constraint |
+|------|------------|
+| **Data / Privacy** | Customer PII handled in every interaction; GDPR/CCPA compliance required; data residency requirements for EU/UK customers; AI must not log or retain sensitive financial data beyond session scope |
+| **Systems** | Must integrate with existing CRM (Salesforce, Zendesk, Intercom), order management, billing/payment systems, and knowledge base; cannot require wholesale platform replacement |
+| **Compliance** | Financial services interactions require audit trails; refund/credit actions above thresholds need human approval; AI must disclose its non-human nature where legally required (EU AI Act, state-level laws) |
+| **Operating Model** | Real-time conversational response required (< 3 seconds per message); backend API calls must complete within 5 seconds; degraded performance must fall back to human queue, not fail silently. Must handle 10K-500K conversations/month with 5-10x peak loads during sales events. LLM inference costs at Klarna-scale (2.3M conversations/month) run $23K-115K/month; must demonstrate ROI within 6 months. |
 
----
+## Evidence Base
+
+| Source / Deployment | What It Proves | Strength |
+|---------------------|----------------|----------|
+| Klarna AI assistant | Handled 2.3M conversations in first month (two-thirds of all chats); reduced cost per interaction from $0.32 to $0.19 (40% reduction); projected $40M annual savings; 25% drop in repeat inquiries. Also revealed quality degradation with over-reliance on AI for complex queries, requiring rebalancing. | Primary |
+| Sierra AI | Powers hundreds of millions of conversations annually across 40% of Fortune 50 companies; achieves ~90% resolution without human handoff. | Primary |
+| Ramp | Achieves 90% resolution without human handoff, eliminating queue wait times entirely. | Primary |
+| Intercom Fin | Involved in 99% of conversations across its customer base, resolving up to 65% end-to-end. | Primary |
+| Gartner (industry benchmark) | Average cost per human-agent interaction is $5-12; provides baseline for ROI calculations. | Secondary |
+| Harvard Business Review | 67% of customer churn is preventable with first-contact resolution; establishes the business case for speed and accuracy. | Secondary |
 
 ## Scope Boundaries
 

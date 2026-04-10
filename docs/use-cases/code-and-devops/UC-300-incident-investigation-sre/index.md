@@ -27,7 +27,7 @@ Investigation work also dominates the lifecycle of an incident. Industry researc
 
 The result is widespread alert fatigue, slow Mean Time to Resolution (MTTR), and senior engineers spending 20–30% of their week on triage instead of building reliability into the systems themselves. Cleric AI, an AI SRE startup that has raised $9.8M in seed funding led by Vertex Ventures US and was named a Gartner® Cool Vendor 2025 in AI for SRE and Observability, reports that early customers reclaimed 20–30% of total engineering capacity after deploying its agent into Slack alerting channels.
 
-## Business Impact
+## Business Case
 
 | Dimension       | Description                               |
 |-----------------|-------------------------------------------|
@@ -37,7 +37,7 @@ The result is widespread alert fatigue, slow Mean Time to Resolution (MTTR), and
 | **Scale**       | BlaBlaCar: 200+ deployments/day, 200+ engineers, 40+ teams, 5-person SRE team. Datadog Bits AI SRE: 2,000+ customer environments tested, tens of thousands of investigations executed across global enterprises and startups. Azure SRE Agent and AWS DevOps Agent ship as managed services across the entire Azure and AWS customer base respectively. Alert volumes for a mid-sized SaaS commonly exceed 10,000–100,000 alerts per month per cluster. |
 | **Risk**        | Slow MTTR translates directly into customer-visible downtime, SLA credit payouts, and revenue loss for transaction-driven businesses. Alert fatigue causes real incidents to be acknowledged late or missed. Senior SRE burnout creates retention risk in a labor market where SRE compensation routinely exceeds $200K. For regulated industries (FinTech, healthcare SaaS), failure to investigate and document an incident creates audit and compliance exposure. |
 
-## Current Process (Before AI)
+## Current Workflow
 
 1. **Alert Fires**: A monitoring tool (Datadog, Prometheus/Alertmanager, New Relic, CloudWatch, Dynatrace) raises an alert based on a SLO breach, error-rate threshold, or anomaly detector. The alert is routed to a Slack/Teams channel and to the on-call rotation in PagerDuty, Opsgenie, or incident.io.
 2. **On-Call Acknowledgment**: The on-call engineer acknowledges the page (often interrupted from focused work or sleep), opens the alert payload, and begins to triage. Severity is provisionally assigned based on the alert metadata.
@@ -48,7 +48,7 @@ The result is widespread alert fatigue, slow Mean Time to Resolution (MTTR), and
 7. **Escalation**: If the on-call engineer cannot resolve the issue within an SLA window, the incident is escalated to a domain expert, a senior SRE, or an incident commander, often pulling multiple engineers into a war-room call.
 8. **Postmortem & Documentation**: After resolution, the on-call writes a postmortem in Confluence/Notion/Jira, captures timeline and remediation actions, and the team meets to review systemic causes.
 
-### Bottlenecks & Pain Points
+### Main Frictions
 
 - **Tool sprawl**: Investigation requires jumping between 5–10 different tools (metrics, logs, traces, deployment system, runbooks, source code, dependency graph, ticketing). The engineer is the manual integration layer between observability silos.
 - **Alert fatigue**: High alert volume relative to true incident volume desensitizes on-call engineers. Real critical incidents get acknowledged late because they look like every other alert.
@@ -58,13 +58,13 @@ The result is widespread alert fatigue, slow Mean Time to Resolution (MTTR), and
 - **Investigations don't scale linearly**: Adding more on-call engineers does not linearly reduce MTTR because the bottleneck is the cognitive work of correlation and hypothesis formation, not the headcount available to look at dashboards.
 - **Postmortem learnings don't reach the next investigation**: Lessons captured in postmortems rarely change how the next similar incident is investigated, because runbook updates lag and engineers don't read runbooks under pressure.
 
-## Desired Outcome (After AI)
+## Target State
 
 An autonomous AI SRE agent that monitors alerting channels (Slack, Teams, PagerDuty webhooks), automatically begins investigating the moment an alert fires, executes a multi-step diagnostic loop using read-only access to the same observability tools a human SRE would use (Datadog, Prometheus, Grafana, Kubernetes API, deployment systems, source repos), correlates signals across all of them, forms and tests hypotheses, posts a structured root-cause analysis back into the alerting channel within 2–5 minutes, and learns continuously from engineer feedback so future investigations of similar alerts improve over time. Humans retain final decision authority on remediation actions in production.
 
 Cleric AI's deployment at BlaBlaCar demonstrates the target state: introduced into the SRE helpdesk in August 2024 against the Chaos engineering app, expanded to the Database Reliability team's alerting channels in October 2024 acting as level-one incident response, and added to the Identity and Access Management team's Slack alerting channel in late January 2025. Within three weeks of being added to the IAM channel, with no prior domain-specific configuration, Cleric earned a perfect score from a senior IAM engineer for correctly diagnosing an "Upstream Retry Limit Exceeded" alert. Investigation time averaged under 2 minutes. Datadog's Bits AI SRE, Azure SRE Agent, AWS DevOps Agent, Neubird, incident.io's AI SRE, and Observe's AI SRE/o11y.ai agents all converge on the same operating model: agentic investigation with explainable RCA and policy-bounded auto-remediation.
 
-### Success Criteria
+### Success Metrics
 
 | Metric                              | Target                                            |
 |-------------------------------------|---------------------------------------------------|
@@ -81,7 +81,7 @@ Cleric AI's deployment at BlaBlaCar demonstrates the target state: introduced in
 
 ## Stakeholders
 
-| Role                              | Interest                                          |
+| Role                              | What They Need                                    |
 |-----------------------------------|---------------------------------------------------|
 | Head of SRE / Reliability         | Reduce on-call burden, improve MTTR, retain senior engineers |
 | On-Call Engineers                 | Fewer middle-of-the-night pages, faster context when paged   |
@@ -95,7 +95,7 @@ Cleric AI's deployment at BlaBlaCar demonstrates the target state: introduced in
 
 ## Constraints
 
-| Constraint              | Detail                          |
+| Area                    | Constraint                      |
 |-------------------------|---------------------------------|
 | **Data Privacy**        | Logs and traces routinely contain customer PII, request payloads, and authentication tokens. Agent must operate within the customer's cloud boundary or via a dedicated tenant with strict data handling. GDPR, CCPA, HIPAA (for healthcare SaaS), and PCI-DSS (for FinTech) apply depending on industry. No telemetry data may be used for cross-customer model training without explicit opt-in. |
 | **Latency**             | Investigation must complete within 2–5 minutes of alert fire to be useful during an active incident. Agent must operate continuously, 24/7, with no human prompting required. |

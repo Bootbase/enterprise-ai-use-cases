@@ -17,8 +17,6 @@ has_references: false
 permalink: /use-cases/UC-508-dynamic-pricing-optimization/
 ---
 
-# UC-508: Autonomous Dynamic Pricing and Revenue Optimization with Agentic AI
-
 ## Problem Statement
 
 Enterprises across retail, e-commerce, airlines, hospitality, and ride-sharing operate in markets where optimal price is a moving target that shifts every minute based on competitor moves, demand fluctuations, inventory levels, weather, and local events. Yet most companies still set prices through manual spreadsheet processes on weekly or monthly cycles — a fundamental inability to capture available revenue.
@@ -27,7 +25,7 @@ McKinsey's landmark pricing study established that a 1% price increase, if volum
 
 Amazon changes prices approximately 2.5 million times per day across hundreds of millions of SKUs — roughly once every 10 minutes per product. During November alone, Amazon implements more than 2.5 million price changes every day, while Best Buy and Walmart together manage only about 50,000 total price changes during the entire month.
 
-## Business Impact
+## Business Case
 
 | Dimension       | Description                               |
 |-----------------|-------------------------------------------|
@@ -36,7 +34,7 @@ Amazon changes prices approximately 2.5 million times per day across hundreds of
 | **Error Rate**  | Manual pricing: inconsistent, cross-elasticity effects invisible. Competera's platform models **20+ pricing factors** with **95% accuracy on what-if simulations**. |
 | **Scale**       | Dynamic pricing market: USD 2.64B (2023) → USD 3.05B (2024) at 15.5% CAGR. Amazon: hundreds of millions of listings. PROS: 400M+ prices + 1.7B forecasts daily. Uber: millions of location updates/second. |
 
-## Success Criteria
+## Success Metrics
 
 | Metric                                       | Target                                                              |
 |----------------------------------------------|---------------------------------------------------------------------|

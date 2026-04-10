@@ -25,7 +25,7 @@ The problem is that traditional modernization approaches fail catastrophically. 
 
 Agentic AI systems — multi-agent architectures that autonomously analyze, decompose, translate, test, and validate legacy code — are now demonstrating the ability to compress these timelines from years to months while dramatically reducing cost, labor, and failure risk.
 
-## Business Impact
+## Business Case
 
 | Dimension       | Description                               |
 |-----------------|-------------------------------------------|
@@ -35,7 +35,7 @@ Agentic AI systems — multi-agent architectures that autonomously analyze, deco
 | **Scale**       | 220–344 billion lines of COBOL in production globally; 92 of top 100 banks use mainframes; 71% of Fortune 500 companies rely on mainframes; 83% of global banking transactions run on mainframes |
 | **Risk**        | Retiring COBOL workforce (fewer than 3,200 active COBOL developers in the US with federal clearances); loss of institutional knowledge embedded in undocumented code; compliance and operational risk if critical systems become unmaintainable |
 
-## Current Process (Before AI)
+## Current Workflow
 
 1. **Assessment phase** (3–6 months): Consulting firm (Accenture, Deloitte, TCS, Infosys) inventories mainframe estate — applications, dependencies, data stores, batch jobs, transaction flows. Much of this is manual code reading because documentation is decades out of date or nonexistent.
 2. **Planning phase** (2–4 months): Architects design target state (cloud platform, modern language, microservices vs. monolith). Business stakeholders prioritize which applications migrate first. Budget and timeline estimates are produced (frequently inaccurate by 2–3x).
@@ -44,7 +44,7 @@ Agentic AI systems — multi-agent architectures that autonomously analyze, deco
 5. **Parallel run** (3–6 months): Both systems run simultaneously in production, processing identical transactions, with outputs compared continuously. Any divergence halts cutover.
 6. **Cutover** (1–4 weeks): Traffic is shifted to the modernized system. Rollback plans are maintained for 30–90 days.
 
-### Bottlenecks & Pain Points
+### Main Frictions
 
 - **Undocumented business logic**: Decades of modifications by hundreds of programmers leave business rules scattered across millions of lines of code with no centralized documentation. At Bankdata (Denmark), COBOL code is written in Danish, poorly represented in any training data or documentation system.
 - **Workforce scarcity**: Average COBOL programmer is ~60 years old. Fewer than 800 developers in the US have 15+ years on IRS or SSA codebases. 70% of organizations struggle to hire mainframe talent (Kyndryl 2025). Salaries for COBOL modernization consultants reach $150K+.
@@ -52,11 +52,11 @@ Agentic AI systems — multi-agent architectures that autonomously analyze, deco
 - **Prohibitive cost**: Commonwealth Bank of Australia spent AU$1B. US federal agencies spend billions annually maintaining legacy systems they cannot afford to replace. Average project cost is $9.1M even for smaller systems.
 - **Institutional knowledge loss**: When the last developer who understands a particular COBOL module retires, the knowledge of why certain business rules exist (not just what they do) is permanently lost. This makes even assessment phases unreliable.
 
-## Desired Outcome (After AI)
+## Target State
 
 Agentic AI systems autonomously handle the end-to-end legacy modernization pipeline: analyzing COBOL codebases to extract business logic hierarchies, decomposing monolithic applications into bounded domains, translating code to modern languages (Java, C#, JavaScript) with preserved semantics, generating comprehensive test suites, and validating functional equivalence — reducing multi-year, $10M+ projects to months-long efforts with 60–80% less human labor and dramatically higher completion rates.
 
-### Success Criteria
+### Success Metrics
 
 | Metric                       | Target                                    |
 |------------------------------|-------------------------------------------|
@@ -70,7 +70,7 @@ Agentic AI systems autonomously handle the end-to-end legacy modernization pipel
 
 ## Stakeholders
 
-| Role                          | Interest                                   |
+| Role                          | What They Need                             |
 |-------------------------------|--------------------------------------------|
 | CIO / CTO                     | Reduce mainframe operating costs, eliminate platform risk, enable cloud-native capabilities |
 | VP of Engineering             | Free developer capacity from maintenance, adopt modern toolchains and CI/CD |
@@ -83,7 +83,7 @@ Agentic AI systems autonomously handle the end-to-end legacy modernization pipel
 
 ## Constraints
 
-| Constraint              | Detail                          |
+| Area                    | Constraint                      |
 |-------------------------|---------------------------------|
 | **Data Privacy**        | Financial transaction data, PII in government systems (IRS, SSA), GDPR for European banks (Bankdata). Code itself may contain hardcoded credentials or sensitive configuration. |
 | **Latency**             | Translated systems must match or exceed mainframe transaction processing speeds (sub-second for online transactions, batch windows for overnight processing). No degradation in throughput. |

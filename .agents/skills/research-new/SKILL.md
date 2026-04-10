@@ -97,6 +97,18 @@ Add one row to `docs/use-cases/README.md`, matching the existing table format ex
 - Before you keep an external URL, open it and confirm it resolves to the content you are citing. Replace redirected or stale URLs with the final working page.
 - If a section does not need a link, omit the link instead of guessing.
 
+## Formatting Rules
+
+- No H1 heading after frontmatter. The title comes from the `title` field in frontmatter only.
+- No horizontal rules (`---`) between sections.
+- All top-level sections use H2 (`##`). Sub-sections use H3 (`###`).
+- Use the exact table column headers defined in the template:
+  - **Business Case**: `Dimension | Current State | Why It Matters`
+  - **Success Metrics**: `Metric | Baseline | Target`
+  - **Stakeholders**: `Role | What They Need`
+  - **Constraints**: `Area | Constraint`
+  - **Evidence Base**: `Source / Deployment | What It Proves | Strength`
+
 ## Writing Rules
 
 - Prefer short declarative sentences.

@@ -25,7 +25,7 @@ Each shipment touches multiple manual steps: reading unstructured customer email
 
 The core problem is speed and scale. In spot freight markets, the first broker to return a quote wins the load. Before AI, C.H. Robinson's average quote response time was 17-20 minutes, and roughly 35-40% of inbound quote requests went unanswered entirely due to volume. Order processing from emailed tenders took an average of 4 hours through the email queue. LTL freight classification required 10+ minutes per shipment of manual NMFC code lookup. Missed LTL pickup resolution consumed half a day of manual phone calls. Every delay in these steps cascades downstream into later pickups, missed delivery windows, and customer churn in a market with razor-thin margins.
 
-## Business Impact
+## Business Case
 
 | Dimension       | Description                               |
 |-----------------|-------------------------------------------|
@@ -35,7 +35,7 @@ The core problem is speed and scale. In spot freight markets, the first broker t
 | **Scale**       | 37 million shipments/year. 5,500+ truckload orders/day via email. 2,000+ LTL shipments/day requiring classification. 3,000+ appointments/day. 318,000 tracking updates captured from a single call type in September 2025 alone. |
 | **Risk**        | Unanswered quote requests (35-40% of inbound volume) represent direct revenue leakage. Missed pickups cascade into SLA breaches and penalty charges. Reactive disruption management (weather, traffic, carrier no-shows) leads to late deliveries. Customer churn in a commoditized market where service speed is the primary differentiator. |
 
-## Success Criteria
+## Success Metrics
 
 | Metric                          | Target                                           |
 |---------------------------------|--------------------------------------------------|

@@ -25,7 +25,7 @@ According to Deloitte's CPO Survey, 65% of procurement leaders have limited or n
 
 The structural problem is that **commercial negotiation itself is the bottleneck**. Tail-spend contracts still require multi-issue, multi-round, multi-party haggling — payment terms vs. price discount, volume commitment vs. lead time, warranty extension vs. termination clauses. Until recently, only humans could conduct this kind of dialogue. Pactum AI proved that an LLM-driven multi-agent system can autonomously chat with thousands of suppliers in parallel and reach signed agreements.
 
-## Business Impact
+## Business Case
 
 | Dimension       | Description                               |
 |-----------------|-------------------------------------------|
@@ -35,7 +35,7 @@ The structural problem is that **commercial negotiation itself is the bottleneck
 | **Scale**       | Walmart expanded from 100-supplier pilot to thousands across US, Chile, South Africa. SUEZ scaled from zero to 2,000 suppliers in 2 months. Negotiations run in massive parallel, breaking the linear "1 buyer = 20–30 deals/year" bottleneck. |
 | **Risk**        | Status quo risks include working capital trapped (extended payment terms can free hundreds of millions), compliance exposure on expired contracts, margin erosion, and supplier relationship deterioration from neglect. |
 
-## Success Criteria
+## Success Metrics
 
 | Metric                                       | Target                                                              |
 |----------------------------------------------|---------------------------------------------------------------------|

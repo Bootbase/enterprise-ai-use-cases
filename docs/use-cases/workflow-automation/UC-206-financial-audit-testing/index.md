@@ -23,7 +23,7 @@ Internal and external audits are among the most labor-intensive, time-pressured 
 
 The fundamental limitation is **sampling**: traditional audits examine only 2–8% of transactions, yet a sample of 2 items from a monthly control has an 83% chance of missing a single control failure during the year. This means material misstatements, fraud, and control weaknesses routinely go undetected until they become costly incidents. EY's global assurance platform alone processes over 1.4 trillion lines of journal entry data per year across 160,000 audit engagements — a scale that manual review cannot meaningfully cover.
 
-## Business Impact
+## Business Case
 
 | Dimension       | Description                               |
 |-----------------|-------------------------------------------|
@@ -33,7 +33,7 @@ The fundamental limitation is **sampling**: traditional audits examine only 2–
 | **Scale**       | Fortune 500 companies maintain 500–5,000+ SOX controls. EY processes 1.4T journal entry lines/year across 130,000 assurance professionals. MindBridge has analyzed 260B+ transactions across 3,000+ ERP systems. |
 | **Risk**        | Missed control failures lead to restatements (avg $2M+ cost), regulatory penalties, and reputational damage. SOX non-compliance can result in criminal penalties for executives. |
 
-## Success Criteria
+## Success Metrics
 
 | Metric                    | Target                                  |
 |---------------------------|------------------------------------------|

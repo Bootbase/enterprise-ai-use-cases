@@ -23,7 +23,7 @@ Regulated enterprises operate under a relentless tide of regulatory change. CUBE
 
 Today, compliance teams monitor regulatory changes by manually checking regulator websites, industry association bulletins, and legal news feeds — often dozens of sources per jurisdiction. A single regulation like MiFID II spans thousands of pages of primary text, implementing technical standards, and supervisory guidance. When a change is detected, compliance officers must read the new text, interpret which internal policies and controls are affected, draft updated procedures, route them through legal review, train impacted staff, and evidence the change for audit. This end-to-end process is slow, error-prone, and scales linearly with headcount. ING and Commonwealth Bank of Australia demonstrated the gap when they used AscentAI's platform to extract their applicable obligations from MiFID/MiFID II in 2.5 minutes — a task that previously required 1,800 hours of manual legal analysis (AscentAI / RegTech Analyst, 2025). The EU AI Act (enforced 2024-2026), the Colorado AI Act (effective June 30, 2026), and ongoing SEC/CFPB rulemaking are adding entirely new compliance domains that existing teams were never staffed to cover. The core problem is that regulatory knowledge management — ingesting, interpreting, mapping, and operationalizing regulatory text — remains a manual, human-bottlenecked process in an environment where the volume and velocity of change have outpaced any team's capacity to keep up.
 
-## Business Impact
+## Business Case
 
 | Dimension       | Description                               |
 |-----------------|-------------------------------------------|
@@ -33,7 +33,7 @@ Today, compliance teams monitor regulatory changes by manually checking regulato
 | **Scale**       | CUBE tracks 10,000+ regulatory issuing bodies across 750 jurisdictions in 80 languages. A global bank operating in 50+ countries must monitor hundreds of regulatory changes per week across banking, securities, data protection, AML, and consumer-protection regimes simultaneously. The EU AI Act alone added an entirely new compliance domain that requires mapping to existing risk and control frameworks. |
 | **Risk**        | Missed or late implementation of a regulatory change exposes the firm to enforcement action, consent orders, license revocation, and reputational damage. Regulatory gaps discovered during examination can freeze business activity (e.g., failure to implement stress-testing requirements can halt new product launches). Cross-border regulatory conflicts (EU vs. US vs. APAC) create compliance ambiguity that manual processes cannot resolve at speed. |
 
-## Current Process (Before AI)
+## Current Workflow
 
 1. Compliance analysts manually check regulator websites (SEC, FCA, EBA, APRA, MAS, BaFin, etc.), industry association bulletins, and legal news aggregators daily or weekly for new publications
 2. When a new regulation, amendment, or guidance document is identified, a compliance officer reads the full text (often 50-500+ pages) and determines whether it applies to the firm's licensed activities and jurisdictions
@@ -46,7 +46,7 @@ Today, compliance teams monitor regulatory changes by manually checking regulato
 9. The change is logged in the GRC system with evidence artifacts (assessment, approval records, updated policies, training completion records) for regulatory examination readiness
 10. During regulatory examinations, the firm must demonstrate that every applicable change was identified, assessed, implemented, and evidenced — producing a complete audit trail on demand
 
-### Bottlenecks & Pain Points
+### Main Frictions
 
 - **Volume overwhelm**: Compliance teams cannot keep pace with the velocity of regulatory output across multiple jurisdictions — changes are missed or assessed late
 - **Language and jurisdiction fragmentation**: Regulations are published in local languages; cross-border firms must interpret and reconcile requirements across 10-50+ jurisdictions with different legal frameworks
@@ -56,7 +56,7 @@ Today, compliance teams monitor regulatory changes by manually checking regulato
 - **Audit preparation is labor-intensive**: Producing evidence that every applicable change was tracked and implemented requires assembling artifacts from email chains, shared drives, GRC tools, and policy repositories — a process that can consume weeks of team time before an examination
 - **Reactive rather than predictive**: Current processes detect changes after publication; firms cannot anticipate regulatory direction or pre-position controls for upcoming requirements
 
-## Desired Outcome (After AI)
+## Target State
 
 An agentic AI platform that serves as the firm's regulatory nervous system — continuously monitoring regulatory sources worldwide, autonomously interpreting new and changed requirements, mapping them to the firm's obligation register and control framework, drafting impact assessments and policy updates, and orchestrating the end-to-end change management workflow from detection to evidencing. The system is modeled on production architectures from CUBE (RegPlatform, 10,000+ issuing bodies, 750 jurisdictions), AscentAI (Regulatory Lifecycle Management, used by ING and Commonwealth Bank), and Wolters Kluwer (Compliance Intelligence, launched Q4 2025).
 
@@ -64,7 +64,7 @@ The platform operates as a multi-agent system: a **Horizon Scanner Agent** conti
 
 Human oversight is maintained through configurable confidence thresholds: high-confidence, low-impact changes (e.g., minor reporting format adjustments) flow through with compliance officer notification, while high-impact or ambiguous changes require explicit human review and approval before policy updates are activated.
 
-### Success Criteria
+### Success Metrics
 
 | Metric                              | Target                                  |
 |-------------------------------------|-----------------------------------------|
@@ -81,7 +81,7 @@ Human oversight is maintained through configurable confidence thresholds: high-c
 
 ## Stakeholders
 
-| Role                              | Interest                                    |
+| Role                              | What They Need                              |
 |-----------------------------------|---------------------------------------------|
 | Chief Compliance Officer (CCO)    | Reduce regulatory risk exposure; shift team from reactive monitoring to strategic advisory; demonstrate examination readiness at all times |
 | Head of Regulatory Affairs        | Anticipate regulatory direction; ensure timely implementation across all jurisdictions; reduce assessment-to-implementation lag |
@@ -96,7 +96,7 @@ Human oversight is maintained through configurable confidence thresholds: high-c
 
 ## Constraints
 
-| Constraint              | Detail                          |
+| Area                    | Constraint                      |
 |-------------------------|---------------------------------|
 | **Data Privacy**        | Regulatory texts are public, but the firm's obligation registers, gap assessments, and policy documents are highly confidential — they reveal the firm's control weaknesses and regulatory exposure. Cross-border data residency requirements apply when regulatory assessments reference client data or jurisdiction-specific business activities. GDPR, SOX, and sector-specific regulations govern how compliance evidence is stored and retained. |
 | **Latency**             | Regulatory change detection must be near-real-time (within 24 hours of publication). Obligation extraction and applicability assessment should complete in minutes. End-to-end change implementation workflow operates on a days-to-weeks cadence. Batch processing is acceptable for overnight ingestion of new publications; real-time alerting is required for urgent supervisory notices and enforcement actions. |

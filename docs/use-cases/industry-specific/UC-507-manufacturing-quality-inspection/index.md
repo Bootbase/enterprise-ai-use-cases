@@ -17,15 +17,13 @@ has_references: false
 permalink: /use-cases/UC-507-manufacturing-quality-inspection/
 ---
 
-# UC-507: Autonomous Manufacturing Quality Inspection and Defect Remediation with Agentic AI Vision
-
 ## Problem Statement
 
 Manufacturing quality inspection is the last major production bottleneck that still depends overwhelmingly on human eyesight. Across the global manufacturing sector, the cost of poor quality averages 20% of total revenue. A human visual inspector operating at production-line speed achieves only 80% defect detection accuracy and misses up to 90% of microscopic or sub-surface defects.
 
 At Audi's Neckarsulm plant, the body shop produces 300 car bodies per shift, each with approximately 5,000 spot welds — totaling 1.5 million spot welds inspected per shift. Manual inspection is expensive, fatiguing, and prone to error, especially by mid-shift when accuracy degrades 15–25%.
 
-## Business Impact
+## Business Case
 
 | Dimension       | Description                               |
 |-----------------|-------------------------------------------|
@@ -34,7 +32,7 @@ At Audi's Neckarsulm plant, the body shop produces 300 car bodies per shift, eac
 | **Error Rate**  | Human visual accuracy: ~80% overall; misses up to 90% of microscopic defects. Fatigue-driven degradation: 15–25% accuracy loss by mid-shift. AI vision accuracy: 99%+ detection; Siemens Amberg achieves 99.9%. BMW AIQX: 60% reduction in escaped defects. |
 | **Scale**       | Audi: 1.5M spot welds per shift. BMW Regensburg: 1,400 vehicles/day. Foxconn: millions of PCBs/day. Global manufacturing output: USD 16.4 trillion (2024). |
 
-## Success Criteria
+## Success Metrics
 
 | Metric                                  | Target                                                                                              |
 |-----------------------------------------|-----------------------------------------------------------------------------------------------------|

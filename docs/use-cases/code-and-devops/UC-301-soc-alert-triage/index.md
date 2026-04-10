@@ -23,7 +23,7 @@ Enterprise Security Operations Centers (SOCs) face an unmanageable volume of sec
 
 Traditional Security Orchestration, Automation, and Response (SOAR) platforms attempted to address this with rigid, pre-scripted playbooks, but they require heavy engineering effort to build and maintain, cannot adapt to novel attack patterns, and still leave the cognitive burden of investigation on human analysts. Both Gartner and Forrester retired their dedicated SOAR evaluations by 2025, signaling the category has hit its ceiling. The industry needs a fundamentally different approach: agentic AI systems that can reason, investigate, and respond autonomously -- not just execute scripts.
 
-## Business Impact
+## Business Case
 
 | Dimension       | Description                               |
 |-----------------|-------------------------------------------|
@@ -33,7 +33,7 @@ Traditional Security Orchestration, Automation, and Response (SOAR) platforms at
 | **Scale**       | Enterprises receive 11,000+ alerts/day on average. Large enterprises with 20,000+ employees see 3,000+ high-priority alerts daily. Exaforce processed 79 billion security events across its customer base in 2025 alone. |
 | **Risk**        | 30% of alerts are ignored entirely. Breach dwell time averages 194 days to identify. Regulatory penalties (GDPR fines up to 4% of revenue, HIPAA, PCI-DSS), reputational damage, and operational disruption from undetected threats. Organizations with alert fatigue show 34% longer containment times and 43% more successful data exfiltration. |
 
-## Current Process (Before AI)
+## Current Workflow
 
 1. **Alert ingestion**: SIEM platforms (Splunk, Microsoft Sentinel, Elastic, IBM QRadar) aggregate logs from firewalls, EDR agents, cloud workloads, identity providers, and email gateways, generating thousands of raw alerts per day.
 2. **Tier-1 triage**: Junior SOC analysts review each alert, checking severity, source IP, affected asset, and basic IOC (Indicators of Compromise) enrichment against threat intelligence feeds. Each triage takes 5-15 minutes. Most are false positives.
@@ -42,7 +42,7 @@ Traditional Security Orchestration, Automation, and Response (SOAR) platforms at
 5. **Playbook execution**: SOAR tools (Palo Alto Cortex XSOAR, Splunk SOAR, Swimlane) execute pre-scripted response playbooks for known alert types. But playbooks are brittle -- they break on novel patterns and require constant maintenance by security engineers.
 6. **Reporting and compliance**: Analysts manually document investigation steps, findings, and response actions for compliance audits (SOC 2, ISO 27001, NIST CSF, PCI-DSS).
 
-### Bottlenecks & Pain Points
+### Main Frictions
 
 - **Alert fatigue**: 71% of SOC analysts report burnout; 65% have considered quitting. The SANS 2025 survey found 70% of SOC analysts with 5 years or less experience leave within 3 years.
 - **Coverage gaps**: With only a fraction of alerts investigated, real threats hide in the noise. 62% of alerts are never properly investigated.
@@ -51,13 +51,13 @@ Traditional Security Orchestration, Automation, and Response (SOAR) platforms at
 - **Tool sprawl**: SOC teams juggle 7+ separate security tools on average, requiring manual context-switching between SIEM, EDR, SOAR, threat intel, ticketing, and cloud security platforms.
 - **Slow response**: MTTD of 6+ hours and MTTR of hours-to-days gives attackers ample dwell time to move laterally, escalate privileges, and exfiltrate data.
 
-## Desired Outcome (After AI)
+## Target State
 
 An agentic AI SOC system that autonomously triages, investigates, and responds to 80-95% of security alerts without human intervention -- operating 24/7 with consistent accuracy, freeing human analysts to focus on threat hunting, detection engineering, and strategic security work.
 
 The system deploys specialized AI agents (triage agent, investigation agent, enrichment agent, response agent, reporting agent) that collaborate in a multi-agent architecture. Each alert triggers a dynamic, reasoning-based investigation -- not a static playbook -- where the AI gathers evidence from across the security stack, correlates patterns, assesses risk, and either closes the alert with a documented rationale or escalates to a human analyst with a complete investigation summary and recommended actions.
 
-### Success Criteria
+### Success Metrics
 
 | Metric                        | Target                                     |
 |-------------------------------|-------------------------------------------|
@@ -72,7 +72,7 @@ The system deploys specialized AI agents (triage agent, investigation agent, enr
 
 ## Stakeholders
 
-| Role                          | Interest                                    |
+| Role                          | What They Need                              |
 |-------------------------------|---------------------------------------------|
 | CISO / VP of Security         | Reduce breach risk, demonstrate ROI, improve security posture metrics (MTTD/MTTR) |
 | SOC Manager                   | Reduce analyst burnout and attrition, improve alert coverage, scale operations without proportional headcount growth |
@@ -84,7 +84,7 @@ The system deploys specialized AI agents (triage agent, investigation agent, enr
 
 ## Constraints
 
-| Constraint              | Detail                                           |
+| Area                    | Constraint                                       |
 |-------------------------|--------------------------------------------------|
 | **Data Privacy**        | Security telemetry contains sensitive data (IP addresses, user identities, file hashes). Must comply with GDPR, CCPA, HIPAA depending on industry. Some organizations require on-premises or private-cloud deployment of AI models to prevent telemetry leaving their environment. |
 | **Latency**             | Real-time to near-real-time. Triage decisions needed within seconds to minutes. Automated containment actions (endpoint isolation, IP blocking) must execute within minutes of confirmed threat detection. |
@@ -114,9 +114,7 @@ The system deploys specialized AI agents (triage agent, investigation agent, enr
 - Physical security operations and convergence with cyber-physical systems
 - Governance, risk, and compliance (GRC) program management beyond SOC-specific audit trails
 
----
-
-## Real-World Deployments & Vendor Landscape
+## Evidence Base
 
 ### Platform Vendors (Integrated SOC Platforms)
 

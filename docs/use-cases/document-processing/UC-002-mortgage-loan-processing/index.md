@@ -25,21 +25,16 @@ The Mortgage Bankers Association (MBA) forecasts $2.2 trillion in originations f
 
 Today's process is plagued by "documentation ping-pong": missing items are requested, wrong versions are received, corrected documents are re-requested, and each roundtrip adds days to the cycle. Underwriters spend substantial time on status inquiries and administrative tasks rather than actual credit analysis. The result is a slow, expensive, error-prone process in an industry where speed-to-close directly determines competitive advantage and borrower satisfaction.
 
----
+## Business Case
 
-## Business Impact
+| Dimension | Current State | Why It Matters |
+|-----------|---------------|----------------|
+| **Volume / Scale** | 5.8M loans originated annually in the US; each loan file averages 200+ pages across 700+ document types. Top lenders process 50,000–150,000 loan files per month | Manual processing cannot keep pace with origination volume, especially during refinance booms |
+| **Cycle Time** | 30–45 day average cycle from application to closing; initial underwriting review alone takes 48–72 hours per file. Each missing-document roundtrip adds 3–5 business days | Speed-to-close directly determines competitive advantage and borrower satisfaction; 20% borrower abandonment rate |
+| **Cost / Effort** | $11,500 average origination cost per loan (MBA Q3 2024); document review and underwriting account for 30–40% of total origination expense. At 5.8M loans/year, the industry spends ~$25B+ annually on document-intensive tasks | Chronic underwriter shortage means lenders cannot hire their way out; cost pressure intensifies with volume |
+| **Risk / Quality** | 10–15% of loan files contain material data discrepancies caught post-closing or during QC audits (Fannie Mae quality reports). Manual data entry errors in income and asset calculations are a leading cause of GSE repurchase demands | CFPB enforcement actions for TRID/RESPA violations; fair lending compliance risk from inconsistent human judgment; repurchase demands erode profitability |
 
-| Dimension       | Description                               |
-|-----------------|-------------------------------------------|
-| **Cost**        | $11,500 average origination cost per loan (MBA Q3 2024); document review and underwriting account for 30–40% of total origination expense. At 5.8M loans/year, the US mortgage industry spends ~$25B+ annually on document-intensive origination tasks |
-| **Time**        | 30–45 day average cycle from application to closing; initial underwriting review alone takes 48–72 hours per file. Each missing-document roundtrip adds 3–5 business days |
-| **Error Rate**  | 10–15% of loan files contain material data discrepancies that are caught post-closing or during QC audits (Fannie Mae quality reports). Manual data entry errors in income and asset calculations are a leading cause of repurchase demands from GSEs |
-| **Scale**       | 5.8 million loans originated annually in the US; each loan file averages 200+ pages across dozens of document types. Top lenders process 50,000–150,000 loan files per month |
-| **Risk**        | CFPB enforcement actions for TRID/RESPA violations; GSE repurchase demands for underwriting errors; fair lending compliance risk from inconsistent human judgment; borrower abandonment from slow cycle times directly impacts revenue |
-
----
-
-## Current Process (Before AI)
+## Current Workflow
 
 1. **Application intake** — Borrower submits initial application (1003/URLA) via lender portal or loan officer. Processor creates loan file in the Loan Origination System (LOS — typically ICE Encompass, Black Knight Empower, or Blend).
 2. **Document collection** — Processor sends borrower a list of required documents (pay stubs, W-2s, tax returns, bank statements, employment verification). Documents arrive via email, fax, portal upload, or physical mail in inconsistent formats (PDF, JPEG, scanned images, photos).
@@ -51,7 +46,7 @@ Today's process is plagued by "documentation ping-pong": missing items are reque
 8. **QC review** — Post-underwriting quality control team re-reviews a sample (or all) of loan files for compliance with TRID timelines, RESPA disclosures, fair lending requirements, and investor guidelines.
 9. **Clear-to-close** — Underwriter issues final approval. Closer prepares closing documents. Loan proceeds to settlement.
 
-### Bottlenecks & Pain Points
+### Main Frictions
 
 - **Documentation ping-pong**: Average loan requires 2.3 rounds of condition requests before clear-to-close; each round adds 3–5 business days and generates borrower frustration
 - **Manual classification at scale**: Processors spend 15–30 minutes per file just classifying and indexing uploaded documents, with error rates of 5–8% on document type identification
@@ -60,32 +55,28 @@ Today's process is plagued by "documentation ping-pong": missing items are reque
 - **Inconsistent decisions**: Different underwriters may reach different conclusions on the same file, creating fair lending risk and audit exposure
 - **Format chaos**: Documents arrive in every conceivable format — photos of documents taken at angles, multi-page faxes with pages out of order, password-protected PDFs, handwritten forms — making automated processing historically unreliable
 
----
-
-## Desired Outcome (After AI)
+## Target State
 
 An agentic AI system that autonomously handles the document-intensive portions of mortgage loan origination: classifying incoming documents, extracting and validating data, cross-referencing across the full loan file, identifying discrepancies, generating conditions, and clearing conditions upon receipt of satisfactory documentation — escalating to human underwriters only for complex credit decisions, exception cases, or regulatory-mandated human review.
 
 The system should function as an autonomous "digital loan processor and junior underwriter" that handles the high-volume, rules-based work while freeing human underwriters to focus on complex credit judgment, relationship management, and exception handling.
 
-### Success Criteria
+### Success Metrics
 
-| Metric                        | Target                                      |
-|-------------------------------|---------------------------------------------|
-| Document classification accuracy | > 95% across 700+ document types          |
-| Data extraction accuracy      | > 97% for key fields (income, assets, DTI)  |
-| Processing time per loan file | < 24 hours from complete submission to initial underwriting decision (vs. 48–72 hours manual) |
-| Cycle time reduction          | 40–50% reduction in application-to-close timeline |
-| Underwriter time per file     | Reduce by 30%+ through automated pre-review and condition generation |
-| Condition roundtrip reduction | Reduce average condition cycles from 2.3 to < 1.5 through upfront completeness checking |
-| Human escalation rate         | < 20% of loan files require full manual underwriting review |
-| Cost per loan                 | Reduce origination cost by 25–35% ($3,000–$4,000 per loan) |
-
----
+| Metric                        | Baseline                                    | Target                                      |
+|-------------------------------|---------------------------------------------|---------------------------------------------|
+| Document classification accuracy | ~92% with rule-based systems; 5–8% manual error rate | > 95% across 700+ document types          |
+| Data extraction accuracy      | Manual keying with variable error rates     | > 97% for key fields (income, assets, DTI)  |
+| Processing time per loan file | 48–72 hours for initial underwriting review | < 24 hours from complete submission to initial underwriting decision |
+| Cycle time (application to close) | 30–45 days                               | 40–50% reduction in application-to-close timeline |
+| Underwriter time per file     | 40%+ spent on administrative tasks          | Reduce by 30%+ through automated pre-review and condition generation |
+| Condition roundtrip cycles    | 2.3 average rounds before clear-to-close    | < 1.5 through upfront completeness checking |
+| Human escalation rate         | ~100% (all files manually reviewed)         | < 20% of loan files require full manual underwriting review |
+| Cost per loan                 | $11,500 average origination cost            | Reduce origination cost by 25–35% ($3,000–$4,000 per loan) |
 
 ## Stakeholders
 
-| Role                              | Interest                                                     |
+| Role                              | What They Need                                               |
 |-----------------------------------|--------------------------------------------------------------|
 | Chief Production Officer / VP Lending | Increase throughput and reduce cost-per-loan while maintaining quality |
 | Underwriting Manager              | Free underwriters from administrative tasks; ensure consistency |
@@ -95,20 +86,14 @@ The system should function as an autonomous "digital loan processor and junior u
 | Secondary Market / Capital Markets | Ensure loan quality meets GSE and investor purchase requirements to avoid repurchase demands |
 | Borrowers                         | Faster, less frustrating loan experience with fewer condition requests |
 
----
-
 ## Constraints
 
-| Constraint              | Detail                                                        |
-|-------------------------|---------------------------------------------------------------|
-| **Data Privacy**        | Borrower PII (SSN, income, assets) subject to GLBA, state privacy laws. SOC 2 Type II required. Data residency within US for most lenders. No borrower data may be used for AI model training without explicit consent |
-| **Latency**             | Near-real-time document classification and extraction (< 30 seconds per document); batch cross-referencing and underwriting analysis within minutes of complete file assembly |
-| **Budget**              | Target cost of AI processing < $50 per loan file to maintain ROI at scale. Must not require per-document pricing models that exceed manual processing costs for complex files |
-| **Existing Systems**    | Must integrate with dominant LOS platforms: ICE Mortgage Technology Encompass (45%+ market share), Black Knight Empower, Blend. Must work with existing document delivery channels (borrower portals, email, fax) |
-| **Compliance**          | CFPB TRID timelines are hard deadlines — AI must not introduce delays. Fair lending (ECOA/Reg B) requires explainable credit decisions. GSE Representations & Warranties require documented underwriting rationale. CFPB has issued guidance on AI in lending decisions requiring adverse action notice specificity |
-| **Scale**               | Top-10 lenders process 50,000–150,000 loan files per month. System must handle peak volumes during refinance booms (2–3x normal volume) without degradation |
-
----
+| Area | Constraint |
+|------|------------|
+| **Data / Privacy** | Borrower PII (SSN, income, assets) subject to GLBA, state privacy laws. SOC 2 Type II required. Data residency within US for most lenders. No borrower data may be used for AI model training without explicit consent |
+| **Compliance** | CFPB TRID timelines are hard deadlines — AI must not introduce delays. Fair lending (ECOA/Reg B) requires explainable credit decisions. GSE Representations & Warranties require documented underwriting rationale. CFPB has issued guidance on AI in lending decisions requiring adverse action notice specificity |
+| **Systems** | Must integrate with dominant LOS platforms: ICE Mortgage Technology Encompass (45%+ market share), Black Knight Empower, Blend. Must work with existing document delivery channels (borrower portals, email, fax) |
+| **Operating Model** | Near-real-time document classification and extraction (< 30 seconds per document); batch cross-referencing within minutes. Target AI processing cost < $50 per loan file. Must handle peak volumes during refinance booms (2–3x normal, 50,000–150,000 files/month for top-10 lenders) without degradation |
 
 ## Scope Boundaries
 
@@ -133,31 +118,12 @@ The system should function as an autonomous "digital loan processor and junior u
 - Borrower-facing chatbot or communication automation (separate customer service function)
 - Secondary market loan trading or securitization document preparation
 
----
+## Evidence Base
 
-## Real-World Deployments
-
-### Rocket Mortgage — Rocket Logic AI Platform
-
-Rocket Mortgage, the largest retail mortgage lender in the US, has deployed its proprietary Rocket Logic AI platform across its entire origination pipeline. The system processes 1.5 million documents per month, automatically classifying approximately 90% of all received documents without human intervention. Two-thirds of income verification is fully machine-automated. The platform has reduced per-loan team member touches by 25% year-over-year and enables Rocket to close loans 2.5 times faster than the industry average — a core competitive differentiator that has helped Rocket maintain its #1 market position. Rocket estimates the platform saves 15,000+ underwriter hours per month.
-
-### Ocrolus — AI Document Automation for Mortgage Lenders
-
-Ocrolus provides AI-powered document analysis deployed in production at multiple named mortgage lenders:
-
-- **American Federal Mortgage**: 29% reduction in underwriter time per file, saving approximately 2 hours per loan
-- **HomeTrust Bank**: 8,500 hours saved annually across the lending team, $90,000 in direct processing cost savings, keystrokes per loan application reduced from hundreds to fewer than 100
-- **Compeer Financial**: 50% increase in loan processing volume using the same staff — effectively doubling per-processor throughput
-- **Deephaven Mortgage**: 2+ hours saved per underwriter per non-QM loan application, enabling expansion into document-heavy non-QM products that were previously uneconomical to process
-
-### Blend — DocAI for Mortgage Origination
-
-Blend's DocAI platform, integrated into its cloud-based LOS, has been deployed at major banks and independent mortgage banks. Individual QC checks that previously took 20 minutes are completed in seconds. Lenders using DocAI report up to 30% reduction in overall loan processing time. The system handles document classification, data extraction, and cross-referencing within the Blend platform, eliminating days of manual review for each loan file.
-
-### ICE Mortgage Technology — Encompass AI
-
-ICE Mortgage Technology serves the majority of US mortgage originations through its Encompass LOS platform. ICE has launched AI-powered Mortgage Analyzers and an automated conditioning engine that creates exception-based underwriting workflows — the AI pre-reviews the entire file and presents only discrepancies and exceptions to human underwriters. In March 2026, ICE expanded its AI capabilities to mortgage servicing with a dedicated AI portal.
-
-### Indecomm — IDXGenius / DecisionGenius / BotGenius
-
-Indecomm, a mortgage technology services provider with 25+ years in the industry, has deployed AI across the loan lifecycle. Their IDXGenius platform claims 100% document classification accuracy across standard mortgage document types. BotGenius automates over 70% of repeatable mortgage processing tasks with zero manual intervention, deployed at top-20 mortgage lenders.
+| Source / Deployment | What It Proves | Strength |
+|---------------------|----------------|----------|
+| **Rocket Mortgage** — Rocket Logic AI Platform | 1.5M documents/month processed; 90% auto-classified without human intervention; two-thirds of income verification fully automated; 25% reduction in per-loan team touches; closes loans 2.5x faster than industry average; 15,000+ underwriter hours saved per month | Production at scale — largest US retail mortgage lender |
+| **Ocrolus** — American Federal Mortgage, HomeTrust Bank, Compeer Financial, Deephaven Mortgage | 29% reduction in underwriter time per file (American Federal); 8,500 hours and $90K saved annually (HomeTrust); 50% increase in loan processing volume with same staff (Compeer); 2+ hours saved per underwriter per non-QM loan (Deephaven) | Multiple named lender deployments with quantified outcomes |
+| **Blend** — DocAI for Mortgage Origination | QC checks reduced from 20 minutes to seconds; up to 30% reduction in overall loan processing time; document classification, extraction, and cross-referencing integrated into cloud LOS | Production at major banks and independent mortgage banks |
+| **ICE Mortgage Technology** — Encompass AI | AI-powered Mortgage Analyzers and automated conditioning engine create exception-based underwriting workflows; AI pre-reviews entire file and presents only discrepancies to underwriters; expanded to servicing (March 2026) | Dominant LOS platform (45%+ market share); broad industry reach |
+| **Indecomm** — IDXGenius / BotGenius | Claims 100% document classification accuracy across standard mortgage document types; BotGenius automates 70%+ of repeatable processing tasks with zero manual intervention | Deployed at top-20 mortgage lenders; 25+ years industry presence |

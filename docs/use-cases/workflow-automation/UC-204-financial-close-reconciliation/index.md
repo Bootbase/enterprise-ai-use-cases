@@ -23,7 +23,7 @@ The financial close process — reconciling accounts, posting journal entries, e
 
 Despite decades of ERP investment, the close process is still dominated by manual data gathering from disparate systems, spreadsheet-based reconciliation, copy-paste journal entries, and email-driven review chains. The Office of the CFO spends 30–40% of its capacity on close-related activities that produce no strategic insight — just compliance overhead. A single reconciliation error can cascade into restatements costing millions in audit fees, regulatory penalties, and reputational damage.
 
-## Business Impact
+## Business Case
 
 | Dimension       | Description                               |
 |-----------------|-------------------------------------------|
@@ -33,7 +33,7 @@ Despite decades of ERP investment, the close process is still dominated by manua
 | **Scale**       | Large enterprises reconcile 5,000–50,000+ accounts monthly across dozens to hundreds of legal entities. Trintech customers process ~6,000 daily reconciliations with only ~50 exceptions requiring human review. |
 | **Risk**        | SOX compliance violations carry penalties up to $5M and 20 years imprisonment for executives. Restatements cost average of $2M plus market cap erosion. Late filings trigger SEC scrutiny. |
 
-## Success Criteria
+## Success Metrics
 
 | Metric                    | Target                                    |
 |---------------------------|-------------------------------------------|

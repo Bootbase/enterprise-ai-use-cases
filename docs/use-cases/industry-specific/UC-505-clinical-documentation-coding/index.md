@@ -17,15 +17,13 @@ has_references: false
 permalink: /use-cases/UC-505-clinical-documentation-coding/
 ---
 
-# UC-505: Autonomous Clinical Documentation and Medical Coding with Agentic AI
-
 ## Problem Statement
 
 Physicians in the United States spend an average of 13 hours per week on indirect patient care — documentation, order entry, and test results — plus another 7.3 hours on administrative tasks such as prior authorizations and insurance forms. This documentation burden is the #1 driver of physician burnout: 43.2% of physicians report at least one burnout symptom, with 26% of primary care physicians citing documentation directly as the primary contributor.
 
 Downstream, medical coding errors cost the US healthcare industry approximately USD 36 billion annually in lost revenue, denied claims, and penalties. Up to 80% of medical claims contain errors, and up to 50% of denied claims are never resubmitted — leaving billions in legitimate revenue uncaptured.
 
-## Business Impact
+## Business Case
 
 | Dimension       | Description                               |
 |-----------------|-------------------------------------------|
@@ -34,7 +32,7 @@ Downstream, medical coding errors cost the US healthcare industry approximately 
 | **Error Rate**  | Up to 80% of claims contain errors. Human coders achieve ~96.3% encounter-level accuracy. Ambient AI hallucination rates average ~7%. |
 | **Scale**       | 1B+ ambulatory visits/year in US. Kaiser Permanente: 24,600 physicians, 40 hospitals. Microsoft DAX Copilot deployed at 600+ health systems (62.6% of Epic hospitals). |
 
-## Success Criteria
+## Success Metrics
 
 | Metric                       | Target                                                    |
 |------------------------------|-----------------------------------------------------------|

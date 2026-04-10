@@ -23,7 +23,7 @@ Enterprises operating across multiple tax jurisdictions face an escalating compl
 
 Manual tax compliance processes cost U.S. taxpayers over $10 billion annually in errors and delays. Tax teams spend the majority of their time on data gathering, rate lookups, form preparation, and portal submissions rather than strategic tax planning. Errors lead to penalties, interest charges, and audit exposure — while missed exemptions leave money on the table. Accenture found that an agentic tax system deployed for one multinational client identified $3.2 million in previously unrecognized tax deductions by detecting patterns in unstructured expense data that human preparers had missed.
 
-## Business Impact
+## Business Case
 
 | Dimension       | Description                               |
 |-----------------|-------------------------------------------|
@@ -33,7 +33,7 @@ Manual tax compliance processes cost U.S. taxpayers over $10 billion annually in
 | **Scale**       | Mid-market manufacturer files 200–500 returns/month across jurisdictions. Large multinationals file thousands/month across 50+ countries. Avalara's platform covers 190+ countries with expert-verified content. |
 | **Risk**        | Late or incorrect filings trigger penalties (5–25% of tax due), interest charges, and audit scrutiny. Nexus determination errors create retroactive liabilities spanning multiple years. Non-compliance with e-invoicing mandates risks transaction-level rejection. |
 
-## Success Criteria
+## Success Metrics
 
 | Metric                   | Target                         |
 |--------------------------|--------------------------------|

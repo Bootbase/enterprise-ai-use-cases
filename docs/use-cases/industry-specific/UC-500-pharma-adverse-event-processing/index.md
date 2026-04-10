@@ -17,8 +17,6 @@ has_references: false
 permalink: /use-cases/UC-500-pharma-adverse-event-processing/
 ---
 
-# UC-500: Autonomous Adverse Event Report Processing in Pharmacovigilance
-
 ## Problem Statement
 
 Pharmaceutical companies are legally required to collect, assess, and submit Individual Case Safety Reports (ICSRs) for every adverse drug reaction reported against their products. The FDA's FAERS database alone contains over 31 million report entries, with approximately 700,000 new adverse event reports filed annually in the US. The EMA's EudraVigilance system holds 29.3+ million ICSRs across 16.9 million unique cases in Europe.
@@ -27,7 +25,7 @@ Each ICSR requires a trained pharmacovigilance specialist to manually extract da
 
 A single routine case takes 2–4 hours of specialist time from intake through submission. Large pharma companies employ thousands of full-time pharmacovigilance staff globally, with per-product safety data management averaging $686K/year. Despite this investment, the manual process is error-prone and struggles to scale with growing report volumes driven by expanded drug portfolios, post-marketing surveillance requirements, and increasing patient self-reporting.
 
-## Business Impact
+## Business Case
 
 | Dimension       | Description                               |
 |-----------------|-------------------------------------------|
@@ -37,7 +35,7 @@ A single routine case takes 2–4 hours of specialist time from intake through s
 | **Scale**       | ~700,000 AE reports/year in US alone (FDA FAERS). Large pharma companies handle tens of thousands of cases internally. Volume grows 10–15% annually with expanded portfolios and patient self-reporting. |
 | **Risk**        | Late or inaccurate submissions trigger regulatory action — FDA warning letters, EMA non-compliance findings, potential market withdrawal. Missed safety signals can lead to patient harm and billion-dollar liability. |
 
-## Success Criteria
+## Success Metrics
 
 | Metric                   | Target                                  |
 |--------------------------|-----------------------------------------|

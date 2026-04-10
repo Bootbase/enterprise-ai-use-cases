@@ -66,8 +66,8 @@ permalink: /use-cases/UC-{NNN}-{slug}/
 
 ## Constraints
 
-| Constraint | Detail |
-|------------|--------|
+| Area | Constraint |
+|------|------------|
 | **Data / Privacy** | {Key data handling requirement} |
 | **Systems** | {Core systems the solution must connect to} |
 | **Compliance** | {Regulatory or audit constraints} |

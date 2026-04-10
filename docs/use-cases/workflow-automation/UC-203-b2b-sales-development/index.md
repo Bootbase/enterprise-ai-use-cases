@@ -25,7 +25,7 @@ A fully-loaded SDR costs approximately $100,000-$140,000/year, with average tenu
 
 Meanwhile, the AI SDR market has exploded to a $4.27 billion market in 2025, projected to reach $24.32 billion by 2034. Companies like SaaStr have demonstrated that a team of 20+ AI agents alongside just 1.25 human salespeople can hit 140% of revenue targets, source $4.8 million in pipeline, and close $2.4 million in won revenue.
 
-## Business Impact
+## Business Case
 
 | Dimension       | Description                               |
 |-----------------|-------------------------------------------|
@@ -35,7 +35,7 @@ Meanwhile, the AI SDR market has exploded to a $4.27 billion market in 2025, pro
 | **Scale**       | Single human SDR handles 50-80 calls + 30-50 emails/day; AI SDR can process thousands of prospects/day across all channels simultaneously. |
 | **Risk**        | 39% annual SDR attrition creates perpetual pipeline volatility. 3-month ramp gaps leave revenue targets exposed. Brand risk from poorly personalized mass outreach. GDPR/CAN-SPAM compliance risk. |
 
-## Success Criteria
+## Success Metrics
 
 | Metric                        | Target                                    |
 |-------------------------------|-------------------------------------------|

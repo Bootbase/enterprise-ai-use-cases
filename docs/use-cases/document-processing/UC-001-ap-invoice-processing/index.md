@@ -29,21 +29,16 @@ Industry benchmarks confirm the gap. Ardent Partners' *AP Metrics that Matter in
 
 The business cost of leaving this work manual is large: AP clerks consume 50–80% of their time on data entry rather than analysis, finance teams miss early-payment discounts (often 2/10 net 30 terms worth 36% APR), duplicate payments quietly drain 0.1–0.5% of total spend, and AP fraud (CEO impersonation, vendor bank-account changes, fake invoices) is a top-three internal-fraud category for finance. Vic.ai alone reports its Autopilot system has processed **535 million invoices with 95% accuracy** across **2,000+ customers**, delivering nearly **$70 million in cost savings and 6 million hours saved** — concrete evidence that the inefficiency is real and the addressable market is enormous.
 
----
+## Business Case
 
-## Business Impact
+| Dimension | Current State | Why It Matters |
+|-----------|---------------|----------------|
+| **Volume / Scale** | HSB Sweden: **1.5M invoices/year**, 300+ accountants, 670K members. Vic.ai across customer base: **535M invoices processed**, 2,000+ customers. Large enterprises commonly process **100K–10M invoices/year**. | Peak loads at month-end and quarter-end (3–5x baseline) compound processing bottlenecks. Coupa covers **55%+ of Fortune 500** for spend management. |
+| **Cycle Time** | Best-in-class AP teams clear an invoice in **3.1 days end-to-end** vs **17.4 days** for the rest of the market (Ardent Partners 2025). Per-invoice coding time at HSB dropped from **2+ minutes to 45 seconds** with Vic.ai. | CNRG saw per-invoice time fall from **5 minutes to 1.2 minutes** (76% reduction). Countsy processes invoices **84% faster** with the same staff. |
+| **Cost / Effort** | Manual processing: **$12–$30 per invoice** (IOFM, Ardent Partners); best-in-class automated: **$2.78 per invoice** (Ardent Partners 2025). Vic.ai customers report **~$70M in cost savings** across 2,000+ deployments. | For HSB's 1.5M annual invoices, the gap represents **$15M+/year**. Duplicate payments drain **0.1–0.5% of total spend**; missed 2/10 net 30 discounts equal **36% APR** margin loss. |
+| **Risk / Quality** | Manual error rates: **3–7%**; **40–60% of invoices generate exceptions**. AP fraud is a top-three internal-fraud category (ACFE). Duplicate detection without AI: **below 50%**. | Automated processing pushes error rates **below 0.8%** (IOFM); AI detection reaches **95%+**. SOX 404, IFRS, and e-invoicing mandates (SdI, PPF, CFDI, ZATCA, ViDA) require auditable records. EU Late Payment Directive imposes statutory interest. |
 
-| Dimension       | Description                               |
-|-----------------|-------------------------------------------|
-| **Cost**        | Manual processing: **$12–$30 per invoice** (IOFM, Ardent Partners) when staff time, exceptions, and rework are included. Best-in-class automated processing: **$2.78 per invoice** (Ardent Partners 2025). For HSB's 1.5M annual invoices, that gap represents **$15M+ per year** in pure processing cost. AP fraud and duplicate payments separately drain **0.1–0.5% of total annual spend**, with automated 3-way matching preventing **1–3% of spend** in overpayment leakage. Vic.ai customers collectively report **~$70M in cost savings** and **6M hours saved** across 2,000+ deployments. |
-| **Time**        | Best-in-class AP teams clear an invoice in **3.1 days end-to-end** vs **17.4 days** for the rest of the market (Ardent Partners 2025). Per-invoice coding time at HSB dropped from **2+ minutes to 45 seconds** with Vic.ai. CNRG (retail hardware) saw per-invoice time fall from **5 minutes to 1.2 minutes** (a 76% reduction). Countsy (outsourced accounting) processes invoices **84% faster** with the same staff. |
-| **Error Rate**  | Manual data-entry error rates run **3–7%** depending on form complexity and clerk fatigue. Automated processing pushes error rates **below 0.8%** (IOFM). Without automation, **40–60% of invoices generate exceptions** that require human follow-up; AI 3-way matching eliminates that share of exceptions. Duplicate-payment detection rates without AI are below 50%; with AI fuzzy-matching and behavioral analysis, **detection reaches 95%+**. |
-| **Scale**       | HSB Sweden: **1.5M invoices/year**, 300+ accountants, 670K members. Vic.ai across customer base: **535M invoices processed**, 2,000+ customers. Coupa: **55%+ of Fortune 500** use it for spend management. Countsy: **3,500 invoices/month** as a mid-market outsourced accountant. Industry-wide, large enterprises commonly process **100K–10M invoices per year** across legal entities, with peak loads at month-end and quarter-end. |
-| **Risk**        | **AP fraud** is consistently a top-three internal-fraud category (Association of Certified Fraud Examiners). Duplicate payments and overpayments quietly drain **0.1–0.5% of total spend** annually. Missed early-payment discounts (e.g., 2/10 net 30 = 36% APR) are direct margin loss. **SOX 404, IFRS, and country-specific e-invoicing mandates** (Italy SdI, France Chorus Pro, Mexico CFDI, Saudi Arabia ZATCA, EU ViDA from 2030) require auditable, tamper-evident invoice records. **Vendor relationships** suffer when payments are late, leading to supply disruption. **Late-payment regulations** in the EU (Late Payment Directive 2011/7/EU) and UK (Reporting on Payment Practices) impose statutory interest and disclosure obligations. |
-
----
-
-## Current Process (Before AI)
+## Current Workflow
 
 1. **Invoice Intake**: A vendor sends an invoice via email PDF, paper mail, EDI, supplier portal upload, or e-invoice XML. The AP team pulls invoices from a shared mailbox, mailroom scan queue, supplier portal, or EDI gateway, and registers them in an invoice-capture inbox or RPA bot output queue.
 2. **OCR & Data Capture**: A traditional OCR/IDP tool (e.g., Kofax, ABBYY, Hyperscience, Rossum, or an ERP-native OCR) extracts header fields (vendor, invoice number, date, total, tax) and line items. An AP clerk manually verifies and corrects the extracted values, particularly line-item details that OCR routinely mis-reads.
@@ -58,7 +53,7 @@ The business cost of leaving this work manual is large: AP clerks consume 50–8
 11. **Exception Handling**: Invoices that fail any step (no PO, mis-coded, mismatched, missing approval, duplicate suspect, vendor block) sit in an exceptions queue and consume disproportionate AP staff time.
 12. **Audit Documentation**: The AP team retains the original invoice image, OCR result, approval chain, posting record, and payment evidence for SOX, statutory audit, and tax authority requirements (typically 7–10 years retention).
 
-### Bottlenecks & Pain Points
+### Main Frictions
 
 - **Format chaos**: Invoices arrive in dozens of layouts. Even within a single vendor, format changes break OCR templates and re-introduce manual correction. Hyperscience and Rossum have shown that traditional template-based OCR caps out around 70% straight-through; the rest is human cleanup.
 - **Coding decisions are tribal knowledge**: Which GL account does a "Microsoft 365 license — finance team" go to? What about a hybrid SaaS+services bill? Coding rules live in clerks' heads, vary across legal entities, and are inconsistent over time and across staff turnover.
@@ -72,9 +67,7 @@ The business cost of leaving this work manual is large: AP clerks consume 50–8
 - **SOX and audit overhead**: Finance must demonstrate segregation of duties, complete audit trails, and tamper-evident records. Manual processes generate audit findings about control weaknesses; auditors spend disproportionate time reconciling exceptions.
 - **Missed early-payment discounts**: A 2/10 net 30 term is equivalent to 36% APR. AP teams that can't clear invoices in 10 days leave substantial margin on the table; finance teams routinely cite missed discounts as a top-five preventable cost.
 
----
-
-## Desired Outcome (After AI)
+## Target State
 
 A multi-agent AI system in which specialized agents autonomously execute every step of the invoice-to-post pipeline — capture, vendor identification, PO and GRN matching, GL coding, duplicate and fraud screening, approval routing, and ERP posting — with humans intervening only on policy exceptions and decisions that exceed agent confidence thresholds. The system targets **straight-through (no-touch) processing rates above 70%** for the highest-volume invoice categories (recurring vendor invoices, low-dollar non-PO invoices, fully matched 3-way PO invoices), with human AP professionals focusing exclusively on exceptions, vendor relationships, and audit oversight.
 
@@ -82,59 +75,58 @@ Vic.ai's deployment at HSB demonstrates the target state at scale: 1.5 million a
 
 Other production reference deployments converge on the same operating model: Tipalti raised $200M from Hercules Capital in 2025 explicitly to fund agentic AI investment, adding context-aware AI agents for repetitive AP tasks; AppZen monitors invoices and expense transactions in real time for policy violations, duplicates, and fraud; Stampli wraps a collaboration layer around an AI-driven coding and approval flow; Ramp launched agentic AP automation for mid-market finance teams with built-in coding, risk flagging, and payment guardrails; HighRadius offers a GenAI-native invoice automation platform; Coupa, used by 55%+ of the Fortune 500 for spend management, embeds AI across requisition-to-pay. Gartner expects the share of AP automation tools with true agentic capabilities to climb from 15% in 2025 to 60% by 2028 — the architectural shift is happening now.
 
-### Success Criteria
+### Success Metrics
 
-| Metric                              | Target                                            |
-|-------------------------------------|---------------------------------------------------|
-| Touchless (no-touch) processing rate| **> 70%** for high-volume invoice categories (HSB benchmark: 72%; Ardent Partners best-in-class: 52.8%) |
-| Cost per invoice                    | **< $3 per invoice** (Ardent Partners best-in-class: $2.78) |
-| End-to-end processing time          | **< 3 days** from receipt to post (Ardent Partners best-in-class: 3.1 days) |
-| Coding accuracy                     | **≥ 95%** on first pass (Vic.ai out-of-box benchmark: 95–97%) |
-| 3-way match rate                    | **≥ 98%** on PO-backed invoices (industry AI benchmark) |
-| Duplicate-payment detection         | **≥ 95%** of duplicates blocked before payment (industry AI benchmark) |
-| AP fraud prevention                 | **≥ 95%** of fraud indicators flagged for human review |
-| Per-invoice coding time             | **≤ 1 minute** (HSB: 45 seconds; CNRG: 1.2 minutes) |
-| Early-payment discount capture rate | **≥ 90%** of available discounts captured |
-| FTE redeployment                    | **50–80%** of AP clerk hours redirected to vendor management, exception handling, and analysis |
-| Human-in-the-loop authority         | **100% human approval** on payments above policy thresholds; agents prepare, humans approve |
-| Audit trail completeness            | Every agent action, document reference, and decision rationale captured for SOX and statutory audit |
-| Time to onboard new vendor format   | **≤ 1 hour** (vs days for template-based OCR) thanks to vision-language models |
-| Time to onboard new entity / GL     | **≤ 2 weeks** for a new legal entity, chart of accounts, and approval policy |
-
----
+| Metric | Baseline | Target |
+|--------|----------|--------|
+| Touchless (no-touch) processing rate | < 30% market average (Ardent Partners); HSB pre-AI near 0% | **> 70%** (HSB benchmark: 72%; best-in-class: 52.8%) |
+| Cost per invoice | $12–$30 manual (IOFM); market average well above $5 | **< $3** (best-in-class: $2.78, Ardent Partners 2025) |
+| End-to-end processing time | 17.4 days market average (Ardent Partners) | **< 3 days** (best-in-class: 3.1 days) |
+| Coding accuracy | 70–85% with template-based OCR | **≥ 95%** first pass (Vic.ai benchmark: 95–97%) |
+| 3-way match rate | 40–60% of invoices fail strict match on first pass | **≥ 98%** on PO-backed invoices |
+| Duplicate-payment detection | < 50% without AI | **≥ 95%** blocked before payment |
+| AP fraud prevention | Visual scanning misses common patterns | **≥ 95%** of fraud indicators flagged |
+| Per-invoice coding time | 2+ minutes (HSB); 5 minutes (CNRG) | **≤ 1 minute** (HSB: 45s; CNRG: 1.2m) |
+| Early-payment discount capture | Routinely missed (top-five preventable cost) | **≥ 90%** of available discounts captured |
+| FTE redeployment | 50–80% of AP time on data entry | **50–80%** redirected to analysis and exceptions |
 
 ## Stakeholders
 
-| Role                              | Interest                                          |
-|-----------------------------------|---------------------------------------------------|
-| Chief Financial Officer (CFO)     | Lower processing cost, faster close, captured discounts, demonstrable ROI on AI investment |
+| Role | What They Need |
+|------|----------------|
+| Chief Financial Officer (CFO) | Lower processing cost, faster close, captured discounts, demonstrable ROI on AI investment |
 | AP Manager / Shared Services Lead | Reduce manual workload, retain staff in higher-value work, lower exception backlog |
-| Controller                        | Accurate GL coding, clean monthly close, fewer journal-entry corrections |
-| Procurement / Sourcing            | Cleaner PO-to-invoice matching, fewer exception emails, better supplier relationships |
-| Treasury                          | On-time payments, captured early-payment discounts, working capital optimization |
-| Internal Audit / SOX              | Complete audit trail, demonstrated segregation of duties, tamper-evident records |
-| External Auditors                 | Sample-able audit trail, consistent control evidence, faster year-end testing |
-| Tax Function                      | Correct VAT/GST/sales-tax codes, country-specific e-invoicing compliance (SdI, KSeF, CFDI, ZATCA, ViDA) |
-| IT / Finance Systems              | Stable ERP integration (SAP S/4HANA, Oracle Fusion, NetSuite, Dynamics), no shadow IT |
-| Information Security / Fraud      | Bank-account-change fraud detection, vendor master integrity, segregation of duties |
-| AP Clerks                         | Less data entry, more meaningful work (vendor relationships, exception resolution) |
-| Vendors / Suppliers               | Faster, more predictable payment, fewer disputes, self-service status visibility |
-| Business Unit Approvers           | Lower-friction approval flow, mobile sign-off, fewer chasing emails |
-
----
+| Controller | Accurate GL coding, clean monthly close, fewer journal-entry corrections |
+| Procurement / Sourcing | Cleaner PO-to-invoice matching, fewer exception emails, better supplier relationships |
+| Treasury | On-time payments, captured early-payment discounts, working capital optimization |
+| Internal Audit / SOX | Complete audit trail, demonstrated segregation of duties, tamper-evident records |
+| External Auditors | Sample-able audit trail, consistent control evidence, faster year-end testing |
+| Tax Function | Correct VAT/GST/sales-tax codes, country-specific e-invoicing compliance (SdI, KSeF, CFDI, ZATCA, ViDA) |
+| IT / Finance Systems | Stable ERP integration (SAP S/4HANA, Oracle Fusion, NetSuite, Dynamics), no shadow IT |
+| Information Security / Fraud | Bank-account-change fraud detection, vendor master integrity, segregation of duties |
+| AP Clerks | Less data entry, more meaningful work (vendor relationships, exception resolution) |
+| Vendors / Suppliers | Faster, more predictable payment, fewer disputes, self-service status visibility |
+| Business Unit Approvers | Lower-friction approval flow, mobile sign-off, fewer chasing emails |
 
 ## Constraints
 
-| Constraint              | Detail                          |
-|-------------------------|---------------------------------|
-| **Data Privacy**        | Invoices contain commercially sensitive information (vendor pricing, contract terms), employee PII (expense names, addresses), and bank account details. Processing must respect GDPR (EU), CCPA (California), LGPD (Brazil), and country-specific data residency rules. Vendor master data must be protected against tampering (bank-account-change fraud). LLM inference should occur within the enterprise cloud boundary (private endpoint, dedicated tenant) or via a vendor with contractual no-train guarantees on customer data. |
-| **Latency**             | Per-invoice agent pipeline should complete in **seconds to a few minutes** for routine invoices; exception cases can flow to a human queue with same-day SLA. Approval routing follows business-hours SLAs. Month-end and quarter-end peak loads (often 3–5x baseline) must not degrade throughput. |
-| **Budget**              | LLM inference cost per invoice must be a small fraction of displaced labor cost. With manual processing at $12–$30 per invoice and best-in-class automation at $2.78, the available budget for AI inference and orchestration per invoice is roughly **$0.10–$1.00**. Total platform cost (subscription + inference + integration) must show payback in **< 12 months** to clear typical CFO investment thresholds. Vic.ai reports an average payback period of **< 7 months** across its customer base. |
-| **Existing Systems**    | Must integrate with the incumbent ERP (SAP S/4HANA via OData V4 / IDoc, Oracle Fusion Cloud Procurement REST APIs, NetSuite SuiteQL, Microsoft Dynamics 365 F&O OData) without replacing it. Must connect to procurement / source-to-pay systems (Coupa, Ariba, Ivalua, Jaggaer). Must read from supplier portals, EDI gateways, and shared mailboxes. Must post into existing approval workflow tools or replace lightweight RPA. Must not break existing SOX-certified controls. |
-| **Compliance**          | **SOX 404** (US public companies): segregation of duties, audit trail, control evidence. **IFRS / local GAAP**: correct GL classification, period accuracy. **Country-specific e-invoicing mandates**: Italy SdI, France PPF (rolling out 2026–2027), Spain Verifactu, Poland KSeF, Hungary RTIR, Mexico CFDI, Brazil NFe, Saudi Arabia ZATCA Phase 2, India GST e-invoicing, EU ViDA (mandatory cross-border B2B e-invoicing by July 2030). **Tax**: correct VAT/GST/sales-tax determination, withholding tax rules. **Late payment**: EU Late Payment Directive 2011/7/EU statutory interest, UK Reporting on Payment Practices public disclosure for large companies. **Anti-fraud / KYC**: vendor onboarding controls, sanctions screening (OFAC, EU consolidated list, UK HMT). |
-| **Scale**               | Must handle **100K to 10M+ invoices per year** depending on enterprise size. Must absorb **3–5x peaks** at month-end and quarter-end without queue backup. Must operate across **dozens of legal entities, chart-of-accounts variants, currencies, and tax regimes** in parallel. Must support **continuous addition** of new vendors, new invoice formats, and new country-specific e-invoicing rules without architectural change. |
+| Area | Constraint |
+|------|------------|
+| **Data / Privacy** | Invoices contain commercially sensitive information (vendor pricing, contract terms), employee PII (expense names, addresses), and bank account details. Processing must respect GDPR (EU), CCPA (California), LGPD (Brazil), and country-specific data residency rules. Vendor master data must be protected against tampering (bank-account-change fraud). LLM inference should occur within the enterprise cloud boundary (private endpoint, dedicated tenant) or via a vendor with contractual no-train guarantees on customer data. |
+| **Systems** | Must integrate with the incumbent ERP (SAP S/4HANA via OData V4 / IDoc, Oracle Fusion Cloud Procurement REST APIs, NetSuite SuiteQL, Microsoft Dynamics 365 F&O OData) without replacing it. Must connect to procurement / source-to-pay systems (Coupa, Ariba, Ivalua, Jaggaer). Must read from supplier portals, EDI gateways, and shared mailboxes. Must not break existing SOX-certified controls. |
+| **Compliance** | **SOX 404** (US public companies): segregation of duties, audit trail, control evidence. **IFRS / local GAAP**: correct GL classification, period accuracy. **Country-specific e-invoicing mandates**: Italy SdI, France PPF (2026–2027), Spain Verifactu, Poland KSeF, Mexico CFDI, Saudi Arabia ZATCA Phase 2, EU ViDA (July 2030). **Tax**: correct VAT/GST/sales-tax determination, withholding tax rules. **Late payment**: EU Late Payment Directive 2011/7/EU, UK Reporting on Payment Practices. **Anti-fraud / KYC**: vendor onboarding controls, sanctions screening (OFAC, EU consolidated list, UK HMT). |
+| **Operating Model** | Per-invoice agent pipeline should complete in seconds to minutes for routine invoices. LLM inference cost per invoice must stay within **$0.10–$1.00**; total platform payback in **< 12 months**. Must handle **100K–10M+ invoices/year** with **3–5x peaks** at month-end/quarter-end across dozens of legal entities, currencies, and tax regimes. |
 
----
+## Evidence Base
+
+| Source / Deployment | What It Proves | Strength |
+|---------------------|----------------|----------|
+| **HSB (Vic.ai)** | 1.5M invoices/year, 72% no-touch rate, coding time from 2+ min to 45 sec, 96% accuracy, 25,000–60,000 hours saved/year since June 2020 | Primary |
+| **Vic.ai Autopilot (aggregate)** | 535M invoices processed, 95% accuracy, 2,000+ customers, ~$70M cost savings, 6M hours saved | Primary |
+| **Countsy (Vic.ai)** | 78% no-touch rate, 84% faster processing, 95% accuracy for mid-market outsourced accounting | Primary |
+| **CNRG (Vic.ai)** | Per-invoice time from 5 min to 1.2 min, 90% accuracy for retail hardware chain | Primary |
+| **Ardent Partners** | $2.78 best-in-class cost/invoice, 3.1 days best-in-class cycle, 52.8% touchless rate, $12.88 median cost — industry benchmarks for 2025 | Secondary |
+| **Gartner** | 15% of AP tools have agentic capabilities in 2025, expected to reach 60% by 2028 — signals architectural shift | Secondary |
 
 ## Scope Boundaries
 

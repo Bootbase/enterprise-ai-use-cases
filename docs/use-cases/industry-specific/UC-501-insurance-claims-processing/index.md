@@ -17,15 +17,13 @@ has_references: false
 permalink: /use-cases/UC-501-insurance-claims-processing/
 ---
 
-# UC-501: Autonomous Insurance Claims Processing with Multi-Agent AI
-
 ## Problem Statement
 
 Property and casualty (P&C) insurers process millions of claims annually through labor-intensive, multi-step workflows that combine document review, policy verification, weather/event validation, fraud screening, payout calculation, and audit — each requiring different expertise and different source systems. Allianz Group, one of the world's largest insurers with 128 million customers across ~70 countries, handles 95 million cases per year (260,000+ daily). In Australia alone, Allianz processed 28,221 claims across 10 major catastrophe events in 2025, with a single Queensland/NSW storm generating 5,000+ claims in days.
 
 The core problem is that even low-complexity, high-frequency claims — such as food spoilage under AUD $500 caused by storm-related power outages — follow the same multi-day manual pipeline as complex claims. A claims adjuster must verify the claimant's policy covers the event type, cross-reference actual weather data against the claim location and date, screen for fraud indicators, calculate the payout per policy terms, and document the decision for audit. Each step requires a different system lookup and a different judgment call. For a sub-$500 food spoilage claim, this process takes several days (4+ days typical) and costs the insurer more in adjuster time than the claim itself is worth.
 
-## Business Impact
+## Business Case
 
 | Dimension       | Description                               |
 |-----------------|-------------------------------------------|
@@ -34,7 +32,7 @@ The core problem is that even low-complexity, high-frequency claims — such as 
 | **Scale**       | Allianz globally: 95 million cases/year, 260,000+ daily. Australia: 28,221 catastrophe claims in 2025. Industry-wide: insurance AI deployments jumped 87% YoY. |
 | **Risk**        | Catastrophe events create claim surges that overwhelm fixed-capacity teams, delaying payouts and damaging customer trust. Inconsistent fraud screening exposes insurers to both overpayment and wrongful denial. |
 
-## Success Criteria
+## Success Metrics
 
 | Metric                          | Target                                           |
 |---------------------------------|--------------------------------------------------|

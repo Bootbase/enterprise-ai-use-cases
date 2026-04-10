@@ -21,7 +21,7 @@ permalink: /use-cases/UC-400-knowledge-synthesis-consulting/
 
 The product of a management consulting firm is its knowledge: hundreds of thousands of past engagement decks, expert-interview transcripts, proprietary research, market models, industry primers, and benchmarking data accumulated over decades. Yet on any given Monday, a freshly staffed consultant on a new engagement begins by emailing partners asking "has anyone done work on X?", searching a stale internal knowledge base with keyword matching, and re-creating analyses that already exist somewhere in the firm. Industry studies put the share of a junior consultant's time spent on manual research, slide reformatting, and "rediscovery" at 30-50% of billable hours — labor that produces no incremental client value and burns out the firm's talent pipeline. The Big Three (McKinsey, BCG, Bain) and Big Four (Deloitte, EY, PwC, KPMG) employ between 30,000 and 460,000 knowledge workers each whose productivity is bottlenecked by exactly this problem. McKinsey's response — Lilli, launched firmwide in July 2023 and now used by 75% of its ~43,000 employees monthly — has demonstrated that an agentic system layered over the firm's curated knowledge corpus can reclaim ~30% of research time, save 50,000+ hours/month across the firm, and redeploy approximately $12M/month of consultant labor toward higher-value work. BCG's GENE platform, Bain's Sage, and Deloitte's PairD/Zora pursue the same outcome but with weaker public metrics and documented hallucination incidents that have surfaced as far as senior-partner review. The use case sits at the intersection of enterprise RAG, multi-agent orchestration over proprietary knowledge corpora, and the most tightly-confidential information environment in business — where a single leaked client document is a career-ending event.
 
-## Business Impact
+## Business Case
 
 | Dimension       | Description                               |
 |-----------------|-------------------------------------------|
@@ -31,7 +31,7 @@ The product of a management consulting firm is its knowledge: hundreds of thousa
 | **Scale**       | McKinsey Lilli: 100,000+ proprietary documents indexed, 40+ curated knowledge sources, 500,000+ prompts per month, ~32,000 monthly active users (75% of ~43,000 employees). BCG: 18,000+ custom GPTs across ~32,000 employees. Bain: 19,000+ custom GPTs across ~19,000 employees. Deloitte PairD: rolled out to 75,000+ UK employees and expanding firmwide (~460,000 globally). |
 | **Risk**        | Client confidentiality breach is the highest-severity risk in professional services — a single leaked NDA-covered document can terminate a multi-year client relationship and trigger litigation. M&A advisory teams operate under information-barrier ("Chinese wall") regimes that make any cross-engagement knowledge sharing legally hazardous. AI hallucinations in client deliverables are career-ending for individual consultants and reputation-damaging for the firm. EU AI Act and US sector regulations add documentation and explainability obligations for any system shaping client recommendations. |
 
-## Current Process (Before AI)
+## Current Workflow
 
 1. New engagement starts: a partner staffs a team of 4-6 consultants from the firm's bench
 2. The engagement manager defines the scoping question (e.g., "growth strategy for a mid-cap industrial chemicals company in Southeast Asia")
@@ -45,7 +45,7 @@ The product of a management consulting firm is its knowledge: hundreds of thousa
 10. The partner reviews the synthesized deliverable, often demanding additional benchmarks or rephrasings 24 hours before the client meeting
 11. Final deck is locked, watermarked, and delivered; the underlying research becomes part of the firm's KB if (and only if) someone manually files it post-engagement
 
-### Bottlenecks & Pain Points
+### Main Frictions
 
 - **Rediscovery tax**: Consultants routinely re-create analyses that already exist somewhere in the firm because keyword search cannot match conceptual queries to past work, and tacit knowledge of "who did what" lives in partner heads
 - **Asymmetric expertise access**: Senior partners are the firm's index — junior consultants depend on getting partner attention to find relevant precedent work, creating a hierarchical bottleneck
@@ -56,11 +56,11 @@ The product of a management consulting firm is its knowledge: hundreds of thousa
 - **Non-billable overhead**: Travel booking, expense management, calendar coordination, and meeting note-taking consume 5-10 hours/week per consultant of non-billable time
 - **Onboarding velocity**: New hires take 6-12 months to become productive because they must learn the firm's tacit knowledge networks rather than its explicit ones
 
-## Desired Outcome (After AI)
+## Target State
 
 An agentic AI platform — modeled on McKinsey Lilli's architecture and 2024-2025 "Agents-at-Scale" framework — that serves as the firm's knowledge operating system. Consultants converse with the platform in natural language to: discover relevant prior work across the firm's full corpus (subject to information-barrier permissions), synthesize multi-source research with citations, draft scoping decks and benchmarking analyses, generate client-ready chart suggestions, summarize expert interviews, and offload non-billable admin tasks (calendar coordination, expense reports, meeting notes) to specialized sub-agents. Beyond a single chat interface, the platform exposes an internal "agent marketplace" where partners and practice areas publish vertical agents (industry-specific research agents, deal-comparison agents, regulatory-tracker agents, tone-of-voice review agents) built on a shared Agent Factory pipeline. Every output is fully cited to source documents, every interaction is logged for audit, and information-barrier permissions are enforced at the retrieval layer so a consultant on Engagement A literally cannot retrieve documents from Engagement B if compliance flags them as walled. The system shifts consultants from "find and reformat" to "evaluate and synthesize," compresses scoping decks from 2 days to 3 hours, and reclaims a measurable share of every consultant's week for higher-value client work.
 
-### Success Criteria
+### Success Metrics
 
 | Metric                              | Target                                  |
 |-------------------------------------|-----------------------------------------|
@@ -78,7 +78,7 @@ An agentic AI platform — modeled on McKinsey Lilli's architecture and 2024-202
 
 ## Stakeholders
 
-| Role                              | Interest                                    |
+| Role                              | What They Need                              |
 |-----------------------------------|---------------------------------------------|
 | Senior Partner / Engagement Director | Faster team mobilization, higher leverage per consultant, fewer escalations to partner attention for routine research |
 | Practice Area Leader              | Codify the practice's intellectual property into reusable assets and specialized agents |
@@ -94,7 +94,7 @@ An agentic AI platform — modeled on McKinsey Lilli's architecture and 2024-202
 
 ## Constraints
 
-| Constraint              | Detail                          |
+| Area                    | Constraint                      |
 |-------------------------|---------------------------------|
 | **Data Privacy**        | All client engagement documents are NDA-covered; many are MNPI (material non-public information) under securities law; cross-border data residency requirements (EU client documents may not leave EU; financial-sector clients may require dedicated tenancy); AI must not be trained on client documents in ways that risk leakage to other tenants |
 | **Latency**             | Sub-30-second response for retrieval queries during client meetings; sub-3-second response for autocomplete and quick lookups; long-running synthesis tasks (multi-source briefs) acceptable up to 5 minutes with progress indication |

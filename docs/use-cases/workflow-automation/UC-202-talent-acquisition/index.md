@@ -21,7 +21,7 @@ permalink: /use-cases/UC-202-talent-acquisition/
 
 Enterprise talent acquisition is a labor-intensive, multi-step process where recruiters spend 60-75% of their time on repetitive administrative work — screening resumes, coordinating interview schedules, sending status updates, and chasing hiring managers for feedback — rather than on strategic activities like candidate relationship building and workforce planning. The average corporate job posting receives 250+ applications, each requiring manual review. With a global average cost-per-hire of $4,683 (rising to $10,000-$20,000+ for technical roles) and mean time-to-fill of 42 days, the traditional recruitment pipeline creates a compounding drag on business agility.
 
-## Business Impact
+## Business Case
 
 | Dimension       | Description                               |
 |-----------------|-------------------------------------------|
@@ -31,7 +31,7 @@ Enterprise talent acquisition is a labor-intensive, multi-step process where rec
 | **Scale**       | Average posting receives 250+ applications. High-volume employers process 100,000-500,000+ applications yearly. Compass Group hires 120,000 workers annually with 20-person recruiting team. |
 | **Risk**        | EEOC, OFCCP, GDPR, CCPA compliance requirements. Adverse impact liability from biased screening. Brand damage from poor candidate experience (72% of candidates share negative experiences online). |
 
-## Success Criteria
+## Success Metrics
 
 | Metric                       | Target                                    |
 |------------------------------|-------------------------------------------|

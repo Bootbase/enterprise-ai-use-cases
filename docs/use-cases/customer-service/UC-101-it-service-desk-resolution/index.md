@@ -21,9 +21,7 @@ permalink: /use-cases/UC-101-it-service-desk-resolution/
 
 Enterprise IT service desks are overwhelmed by high-volume, repetitive employee support requests — password resets, software provisioning, access management, VPN troubleshooting, and hardware issues — that consume skilled L1/L2 analyst time and delay resolution for the entire workforce. Gartner estimates that 20–50% of all service desk calls are password resets alone, each costing $70+ in help desk labor (Forrester Research). With average ticket volumes increasing 16% since 2020 and chronic staffing shortages in IT operations, enterprises face a compounding productivity drain: employees wait an average of 2 hours 50 minutes for resolution (HappySignals Global IT Experience Benchmark), while IT teams spend up to 40% of their workday on repetitive tier-1 tasks instead of strategic initiatives. The result is a growing backlog, declining employee satisfaction, and escalating operational costs that scale linearly with headcount.
 
----
-
-## Business Impact
+## Business Case
 
 | Dimension       | Description                               |
 |-----------------|-------------------------------------------|
@@ -33,9 +31,7 @@ Enterprise IT service desks are overwhelmed by high-volume, repetitive employee 
 | **Scale**       | Enterprises generate 0.54–1.38 tickets per employee per month (MetricNet benchmarks). A 50,000-employee organization handles 27,000–69,000 tickets/month — 324,000–828,000/year. Ticket volumes have grown 16% since 2020. |
 | **Risk**        | Prolonged access outages impact revenue-generating work. Security risks from delayed account lockout responses. SLA breaches erode trust between IT and business units. Analyst burnout drives turnover in an already tight labor market. |
 
----
-
-## Current Process (Before AI)
+## Current Workflow
 
 1. **Employee submits a ticket** via email, portal (ServiceNow, Jira Service Management), chat (Slack/Teams), or phone call to the IT help desk.
 2. **L1 analyst triages the ticket** — reads the description, categorizes it (incident vs. service request), assigns priority, and routes it to the appropriate queue or resolver group.
@@ -44,7 +40,7 @@ Enterprise IT service desks are overwhelmed by high-volume, repetitive employee 
 5. **Resolution and closure** — the resolver documents the fix, updates the knowledge base (inconsistently), closes the ticket, and triggers a satisfaction survey.
 6. **Reporting and review** — service desk managers compile weekly/monthly reports on ticket volume, MTTR, SLA compliance, and customer satisfaction scores.
 
-### Bottlenecks & Pain Points
+### Main Frictions
 
 - **Password resets consume 20–50% of all tickets** (Gartner) despite being fully automatable — each requires analyst interaction, identity verification, and manual Active Directory/Okta operations.
 - **Misrouting and reclassification** waste 15–30 minutes per misrouted ticket as analysts redirect requests between queues, losing context at each handoff.
@@ -53,13 +49,11 @@ Enterprise IT service desks are overwhelmed by high-volume, repetitive employee 
 - **Inconsistent quality** — resolution depends on which analyst picks up the ticket. New hires take weeks to ramp up on tooling and procedures, leading to variable service quality.
 - **Employee frustration** — waiting hours for a password reset or software install erodes trust in IT and drives shadow IT adoption, creating security risks.
 
----
-
-## Desired Outcome (After AI)
+## Target State
 
 An agentic AI system that autonomously resolves 60–85% of L1/L2 IT service desk requests end-to-end — from intake and classification through execution and closure — with sub-minute resolution times, 24/7 availability, and consistent quality. The system integrates with enterprise identity providers (Active Directory, Okta, Azure AD), endpoint management platforms (Intune, SCCM, Jamf), ITSM tools (ServiceNow, Jira), and collaboration platforms (Slack, Microsoft Teams) to execute actions directly rather than merely suggesting solutions. Human analysts are freed to focus on complex L2/L3 incidents, proactive problem management, and infrastructure improvements. Employee experience improves dramatically as routine requests are resolved in seconds instead of hours.
 
-### Success Criteria
+### Success Metrics
 
 | Metric                        | Target                                      |
 |-------------------------------|---------------------------------------------|
@@ -71,11 +65,9 @@ An agentic AI system that autonomously resolves 60–85% of L1/L2 IT service des
 | 24/7 availability             | 99.9% uptime for AI resolution across all time zones |
 | Cost per ticket (AI-resolved) | < $2 per ticket (vs. $15–50 for human-resolved) |
 
----
-
 ## Stakeholders
 
-| Role                          | Interest                        |
+| Role                          | What They Need                  |
 |-------------------------------|---------------------------------|
 | CIO / VP of IT Operations     | Reduce operational costs, improve SLAs, redeploy analyst capacity to strategic projects |
 | IT Service Desk Manager       | Decrease ticket backlog, reduce after-hours escalations, improve team morale by eliminating repetitive work |
@@ -84,11 +76,9 @@ An agentic AI system that autonomously resolves 60–85% of L1/L2 IT service des
 | End Employees (all departments) | Instant resolution of routine IT issues, unblocked productivity, consistent service quality regardless of time or location |
 | CFO / Finance                 | Measurable cost reduction in IT operations, predictable scaling of support costs as headcount grows |
 
----
-
 ## Constraints
 
-| Constraint              | Detail                          |
+| Area                    | Constraint                      |
 |-------------------------|---------------------------------|
 | **Data Privacy**        | AI agents must handle employee PII (names, employee IDs, device identifiers) in compliance with GDPR, CCPA, and internal data handling policies. Credential operations must never expose passwords or tokens in logs or conversation history. |
 | **Latency**             | Real-time conversational response required (< 3 seconds per interaction turn). Backend actions (password resets, group membership changes) must complete within 30 seconds. |
@@ -96,8 +86,6 @@ An agentic AI system that autonomously resolves 60–85% of L1/L2 IT service des
 | **Existing Systems**    | Must integrate with incumbent ITSM platform (ServiceNow, Jira Service Management, or BMC Helix), identity provider (Active Directory, Okta, Azure AD), endpoint management (Intune, SCCM, Jamf), and collaboration tools (Slack, Microsoft Teams). Cannot require rip-and-replace of existing infrastructure. |
 | **Compliance**          | All AI-executed actions must produce audit trails compliant with SOX, ISO 27001, and SOC 2. Identity verification before privileged operations (password resets, access grants) must meet organizational security policy. |
 | **Scale**               | Must handle burst loads during major incidents (e.g., company-wide VPN outage generating thousands of simultaneous tickets). Must scale from hundreds to tens of thousands of employees without degradation. |
-
----
 
 ## Scope Boundaries
 

@@ -17,8 +17,6 @@ has_references: false
 permalink: /use-cases/UC-502-legal-ma-due-diligence/
 ---
 
-# UC-502: Autonomous M&A Due Diligence and Contract Review with Agentic Legal AI
-
 ## Problem Statement
 
 Mergers and acquisitions, leveraged finance, fund formation, and antitrust filings all rest on manual review of thousands of contracts. A mid-market M&A deal typically requires reviewing 500–2,000 target-company contracts inside a 2–6 week diligence window. According to LegalOn's 2025 survey of 286 legal professionals, lawyers spend an average of 3.2 hours reviewing a single contract, meaning a 500-contract review represents almost 200 working days of associate effort.
@@ -27,7 +25,7 @@ The cost is severe: at AmLaw 100 hourly rates of USD 700–1,400 for senior asso
 
 The barrier to enterprise adoption is not the model — it is grounding agents in firm-specific precedent and curated legal data without leaking client privileged information into third-party models.
 
-## Business Impact
+## Business Case
 
 | Dimension       | Description                               |
 |-----------------|-------------------------------------------|
@@ -36,7 +34,7 @@ The barrier to enterprise adoption is not the model — it is grounding agents i
 | **Error Rate**  | Human reviewers miss change-of-control triggers, exclusivity clauses, MAC language. Different reviewers classify the same clause differently (known quality issue). |
 | **Scale**       | Large LBO/PE platform deal: 5,000–10,000 contracts. A&O Shearman: ~2,000 lawyers actively using agentic AI daily. Legal AI market: USD 2.1B (2025) → USD 7.4B by 2035. |
 
-## Success Criteria
+## Success Metrics
 
 | Metric                          | Target                                           |
 |---------------------------------|--------------------------------------------------|

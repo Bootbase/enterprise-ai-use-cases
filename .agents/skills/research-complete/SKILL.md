@@ -134,6 +134,41 @@ Update:
   - `has_evaluation: true`
   - `has_references: true`
 
+## Formatting Rules
+
+- No H1 heading after frontmatter. The title comes from the `title` field in frontmatter only.
+- No horizontal rules (`---`) between sections.
+- All top-level sections use H2 (`##`). Sub-sections use H3 (`###`).
+- Use the exact table column headers defined in each template:
+
+  **solution-design.md**:
+  - **Recommended Operating Model**: `Decision Area | Recommendation`
+  - **Component Responsibilities**: `Component | Role | Notes`
+  - **End-to-End Flow**: `Step | What Happens | Owner`
+  - **AI Responsibilities and Boundaries**: `Workflow Area | AI Does | Deterministic System Does | Human Owns`
+  - **Integration Seams**: `System | Integration Method | Why It Matters`
+  - **Control Model**: `Risk | Control`
+  - **Reference Technology Stack**: `Layer | Default Choice | Reason | Viable Alternative`
+  - **Key Design Decisions**: `Decision | Choice | Why It Fits This Use Case`
+
+  **implementation-guide.md**:
+  - **Reference Stack**: `Layer | Recommended Choice | Reason`
+  - **Delivery Plan**: `Phase | Outcome | Main Deliverables`
+  - **Integration Notes**: `Integration Area | What To Build | Implementation Note`
+  - **Evaluation Harness**: `Area To Test | How To Measure It | Release Gate`
+  - **Deployment Notes**: `Topic | Guidance`
+
+  **evaluation.md**:
+  - **Published Evidence**: `Deployment / Source | Published Metric | What It Shows`
+  - **Assumptions And Scenario Model**: `Assumption | Value | Basis`
+  - **Expected Economics**: `Factor | Value | Note`
+  - **Quality, Risk, And Failure Modes**: `Area | Strength / Risk | Control Or Mitigation`
+  - **Rollout KPI Set**: `KPI | Why It Matters | Pilot Gate`
+
+  **references.md**:
+  - **Source Register**: `ID | Type | Source | Why It Was Used | Link`
+  - **Claim Map**: `Claim Or Section | Source IDs`
+
 ## Writing Rules
 
 - Write like an operator or architect explaining a real system to another operator or architect.

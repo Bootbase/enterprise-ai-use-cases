@@ -7,13 +7,13 @@ category_dir: "industry-specific"
 category_icon: "briefcase"
 industry: "Agriculture"
 complexity: "High"
-status: "research"
+status: "detailed"
 summary: "Commercial farms lose up to 40% of crops to pests and diseases annually, costing over $220 billion globally. AI-driven crop monitoring and precision application systems detect threats at the plant level and target treatment accordingly, cutting chemical use by half while protecting yield."
 slug: "UC-510-agriculture-crop-protection"
-has_solution_design: false
-has_implementation_guide: false
-has_evaluation: false
-has_references: false
+has_solution_design: true
+has_implementation_guide: true
+has_evaluation: true
+has_references: true
 permalink: /use-cases/UC-510-agriculture-crop-protection/
 ---
 

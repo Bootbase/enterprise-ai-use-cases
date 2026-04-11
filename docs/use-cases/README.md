@@ -74,7 +74,7 @@ docs/use-cases/
 | UC-100 | Autonomous Customer Service Resolution | Customer Service | Cross-Industry | detailed | `customer-service/UC-100-customer-service-resolution/` |
 | UC-101 | Autonomous IT Service Desk Resolution | Customer Service | Cross-Industry | detailed | `customer-service/UC-101-it-service-desk-resolution/` |
 | UC-200 | Autonomous Freight Logistics Orchestration | Workflow Automation | Logistics / Transportation | detailed | `workflow-automation/UC-200-freight-logistics-orchestration/` |
-| UC-201 | Autonomous Supplier Negotiation | Workflow Automation | Cross-Industry | research | `workflow-automation/UC-201-supplier-negotiation/` |
+| UC-201 | Autonomous Supplier Negotiation | Workflow Automation | Cross-Industry | detailed | `workflow-automation/UC-201-supplier-negotiation/` |
 | UC-202 | Autonomous Talent Acquisition and Candidate Screening | Workflow Automation | Cross-Industry | research | `workflow-automation/UC-202-talent-acquisition/` |
 | UC-203 | Autonomous B2B Sales Development | Workflow Automation | Cross-Industry | research | `workflow-automation/UC-203-b2b-sales-development/` |
 | UC-204 | Autonomous Financial Close and Reconciliation | Workflow Automation | Cross-Industry | research | `workflow-automation/UC-204-financial-close-reconciliation/` |

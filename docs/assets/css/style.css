@@ -359,9 +359,6 @@ a:hover {
 }
 
 .filters-section {
-  position: sticky;
-  top: var(--header-height);
-  z-index: 20;
   margin-bottom: var(--space-2);
 }
 

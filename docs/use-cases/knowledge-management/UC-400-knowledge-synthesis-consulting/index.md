@@ -7,13 +7,13 @@ category_dir: "knowledge-management"
 category_icon: "book-open"
 industry: "Professional Services (Management Consulting, Strategy, Audit & Advisory)"
 complexity: "High"
-status: "research"
+status: "detailed"
 summary: "The product of a management consulting firm is its knowledge — hundreds of thousands of past engagement decks and research accumulated over decades. Yet junior consultants spend 30-50% of billable time on manual research, slide reformatting, and 'rediscovery' of work that already exists. McKinsey Lilli demonstrates that an agentic system can reclaim ~30% of research time, saving $12M/month across the firm."
 slug: "UC-400-knowledge-synthesis-consulting"
-has_solution_design: false
-has_implementation_guide: false
-has_evaluation: false
-has_references: false
+has_solution_design: true
+has_implementation_guide: true
+has_evaluation: true
+has_references: true
 permalink: /use-cases/UC-400-knowledge-synthesis-consulting/
 ---
 

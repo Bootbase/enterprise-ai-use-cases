@@ -7,13 +7,13 @@ category_dir: "workflow-automation"
 category_icon: "settings"
 industry: "Cross-Industry (SaaS, Technology, Financial Services, Professional Services, Manufacturing)"
 complexity: "High"
-status: "research"
+status: "detailed"
 summary: "AI SDR agents autonomously execute full sales development workflows: prospect research, personalized multi-channel outreach, response handling, objection management, and meeting booking. Reduces cost per qualified meeting from $200-300 to < $50, achieves 6.7% email reply rate (vs. 3-4% industry average), and generates > $500K quarterly pipeline per agent while operating 24/7 across all time zones."
 slug: "UC-203-b2b-sales-development"
-has_solution_design: false
-has_implementation_guide: false
-has_evaluation: false
-has_references: false
+has_solution_design: true
+has_implementation_guide: true
+has_evaluation: true
+has_references: true
 permalink: /use-cases/UC-203-b2b-sales-development/
 ---
 

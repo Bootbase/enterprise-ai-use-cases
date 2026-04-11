@@ -76,7 +76,7 @@ docs/use-cases/
 | UC-200 | Autonomous Freight Logistics Orchestration | Workflow Automation | Logistics / Transportation | detailed | `workflow-automation/UC-200-freight-logistics-orchestration/` |
 | UC-201 | Autonomous Supplier Negotiation | Workflow Automation | Cross-Industry | detailed | `workflow-automation/UC-201-supplier-negotiation/` |
 | UC-202 | Autonomous Talent Acquisition and Candidate Screening | Workflow Automation | Cross-Industry | detailed | `workflow-automation/UC-202-talent-acquisition/` |
-| UC-203 | Autonomous B2B Sales Development | Workflow Automation | Cross-Industry | research | `workflow-automation/UC-203-b2b-sales-development/` |
+| UC-203 | Autonomous B2B Sales Development | Workflow Automation | Cross-Industry | detailed | `workflow-automation/UC-203-b2b-sales-development/` |
 | UC-204 | Autonomous Financial Close and Reconciliation | Workflow Automation | Cross-Industry | research | `workflow-automation/UC-204-financial-close-reconciliation/` |
 | UC-205 | Autonomous Multi-Jurisdiction Tax Compliance | Workflow Automation | Cross-Industry | research | `workflow-automation/UC-205-tax-compliance/` |
 | UC-206 | Autonomous Financial Audit and Controls Testing | Workflow Automation | Cross-Industry | research | `workflow-automation/UC-206-financial-audit-testing/` |

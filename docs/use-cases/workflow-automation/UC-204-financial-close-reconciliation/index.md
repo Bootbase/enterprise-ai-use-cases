@@ -7,13 +7,13 @@ category_dir: "workflow-automation"
 category_icon: "settings"
 industry: "Cross-Industry (Financial Services, Manufacturing, Technology, Retail, Professional Services, Healthcare)"
 complexity: "High"
-status: "research"
+status: "detailed"
 summary: "Multi-agent financial close orchestration that autonomously reconciles accounts, detects anomalies, prepares journal entries, analyzes variances, and routes exceptions. Compresses close cycle from 10+ days to 2-4 days, achieves > 99% auto-match rate on recurring items, reduces manual reconciliation effort by 80%, and maintains 100% SOX compliance with automated audit trails."
 slug: "UC-204-financial-close-reconciliation"
-has_solution_design: false
-has_implementation_guide: false
-has_evaluation: false
-has_references: false
+has_solution_design: true
+has_implementation_guide: true
+has_evaluation: true
+has_references: true
 permalink: /use-cases/UC-204-financial-close-reconciliation/
 ---
 

@@ -7,13 +7,13 @@ category_dir: "workflow-automation"
 category_icon: "settings"
 industry: "Logistics / Transportation"
 complexity: "High"
-status: "research"
+status: "detailed"
 summary: "Multi-agent AI system that autonomously orchestrates 30+ specialized agents embedded in TMS backends, processing 3+ million shipping tasks annually. Agents parse unstructured communications, execute multi-step decision workflows, and escalate to humans only for complex negotiations. Achieves 32-second quote response times (from 17-20 min), 90-second order processing (from 4 hours), 3-second freight classification (from 10+ min), and 40% overall productivity improvement with 520 basis-point margin expansion."
 slug: "UC-200-freight-logistics-orchestration"
-has_solution_design: false
-has_implementation_guide: false
-has_evaluation: false
-has_references: false
+has_solution_design: true
+has_implementation_guide: true
+has_evaluation: true
+has_references: true
 permalink: /use-cases/UC-200-freight-logistics-orchestration/
 ---
 

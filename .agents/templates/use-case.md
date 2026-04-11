@@ -8,6 +8,8 @@ category_icon: "{icon}"
 industry: "{Industry or Cross-Industry}"
 complexity: "Low / Medium / High"
 status: "research"
+date_added: "{YYYY-MM-DD}"
+date_updated: "{YYYY-MM-DD}"
 summary: "{One or two direct business sentences describing the problem and outcome}"
 slug: "UC-{NNN}-{slug}"
 has_solution_design: false

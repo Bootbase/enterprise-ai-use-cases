@@ -133,6 +133,7 @@ Update:
   - `has_implementation_guide: true`
   - `has_evaluation: true`
   - `has_references: true`
+  - `date_updated: "{today in YYYY-MM-DD}"` — bump to today because the detailed write-up is a substantive change. Leave `date_added` untouched. If the original `index.md` is missing either field, add both: use today for `date_updated` and the existing creation date (or today, if unknown) for `date_added`.
 
 ## Formatting Rules
 

@@ -8,6 +8,8 @@ category_icon: "headphones"
 industry: "Cross-Industry (Technology, Financial Services, Manufacturing, Pharmaceutical, Professional Services)"
 complexity: "High"
 status: "detailed"
+date_added: "2026-04-09"
+date_updated: "2026-04-11"
 summary: "Enterprise IT service desks are overwhelmed by high-volume, repetitive employee support requests — password resets, software provisioning, access management, VPN troubleshooting, and hardware issues — that consume skilled L1/L2 analyst time and delay resolution for the entire workforce."
 slug: "UC-101-it-service-desk-resolution"
 has_solution_design: true

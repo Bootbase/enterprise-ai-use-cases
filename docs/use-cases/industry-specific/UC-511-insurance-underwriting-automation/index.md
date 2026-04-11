@@ -8,6 +8,8 @@ category_icon: "briefcase"
 industry: "Insurance"
 complexity: "High"
 status: "detailed"
+date_added: "2026-04-10"
+date_updated: "2026-04-10"
 summary: "P&C carriers still route 85–90% of submissions through human underwriters for manual data entry, risk assessment, and quote generation — a 3–5 day cycle that loses broker business to faster competitors. AI agents that ingest submissions, enrich risk profiles, and auto-quote standard risks in minutes can push straight-through processing from 10–15% to 70–90%, while freeing underwriters for complex accounts."
 slug: "UC-511-insurance-underwriting-automation"
 has_solution_design: true

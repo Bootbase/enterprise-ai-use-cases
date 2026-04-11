@@ -8,6 +8,8 @@ category_icon: "settings"
 industry: "Cross-Industry (Retail, Logistics, Industrial, Utilities, Manufacturing)"
 complexity: "High"
 status: "detailed"
+date_added: "2026-04-09"
+date_updated: "2026-04-11"
 summary: "Autonomous negotiation platform using multi-agent systems to negotiate tail-spend contracts with thousands of suppliers in parallel. Pactum AI deployed at Walmart, Maersk, and SUEZ demonstrates 64-68% supplier agreement rates within 11 days, 3-15% savings per category, and 35-day payment term extensions, breaking the linear bottleneck of human procurement."
 slug: "UC-201-supplier-negotiation"
 has_solution_design: true

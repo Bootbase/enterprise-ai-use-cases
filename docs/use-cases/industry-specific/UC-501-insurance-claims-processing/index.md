@@ -8,6 +8,8 @@ category_icon: "briefcase"
 industry: "Insurance / Financial Services"
 complexity: "High"
 status: "research"
+date_added: "2026-04-09"
+date_updated: "2026-04-10"
 summary: "Property and casualty insurers process millions of claims annually through labor-intensive workflows combining policy verification, weather validation, fraud screening, and payout calculation. A multi-agent system reduces processing time from 4+ days to same-day, with agents for policy coverage, weather validation, fraud screening, and payout calculation—all controlled by human adjusters for final decisions."
 slug: "UC-501-insurance-claims-processing"
 has_solution_design: false

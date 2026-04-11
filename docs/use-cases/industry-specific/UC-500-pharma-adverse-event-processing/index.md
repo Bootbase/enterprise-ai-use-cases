@@ -8,6 +8,8 @@ category_icon: "briefcase"
 industry: "Pharmaceutical / Life Sciences"
 complexity: "High"
 status: "detailed"
+date_added: "2026-04-09"
+date_updated: "2026-04-11"
 summary: "Pharmaceutical companies must process hundreds of thousands of adverse drug event reports annually under strict regulatory deadlines. Manual ICSR processing consumes 2–4 hours per case and costs USD 686K/year per product. An agentic AI system autonomously handles intake, triage, medical coding, duplicate detection, and narrative drafting—achieving < 30 minutes per case with 50–65% specialist FTE reduction while maintaining human control over serious cases and causality assessment."
 slug: "UC-500-pharma-adverse-event-processing"
 has_solution_design: true

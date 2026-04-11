@@ -8,6 +8,8 @@ category_icon: "briefcase"
 industry: "Healthcare"
 complexity: "High"
 status: "research"
+date_added: "2026-04-09"
+date_updated: "2026-04-10"
 summary: "US physicians spend 13 hours/week on indirect patient care and documentation, driving 43.2% burnout rates. Medical coding errors cost USD 36 billion annually in lost revenue and penalties. An agentic AI system listens to patient-physician encounters, generates structured clinical notes, assigns ICD-10 and CPT codes with compliance validation, and routes routine cases directly to billing with zero human intervention—achieving 90%+ zero-touch automation and reducing physician burnout by 10+ percentage points."
 slug: "UC-505-clinical-documentation-coding"
 has_solution_design: false

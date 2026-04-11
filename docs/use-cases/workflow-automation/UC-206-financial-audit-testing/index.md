@@ -8,6 +8,8 @@ category_icon: "settings"
 industry: "Cross-Industry (Financial Services, Professional Services, Enterprise)"
 complexity: "High"
 status: "detailed"
+date_added: "2026-04-09"
+date_updated: "2026-04-11"
 summary: "Agentic audit system that autonomously executes end-to-end audit workflows: ingesting 100% of transaction data from ERP systems, continuously monitoring controls, automatically testing all transactions (not samples), detecting anomalies using ML-driven risk scoring, and generating audit documentation. Achieves 100% transaction coverage (vs. 2-8% sampling), 70-80% reduction in manual testing hours, 3-5x more anomalies detected, and PCAOB-ready evidence with < 15% false positive rate."
 slug: "UC-206-financial-audit-testing"
 has_solution_design: true

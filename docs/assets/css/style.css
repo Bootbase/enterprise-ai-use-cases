@@ -459,6 +459,49 @@ a:hover {
   color: var(--muted-soft);
 }
 
+.filter-group-search {
+  flex: 1;
+  min-width: min(20rem, 100%);
+}
+
+.sort-box {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0.55rem 0.9rem 0.55rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.86);
+  min-width: 14rem;
+}
+
+.sort-box:focus-within {
+  border-color: rgba(217, 119, 87, 0.26);
+  box-shadow: 0 0 0 4px rgba(217, 119, 87, 0.08);
+}
+
+.sort-box i {
+  width: 17px;
+  height: 17px;
+  color: var(--muted-soft);
+  flex-shrink: 0;
+}
+
+.sort-box select {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 0.25rem;
+}
+
 .catalog-section {
   padding: var(--space-8) 0 var(--space-20);
 }
@@ -583,6 +626,36 @@ a:hover {
 .card-badge i {
   width: 13px;
   height: 13px;
+}
+
+.card-dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-4);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--muted-soft);
+  text-transform: uppercase;
+}
+
+.card-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.card-date i {
+  width: 13px;
+  height: 13px;
+  color: var(--muted-soft);
+}
+
+.card-date time {
+  color: var(--muted);
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 700;
 }
 
 .card-docs {
@@ -741,6 +814,37 @@ a:hover {
 .badge-complexity-low {
   color: #166b4f;
   background: rgba(33, 136, 99, 0.12);
+}
+
+.uc-dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted-soft);
+}
+
+.uc-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.uc-date i {
+  width: 14px;
+  height: 14px;
+  color: var(--muted-soft);
+}
+
+.uc-date time {
+  color: var(--muted);
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 700;
 }
 
 .uc-content-area {
@@ -1014,6 +1118,11 @@ a:hover {
   }
 
   .search-box {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .sort-box {
     min-width: 0;
     width: 100%;
   }

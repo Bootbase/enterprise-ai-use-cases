@@ -44,6 +44,20 @@ title: Catalog
         </div>
       </div>
       <div class="filter-group">
+        <label class="filter-label" for="sort-select">Sort</label>
+        <div class="sort-box">
+          <i data-lucide="arrow-up-down"></i>
+          <select id="sort-select" aria-label="Sort case studies">
+            <option value="id-asc">ID (ascending)</option>
+            <option value="id-desc">ID (descending)</option>
+            <option value="added-desc">Newest first</option>
+            <option value="added-asc">Oldest first</option>
+            <option value="updated-desc">Recently updated</option>
+          </select>
+        </div>
+      </div>
+      <div class="filter-group filter-group-search">
+        <label class="filter-label" for="search-input">Search</label>
         <div class="search-box">
           <i data-lucide="search"></i>
           <input type="text" id="search-input" placeholder="Search titles, sectors, or IDs..." autocomplete="off">
@@ -67,7 +81,9 @@ title: Catalog
          data-category="{{ uc.category }}"
          data-industry="{{ uc.industry }}"
          data-title="{{ uc.title | downcase }}"
-         data-id="{{ uc.uc_id | downcase }}">
+         data-id="{{ uc.uc_id | downcase }}"
+         data-added="{{ uc.date_added }}"
+         data-updated="{{ uc.date_updated }}">
         <div class="card-header">
           <span class="card-id">{{ uc.uc_id }}</span>
           <span class="card-depth">{{ doc_count }} sections</span>
@@ -83,6 +99,22 @@ title: Catalog
             {{ uc.industry }}
           </span>
         </div>
+        {% if uc.date_added or uc.date_updated %}
+        <div class="card-dates">
+          {% if uc.date_added %}
+          <span class="card-date">
+            <i data-lucide="calendar-plus"></i>
+            Added <time datetime="{{ uc.date_added }}">{{ uc.date_added | date: "%b %-d, %Y" }}</time>
+          </span>
+          {% endif %}
+          {% if uc.date_updated and uc.date_updated != uc.date_added %}
+          <span class="card-date">
+            <i data-lucide="refresh-cw"></i>
+            Updated <time datetime="{{ uc.date_updated }}">{{ uc.date_updated | date: "%b %-d, %Y" }}</time>
+          </span>
+          {% endif %}
+        </div>
+        {% endif %}
         <div class="card-docs">
           {% if uc.has_solution_design %}<span class="doc-indicator"><i data-lucide="puzzle"></i></span>{% endif %}
           {% if uc.has_implementation_guide %}<span class="doc-indicator"><i data-lucide="wrench"></i></span>{% endif %}
@@ -104,8 +136,10 @@ title: Catalog
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  const cards = document.querySelectorAll('.uc-card');
+  const grid = document.getElementById('use-case-grid');
+  const cards = Array.from(grid.querySelectorAll('.uc-card'));
   const searchInput = document.getElementById('search-input');
+  const sortSelect = document.getElementById('sort-select');
   const noResults = document.getElementById('no-results');
   let activeCategory = 'all';
 
@@ -119,6 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   searchInput.addEventListener('input', filterCards);
+  sortSelect.addEventListener('change', sortCards);
 
   function filterCards() {
     const query = searchInput.value.toLowerCase().trim();
@@ -140,11 +175,39 @@ document.addEventListener('DOMContentLoaded', function() {
     noResults.style.display = visible === 0 ? '' : 'none';
   }
 
+  function sortCards() {
+    const mode = sortSelect.value;
+    const sorted = cards.slice().sort((a, b) => {
+      switch (mode) {
+        case 'id-asc':
+          return a.dataset.id.localeCompare(b.dataset.id);
+        case 'id-desc':
+          return b.dataset.id.localeCompare(a.dataset.id);
+        case 'added-desc':
+          return (b.dataset.added || '').localeCompare(a.dataset.added || '') ||
+                 a.dataset.id.localeCompare(b.dataset.id);
+        case 'added-asc':
+          return (a.dataset.added || '').localeCompare(b.dataset.added || '') ||
+                 a.dataset.id.localeCompare(b.dataset.id);
+        case 'updated-desc':
+          return (b.dataset.updated || '').localeCompare(a.dataset.updated || '') ||
+                 a.dataset.id.localeCompare(b.dataset.id);
+        default:
+          return 0;
+      }
+    });
+    const frag = document.createDocumentFragment();
+    sorted.forEach(card => frag.appendChild(card));
+    grid.appendChild(frag);
+  }
+
   window.resetFilters = function() {
     searchInput.value = '';
     activeCategory = 'all';
+    sortSelect.value = 'id-asc';
     document.querySelectorAll('.chip').forEach(b => b.classList.remove('chip-active'));
     document.querySelectorAll('.chip[data-filter="all"]').forEach(b => b.classList.add('chip-active'));
+    sortCards();
     filterCards();
   };
 });

@@ -86,6 +86,10 @@ The brief must:
 - keep numbered workflows to `4–6` steps unless the domain genuinely requires more
 - keep friction lists and scope lists short and specific
 
+Front matter requirements:
+
+- Populate `date_added` and `date_updated` with today's date in `YYYY-MM-DD` format (both fields get the same value on initial creation). These power the "Added / Updated" timestamps on the website.
+
 ### Step 5 — Update The Index
 
 Add one row to `docs/use-cases/README.md`, matching the existing table format exactly.

@@ -8,6 +8,8 @@ category_icon: "briefcase"
 industry: "Energy / Utilities"
 complexity: "High"
 status: "research"
+date_added: "2026-04-09"
+date_updated: "2026-04-10"
 summary: "Modern electricity grids with high renewable penetration face sub-second frequency stability challenges. Tesla's Hornsdale Power Reserve responds to grid frequency drops in 0.14 seconds versus 6 seconds for traditional services—a 43× improvement. An autonomous multi-agent AI system continuously optimizes grid operations across generation forecasting, storage dispatch, demand response, and wholesale market participation—reducing renewable curtailment by 30% and cutting FCAS costs by 91%."
 slug: "UC-504-energy-grid-optimization"
 has_solution_design: false

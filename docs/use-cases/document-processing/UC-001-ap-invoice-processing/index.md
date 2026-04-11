@@ -8,6 +8,8 @@ category_icon: "file-text"
 industry: "Cross-Industry (Real Estate, Retail, Manufacturing, Professional Services, Hospitality)"
 complexity: "High"
 status: "detailed"
+date_added: "2026-04-09"
+date_updated: "2026-04-10"
 summary: "Every enterprise that buys goods or services runs an Accounts Payable (AP) function whose job is to receive vendor invoices, verify they correspond to a legitimate purchase, code them to the correct general ledger (GL) account and cost center, route them through a policy-driven approval chain, and post the payment into a core ERP. The work is high-volume, mostly repetitive, and dominated by data entry, document chasing, and reconciliation."
 slug: "UC-001-ap-invoice-processing"
 has_solution_design: true

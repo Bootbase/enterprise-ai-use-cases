@@ -26,6 +26,22 @@ layout: default
         {{ page.complexity }} Complexity
       </span>
     </div>
+    {% if page.date_added or page.date_updated %}
+    <div class="uc-dates">
+      {% if page.date_added %}
+      <span class="uc-date">
+        <i data-lucide="calendar-plus"></i>
+        Added <time datetime="{{ page.date_added }}">{{ page.date_added | date: "%b %-d, %Y" }}</time>
+      </span>
+      {% endif %}
+      {% if page.date_updated and page.date_updated != page.date_added %}
+      <span class="uc-date">
+        <i data-lucide="refresh-cw"></i>
+        Updated <time datetime="{{ page.date_updated }}">{{ page.date_updated | date: "%b %-d, %Y" }}</time>
+      </span>
+      {% endif %}
+    </div>
+    {% endif %}
   </div>
 </div>
 

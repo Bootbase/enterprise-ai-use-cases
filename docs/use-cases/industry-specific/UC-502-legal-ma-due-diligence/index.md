@@ -8,6 +8,8 @@ category_icon: "briefcase"
 industry: "Legal / Professional Services"
 complexity: "High"
 status: "research"
+date_added: "2026-04-09"
+date_updated: "2026-04-10"
 summary: "M&A diligence requires reviewing 500–2,000+ contracts under tight deadlines, with lawyers spending 3.2 hours per contract on manual review. An agentic multi-agent system autonomously executes each step of the diligence pipeline—VDR ingestion, contract classification, clause extraction, cross-contract conflict detection, and draft memo generation—reducing 200 associate-days to under 5 days while maintaining partner control over final judgment."
 slug: "UC-502-legal-ma-due-diligence"
 has_solution_design: false

@@ -8,6 +8,8 @@ category_icon: "settings"
 industry: "Logistics / Transportation"
 complexity: "High"
 status: "detailed"
+date_added: "2026-04-09"
+date_updated: "2026-04-11"
 summary: "Multi-agent AI system that autonomously orchestrates 30+ specialized agents embedded in TMS backends, processing 3+ million shipping tasks annually. Agents parse unstructured communications, execute multi-step decision workflows, and escalate to humans only for complex negotiations. Achieves 32-second quote response times (from 17-20 min), 90-second order processing (from 4 hours), 3-second freight classification (from 10+ min), and 40% overall productivity improvement with 520 basis-point margin expansion."
 slug: "UC-200-freight-logistics-orchestration"
 has_solution_design: true

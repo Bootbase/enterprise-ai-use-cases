@@ -8,6 +8,8 @@ category_icon: "settings"
 industry: "Cross-Industry (Financial Services, Manufacturing, Technology, Retail, Professional Services, Healthcare)"
 complexity: "High"
 status: "detailed"
+date_added: "2026-04-09"
+date_updated: "2026-04-11"
 summary: "Multi-agent financial close orchestration that autonomously reconciles accounts, detects anomalies, prepares journal entries, analyzes variances, and routes exceptions. Compresses close cycle from 10+ days to 2-4 days, achieves > 99% auto-match rate on recurring items, reduces manual reconciliation effort by 80%, and maintains 100% SOX compliance with automated audit trails."
 slug: "UC-204-financial-close-reconciliation"
 has_solution_design: true

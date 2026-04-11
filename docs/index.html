@@ -44,15 +44,12 @@ title: Catalog
         </div>
       </div>
       <div class="filter-group">
-        <label class="filter-label" for="sort-select">Sort</label>
-        <div class="sort-box">
-          <select id="sort-select" aria-label="Sort case studies">
-            <option value="id-asc">ID (ascending)</option>
-            <option value="id-desc">ID (descending)</option>
-            <option value="added-desc">Newest first</option>
-            <option value="added-asc">Oldest first</option>
-            <option value="updated-desc">Recently updated</option>
-          </select>
+        <label class="filter-label">Sort</label>
+        <div class="filter-chips" id="sort-filters" role="group" aria-label="Sort case studies">
+          <button class="chip chip-active" data-sort="id-asc">ID</button>
+          <button class="chip" data-sort="added-desc">Newest</button>
+          <button class="chip" data-sort="added-asc">Oldest</button>
+          <button class="chip" data-sort="updated-desc">Recently updated</button>
         </div>
       </div>
       <div class="filter-group filter-group-search">
@@ -138,9 +135,9 @@ document.addEventListener('DOMContentLoaded', function() {
   const grid = document.getElementById('use-case-grid');
   const cards = Array.from(grid.querySelectorAll('.uc-card'));
   const searchInput = document.getElementById('search-input');
-  const sortSelect = document.getElementById('sort-select');
   const noResults = document.getElementById('no-results');
   let activeCategory = 'all';
+  let activeSort = 'id-asc';
 
   document.querySelectorAll('#category-filters .chip').forEach(btn => {
     btn.addEventListener('click', function() {
@@ -151,8 +148,16 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  document.querySelectorAll('#sort-filters .chip').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('#sort-filters .chip').forEach(b => b.classList.remove('chip-active'));
+      this.classList.add('chip-active');
+      activeSort = this.dataset.sort;
+      sortCards();
+    });
+  });
+
   searchInput.addEventListener('input', filterCards);
-  sortSelect.addEventListener('change', sortCards);
 
   function filterCards() {
     const query = searchInput.value.toLowerCase().trim();
@@ -175,13 +180,10 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function sortCards() {
-    const mode = sortSelect.value;
     const sorted = cards.slice().sort((a, b) => {
-      switch (mode) {
+      switch (activeSort) {
         case 'id-asc':
           return a.dataset.id.localeCompare(b.dataset.id);
-        case 'id-desc':
-          return b.dataset.id.localeCompare(a.dataset.id);
         case 'added-desc':
           return (b.dataset.added || '').localeCompare(a.dataset.added || '') ||
                  a.dataset.id.localeCompare(b.dataset.id);
@@ -203,9 +205,11 @@ document.addEventListener('DOMContentLoaded', function() {
   window.resetFilters = function() {
     searchInput.value = '';
     activeCategory = 'all';
-    sortSelect.value = 'id-asc';
-    document.querySelectorAll('.chip').forEach(b => b.classList.remove('chip-active'));
-    document.querySelectorAll('.chip[data-filter="all"]').forEach(b => b.classList.add('chip-active'));
+    activeSort = 'id-asc';
+    document.querySelectorAll('#category-filters .chip').forEach(b => b.classList.remove('chip-active'));
+    document.querySelector('#category-filters .chip[data-filter="all"]').classList.add('chip-active');
+    document.querySelectorAll('#sort-filters .chip').forEach(b => b.classList.remove('chip-active'));
+    document.querySelector('#sort-filters .chip[data-sort="id-asc"]').classList.add('chip-active');
     sortCards();
     filterCards();
   };

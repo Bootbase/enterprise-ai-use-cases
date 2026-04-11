@@ -464,57 +464,6 @@ a:hover {
   min-width: min(20rem, 100%);
 }
 
-.sort-box {
-  position: relative;
-  min-width: 15rem;
-  display: flex;
-  align-items: center;
-  padding: 0.8rem 2.8rem 0.8rem 1rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.86);
-}
-
-.sort-box:focus-within {
-  border-color: rgba(217, 119, 87, 0.26);
-  box-shadow: 0 0 0 4px rgba(217, 119, 87, 0.08);
-}
-
-.sort-box select {
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  outline: 0;
-  background: transparent;
-  box-shadow: none;
-  font: inherit;
-  font-size: 0.92rem;
-  color: var(--ink-soft);
-  cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-}
-
-.sort-box select::-ms-expand {
-  display: none;
-}
-
-.sort-box::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  right: 1.1rem;
-  width: 9px;
-  height: 9px;
-  margin-top: -7px;
-  border-right: 2px solid var(--muted-soft);
-  border-bottom: 2px solid var(--muted-soft);
-  transform: rotate(45deg);
-  pointer-events: none;
-}
-
 .catalog-section {
   padding: var(--space-8) 0 var(--space-20);
 }
@@ -1131,11 +1080,6 @@ a:hover {
   }
 
   .search-box {
-    min-width: 0;
-    width: 100%;
-  }
-
-  .sort-box {
     min-width: 0;
     width: 100%;
   }

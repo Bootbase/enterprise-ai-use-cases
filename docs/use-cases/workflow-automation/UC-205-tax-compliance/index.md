@@ -7,13 +7,13 @@ category_dir: "workflow-automation"
 category_icon: "settings"
 industry: "Cross-Industry (Manufacturing, Retail, E-Commerce, Financial Services, Technology, Professional Services)"
 complexity: "High"
-status: "research"
+status: "detailed"
 summary: "Agentic tax compliance system that autonomously manages end-to-end tax lifecycle: ingesting transaction data, determining jurisdictional obligations, calculating taxes at correct rates, preparing and validating returns, filing through authority portals, managing exemption certificates, processing notices, and maintaining audit-ready documentation. Reduces filing preparation time by 40-60%, audit exposure by 75%, and compliance cost by 50-78%."
 slug: "UC-205-tax-compliance"
-has_solution_design: false
-has_implementation_guide: false
-has_evaluation: false
-has_references: false
+has_solution_design: true
+has_implementation_guide: true
+has_evaluation: true
+has_references: true
 permalink: /use-cases/UC-205-tax-compliance/
 ---
 

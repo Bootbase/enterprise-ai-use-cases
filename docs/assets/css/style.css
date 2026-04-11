@@ -824,7 +824,6 @@ a:hover {
 }
 
 .uc-body {
-  max-width: 940px;
   padding: clamp(1.4rem, 3vw, 2.6rem);
   border-radius: var(--radius-xl);
   border: 1px solid rgba(20, 20, 19, 0.08);

@@ -81,8 +81,8 @@ docs/use-cases/
 | UC-205 | Autonomous Multi-Jurisdiction Tax Compliance | Workflow Automation | Cross-Industry | detailed | `workflow-automation/UC-205-tax-compliance/` |
 | UC-206 | Autonomous Financial Audit and Controls Testing | Workflow Automation | Cross-Industry | detailed | `workflow-automation/UC-206-financial-audit-testing/` |
 | UC-300 | Autonomous Incident Investigation (AI SRE) | Code & DevOps | Cross-Industry | detailed | `code-and-devops/UC-300-incident-investigation-sre/` |
-| UC-301 | Autonomous SOC Alert Triage and Response | Code & DevOps | Cross-Industry | research | `code-and-devops/UC-301-soc-alert-triage/` |
-| UC-302 | Autonomous Legacy Code Modernization | Code & DevOps | Cross-Industry | research | `code-and-devops/UC-302-legacy-code-modernization/` |
+| UC-301 | Autonomous SOC Alert Triage and Response | Code & DevOps | Cross-Industry | detailed | `code-and-devops/UC-301-soc-alert-triage/` |
+| UC-302 | Autonomous Legacy Code Modernization | Code & DevOps | Cross-Industry | detailed | `code-and-devops/UC-302-legacy-code-modernization/` |
 | UC-400 | Autonomous Knowledge Synthesis (Consulting Copilot) | Knowledge Management | Consulting | research | `knowledge-management/UC-400-knowledge-synthesis-consulting/` |
 | UC-401 | Autonomous Regulatory Change Intelligence | Knowledge Management | Cross-Industry | research | `knowledge-management/UC-401-regulatory-change-intelligence/` |
 | UC-500 | Autonomous Pharma Adverse Event Processing | Industry-Specific | Pharmaceutical | research | `industry-specific/UC-500-pharma-adverse-event-processing/` |

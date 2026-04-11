@@ -7,13 +7,13 @@ category_dir: "code-and-devops"
 category_icon: "terminal"
 industry: "Cross-Industry (Financial Services, Technology, Healthcare, Retail, Energy, Government)"
 complexity: "High"
-status: "research"
+status: "detailed"
 summary: "Enterprise Security Operations Centers face an unmanageable volume of 11,000 daily alerts with 53% false positive rates. Tier-1 and Tier-2 analysts spend 15-40 minutes per alert, leaving 62% never properly investigated and creating alert fatigue and burnout across the security workforce."
 slug: "UC-301-soc-alert-triage"
-has_solution_design: false
-has_implementation_guide: false
-has_evaluation: false
-has_references: false
+has_solution_design: true
+has_implementation_guide: true
+has_evaluation: true
+has_references: true
 permalink: /use-cases/UC-301-soc-alert-triage/
 ---
 

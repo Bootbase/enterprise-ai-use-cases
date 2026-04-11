@@ -44,7 +44,18 @@ def build_parser() -> argparse.ArgumentParser:
     )
     run_parser.add_argument(
         "--resume-state",
-        help="Alternate state-file path. Defaults to .research-runner/state.json under the repo root.",
+        help="Alternate state-file path. Defaults to .research-runner/state-<instance-id>.json under the repo root.",
+    )
+    run_parser.add_argument(
+        "--instance-id",
+        default=None,
+        help=(
+            "Unique identifier for this runner instance. Defaults to the backend name. "
+            "Use a different value when running multiple instances of the same backend "
+            "concurrently. Each instance keeps its own state, logs, and baselines, and "
+            "claims use cases through the shared .research-runner/claims directory so "
+            "two runners never work on the same use case."
+        ),
     )
 
     verify_parser = subparsers.add_parser("verify-links", help="Verify markdown links and placeholder URLs.")
@@ -73,6 +84,7 @@ def main(argv: list[str] | None = None) -> int:
             no_push=args.no_push,
             state_path=args.resume_state,
             workflow_mode=args.workflow_mode,
+            instance_id=args.instance_id,
         )
         return run_workflow(config)
 

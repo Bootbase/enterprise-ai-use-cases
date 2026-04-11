@@ -25,7 +25,7 @@ def _upsert_readme_row(root: Path, topic_id: str, status: str) -> None:
     existing = readme.read_text(encoding="utf-8") if readme.exists() else ""
     lines = existing.splitlines()
     target_prefix = f"| {topic_id} "
-    replacement = f"| {topic_id} | [Title](foo) | Workflow Automation | Cross | High | `{status}` |"
+    replacement = f"| {topic_id} | Title | Workflow Automation | Cross | High | `{status}` |"
     replaced = False
     updated: list[str] = []
     for line in lines:

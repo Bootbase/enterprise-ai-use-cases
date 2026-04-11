@@ -16,47 +16,42 @@ permalink: /use-cases/UC-101-it-service-desk-resolution/references/
 
 ## Source Quality Notes
 
-The strongest deployment evidence comes from three named Moveworks customer stories: Broadcom, Nutanix, and Equinix. These are vendor-published, not independent benchmark studies, but they describe production deployments at named enterprises with specific metrics. The cost baseline relies on MetricNet benchmarking data, which is an established industry source for IT service desk economics. The implementation guidance relies on official product documentation from Microsoft (Graph API, Intune), ServiceNow (Table API), Okta (SCIM), OpenAI, and LangGraph. The control model uses public regulatory guidance from the European Commission and ICO. The password reset cost figure ($70 per incident) is widely attributed to Forrester Research and cited across multiple industry sources. The scenario economics in `evaluation.md` remain estimated even where they are anchored in published benchmarks.
+The strongest external evidence for UC-101 comes from named production deployments at IBM and Moveworks customers. Those sources are useful because they report live operational metrics, but most are still company- or vendor-published rather than independent benchmark studies. That means the published numbers should be treated as directional evidence that the workflow class is real, not as universal performance targets. The implementation guidance is stronger because it rests on current official documentation from ServiceNow, Okta, Microsoft, OpenAI, and LangGraph. The economic model in `evaluation.md` is intentionally estimated and conservative; it combines the internal brief, public wage data, and current model pricing rather than claiming a published ROI benchmark.
 
 ## Source Register
 
 | ID | Type | Source | Why It Was Used | Link |
 |----|------|--------|-----------------|------|
-| S1 | Internal brief | UC-101 research brief | Baseline scope, operating constraints, ticket volume assumptions, and target success metrics | [Research brief](./index.md) |
-| S2 | Primary deployment | Broadcom / Moveworks customer story | Published autonomous resolution rate (88%), cost reduction (40%), $1.4M savings, and 75,000+ tickets resolved | [Broadcom case study](https://www.moveworks.com/us/en/customers/broadcom-integrates-it-knowledge-base-with-moveworks-ai) |
-| S3 | Primary deployment | Nutanix / Moveworks customer story | Published MTTR (7 seconds), autonomous resolution (54%), 90% employee satisfaction, and 7-week deployment timeline | [Nutanix case study](https://www.moveworks.com/us/en/customers/nutanix-reduces-mttr-with-moveworks-ai-implementation-strategy) |
-| S4 | Primary deployment | Equinix / Moveworks customer story | Published deflection (68%), autonomous resolution (43%), 96% routing accuracy, and 96% employee satisfaction | [Equinix case study](https://www.moveworks.com/case-studies/equinix) |
-| S5 | Analysis | MetricNet service desk cost per ticket benchmarks | Published Tier 1 ($22), Desktop Support ($70), and Tier 3 ($104) cost-per-ticket benchmarks for scenario modeling | [MetricNet cost per ticket](https://www.metricnet.com/service-desk-cost-per-ticket-motm/) |
-| S6 | Analysis | Forrester Research / industry citations on password reset cost | Published $70 per password reset figure, widely cited across IT operations industry | [Password reset cost analysis](https://jumpcloud.com/blog/password-reset-cost) |
-| S7 | Analysis | HappySignals Global IT Experience Benchmark 2024 | Published employee productivity loss data (2h 19min for large organizations) used to validate resolution-time baseline | [HappySignals benchmark](https://www.happysignals.com/global-it-experience-benchmark-2024) |
-| S8 | Official docs | ServiceNow Table API documentation | Supports the ITSM ticket lifecycle integration pattern (create, update, work notes, close) | [ServiceNow Table API](https://www.servicenow.com/docs/bundle/yokohama-api-reference/page/integrate/inbound-rest/concept/c_TableAPI.html) |
-| S9 | Official docs | Microsoft Graph API: authenticationMethod resetPassword | Supports the password reset adapter pattern, required permissions, and request/response contract | [Microsoft Graph password reset](https://learn.microsoft.com/en-us/graph/api/authenticationmethod-resetpassword?view=graph-rest-1.0) |
-| S10 | Official docs | Microsoft Intune Graph API overview | Supports software assignment, device compliance queries, and endpoint management integration | [Intune Graph API](https://learn.microsoft.com/en-us/graph/intune-concept-overview) |
-| S11 | Official docs | OpenAI models documentation | Supports the current model recommendation for classification and planning tasks | [OpenAI models](https://developers.openai.com/api/docs/models) |
-| S12 | Official docs | OpenAI structured outputs guide | Supports schema-bound outputs and the `responses.parse` pattern with Pydantic | [Structured outputs](https://developers.openai.com/api/docs/guides/structured-outputs) |
-| S13 | Official docs | LangGraph overview documentation | Supports the state-graph orchestration pattern with nodes, edges, and conditional routing | [LangGraph overview](https://docs.langchain.com/oss/python/langgraph/overview) |
-| S14 | Official docs | Okta SCIM provisioning documentation | Supports user provisioning and app assignment integration for Okta-based identity environments | [Okta SCIM](https://developer.okta.com/docs/concepts/scim/) |
-| S15 | Official guidance | European Commission FAQ: Navigating the AI Act | Supports disclosure requirements for AI systems that interact directly with employees | [Navigating the AI Act](https://digital-strategy.ec.europa.eu/en/faqs/navigating-ai-act) |
-| S16 | Official guidance | ICO guidance: Data minimisation | Supports the recommendation to keep employee context and credential data handling to the minimum necessary | [ICO data minimisation](https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/data-protection-principles/a-guide-to-the-data-protection-principles/data-minimisation/) |
-| S17 | Industry recognition | Moveworks recognized as Challenger in 2025 Gartner Magic Quadrant for AI in ITSM | Validates vendor maturity and market position for AI-powered IT service desk solutions | [Moveworks Gartner MQ](https://www.moveworks.com/us/en/resources/blog/moveworks-in-gartner-ai-magic-quadrant-for-itsm) |
-| S18 | Official docs | OpenAI function calling guide | Supports the tool-calling loop used in the orchestration pattern | [Function calling](https://developers.openai.com/api/docs/guides/function-calling) |
+| S1 | Internal brief | UC-101 research brief | Baseline scope, constraints, target metrics, and incumbent-system assumptions | [Research brief](./index.md) |
+| S2 | Primary deployment | IBM case study: `AskIT` | Supports production-scale internal support automation and published successful-handling metrics | [IBM AskIT case study](https://www.ibm.com/case-studies/cio-watsonx-askit) |
+| S3 | Primary deployment | Broadcom customer story | Supports the published `88%` autonomous resolution figure for employee-support workflows | [Broadcom + Moveworks](https://www.moveworks.com/us/en/customers/broadcom-integrates-it-knowledge-base-with-moveworks-ai) |
+| S4 | Primary deployment | Equinix customer story | Supports routing-speed, routing-accuracy, and ticket-lifespan improvement claims | [Equinix + Moveworks](https://www.moveworks.com/us/en/customers/equinix-disappears-it-queue-with-moveworks-triage-ticketing-system) |
+| S5 | Primary deployment / vendor solution page | Moveworks identity and access management page | Supports the Achieve password-reset metric and Verisk account-issue volume metric for identity-heavy support work | [Moveworks IAM](https://www.moveworks.com/us/en/solutions/identity-access-management) |
+| S6 | Official docs | ServiceNow REST API Explorer learning module | Supports the use of narrow REST-based reads and writes against the ITSM system of record | [ServiceNow REST API Explorer](https://developer.servicenow.com/print_page.do?category=learning-module&identifier=app_store_learnv2_rest_xanadu_introduction_to_the_rest_api_explorer%2Cservicenow_application_developer&module=learning+plan&release=xanadu) |
+| S7 | Official docs | ServiceNow Scripted REST APIs learning module | Supports the recommendation to hide broad ITSM privileges behind a small internal API surface | [ServiceNow Scripted REST APIs](https://developer.servicenow.com/print_page.do?category=course-module&identifier=app_store_learnv2_rest_xanadu_scripted_rest_apis%2Capp_store_learnv2_rest_xanadu_scripted_rest_api_error_objects&module=course&release=xanadu) |
+| S8 | Official docs | Okta User Lifecycle API | Supports account lifecycle actions such as unlock and activation being executed by the identity platform rather than by the model | [Okta User Lifecycle API](https://developer.okta.com/docs/api/openapi/okta-management/management/tag/UserLifecycle/) |
+| S9 | Official docs | Okta User Credentials API | Supports password-reset and credential-management flows staying inside the IdP-native API surface | [Okta User Credentials API](https://developer.okta.com/docs/api/openapi/okta-management/management/tag/UserCred/) |
+| S10 | Official docs | Microsoft Graph `rebootNow` action for managed devices | Supports managed-device recovery as a narrow endpoint action in the first release | [Microsoft Graph rebootNow](https://learn.microsoft.com/en-us/graph/api/intune-devices-manageddevice-rebootnow?view=graph-rest-1.0) |
+| S11 | Official guidance | NIST SP 800-63B, Digital Identity Guidelines | Supports keeping identity verification and recovery controls outside conversational improvisation | [NIST SP 800-63B](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63b.pdf) |
+| S12 | Official statistics | U.S. Bureau of Labor Statistics: Computer Support Specialists | Supports the labor-cost anchor used in the scenario model | [BLS Occupational Outlook](https://www.bls.gov/ooh/computer-and-information-technology/computer-support-specialists.htm) |
+| S13 | Official docs | OpenAI models documentation | Supports the current `gpt-5.4` and `gpt-5.4-mini` model recommendation | [OpenAI models](https://developers.openai.com/api/docs/models) |
+| S14 | Official docs | OpenAI API pricing | Supports the estimated per-ticket compute-cost model in `evaluation.md` | [OpenAI pricing](https://openai.com/api/pricing/) |
+| S15 | Official docs | OpenAI structured outputs guide | Supports the typed `TicketPlan` contract and schema-bound planner pattern | [OpenAI structured outputs](https://developers.openai.com/api/docs/guides/structured-outputs) |
+| S16 | Official docs | OpenAI function calling guide | Supports the tool-calling loop used between the planner and control-plane tools | [OpenAI function calling](https://developers.openai.com/api/docs/guides/function-calling) |
+| S17 | Official docs | LangGraph Graph API overview | Supports the explicit state-graph orchestration pattern in the implementation guide | [LangGraph Graph API](https://docs.langchain.com/oss/python/langgraph/graph-api) |
 
 ## Claim Map
 
 | Claim Or Section | Source IDs |
 |------------------|------------|
-| UC-101 operating constraints, ticket volume assumptions, and target metrics | S1 |
-| Solution design: bounded autonomy for L1 intents with deterministic gate and human fallback | S1, S2, S3, S4 |
-| Solution design: ITSM platform remains the system of record and operator surface | S8 |
-| Solution design: password resets as primary value driver (20-50% of volume, $70 each) | S1, S5, S6 |
-| Solution design: identity provider and endpoint management integration seams | S9, S10, S14 |
-| Solution design: disclosure, data minimization, and audit controls | S15, S16 |
-| Implementation guide: OpenAI model choice and structured action proposal contract | S11, S12 |
-| Implementation guide: tool-calling loop and state-graph orchestration | S13, S18 |
-| Implementation guide: password reset adapter using Microsoft Graph API | S9 |
-| Implementation guide: ServiceNow ticket lifecycle integration | S8 |
-| Implementation guide: Intune software provisioning integration | S10 |
-| Evaluation: published autonomous resolution, MTTR, and satisfaction evidence | S2, S3, S4 |
-| Evaluation: cost-per-ticket baseline and economic scenario model | S1, S5, S6, S7 |
-| Evaluation: credential exposure and identity mutation safety risks | S9, S15, S16 |
-| Evaluation: vendor maturity and market validation | S17 |
+| UC-101 baseline scope, constraints, and first-release boundary | S1 |
+| Solution design: bounded autonomy for routine identity, device, and KB-backed L1 work | S1, S2, S3, S4, S5 |
+| Solution design: incumbent ITSM remains the system of record and audit surface | S1, S6, S7 |
+| Solution design: identity verification stays outside the conversational model and inside the IdP flow | S8, S9, S11 |
+| Solution design: endpoint recovery as a narrow, managed-device action | S1, S10 |
+| Implementation guide: structured planner contract and OpenAI-based planning loop | S13, S15, S16 |
+| Implementation guide: LangGraph workflow with deterministic verify and execute branches | S17 |
+| Implementation guide: ServiceNow, Okta, and Microsoft Graph integration pattern | S6, S7, S8, S9, S10 |
+| Evaluation: published production evidence for autonomous or accelerated employee support | S2, S3, S4, S5 |
+| Evaluation: labor-cost and per-ticket operating-cost scenario model | S1, S12, S13, S14 |
+| Evaluation: evidence limitations and rollout-risk framing | S1, S2, S3, S4, S5, S11 |

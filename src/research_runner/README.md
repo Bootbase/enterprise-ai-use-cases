@@ -164,6 +164,8 @@ research-runner verify-links --root . --check-remote
   `new-and-complete` to create and complete new use cases, or `detail-next` to recursively complete the next existing use case that is not yet `detailed`.
 - `--resume-state`
   Alternate path for the persisted state file.
+- `--instance-id`
+  Unique identifier for this runner instance. Defaults to the backend name (`claude` or `codex`). Use a different value when running multiple instances of the same backend concurrently. Each instance keeps its own state file, log directory, and baselines directory; runners coordinate through a shared `claims/` directory and never work on the same use case.
 
 `research-runner verify-links` supports:
 
@@ -200,14 +202,55 @@ BACKENDS: dict[str, type[AgentBackend]] = {
 The runner persists state in:
 
 ```text
-.research-runner/state.json
+.research-runner/state-<instance-id>.json
 ```
 
-If a run stops partway through because of an interruption or a resettable limit, rerun the same command. The runner will load the saved phase and continue from there.
+The default instance ID is the backend name, so a typical run uses `state-claude.json` or `state-codex.json`.
+
+**Resume is the default.** Every time you start the runner it inspects the persisted state and continues from it:
+
+- No state file → start a brand-new workflow.
+- State file in a non-terminal phase → resume that phase in place. The topic claim is re-acquired so peer instances stay coordinated.
+- State file in a terminal phase (`completed`, `stopped`, or `failed`) → roll into a fresh cycle from the same instance. The next cycle's selection logic looks at the filesystem (`status:` frontmatter), so any use case that was in progress but never reached `status: detailed` is picked up again on the next cycle without losing work.
 
 For Claude, the runner recovers the session UUID from logs and uses `--resume`. For backends without session support (Codex), each phase is a fresh invocation.
 
-After a fully successful cycle, the runner resets its internal phase state and starts the next cycle for the same workflow mode until one of the stop conditions is hit.
+Use cases that have already reached `status: detailed` are skipped because `find_next_topic_needing_detail` filters them out.
+
+## Running Multiple Instances Concurrently
+
+You can run more than one runner against the same repository at the same time — for example, one Claude instance and one Codex instance — and each will pick a different use case to work on. Coordination happens through a shared lock directory:
+
+```text
+.research-runner/
+├── state-claude.json
+├── state-codex.json
+├── logs/
+│   ├── claude/
+│   └── codex/
+├── baselines/
+│   ├── claude/
+│   └── codex/
+└── claims/
+    ├── UC-203.json   # owned by claude
+    └── UC-204.json   # owned by codex
+```
+
+How it works:
+
+1. When a runner picks the next un-detailed use case, it atomically writes a claim file under `claims/`. Atomicity uses `O_CREAT | O_EXCL`, so two runners cannot create the same claim.
+2. Each runner skips topics that other instances currently hold a claim for, and retries with the next candidate if it loses a race during the atomic acquire.
+3. On a successful cycle, normal stop, or failure, the runner releases its own claim. Foreign claims are never touched.
+4. On resume, the runner re-acquires the claim for the topic it had been working on. If a peer instance now owns it, the runner aborts with a clear error.
+
+To run two instances of the same backend, give each one a unique `--instance-id`:
+
+```bash
+research-runner run --root . --backend claude --instance-id claude-a &
+research-runner run --root . --backend claude --instance-id claude-b &
+```
+
+If a runner dies hard (e.g. `kill -9`) and leaves an orphan claim file, delete the file under `.research-runner/claims/` to release it.
 
 ## Logs And Artifacts
 
@@ -217,16 +260,18 @@ The runner writes under:
 .research-runner/
 ```
 
-Important files:
+Important files (substitute your `<instance-id>` for the runner you started; default is the backend name):
 
-- `.research-runner/state.json`
-  Current workflow state
-- `.research-runner/logs/research-new.ndjson`
+- `.research-runner/state-<instance-id>.json`
+  Current workflow state for this instance
+- `.research-runner/logs/<instance-id>/research-new.ndjson`
   Streamed agent output for `research-new`
-- `.research-runner/logs/research-complete.ndjson`
+- `.research-runner/logs/<instance-id>/research-complete.ndjson`
   Streamed agent output for `research-complete`
-- `.research-runner/baselines/`
+- `.research-runner/baselines/<instance-id>/`
   Internal snapshots used to safely handle pre-existing index-file edits and detect pre-existing use-case directories
+- `.research-runner/claims/UC-XXX.json`
+  Cross-instance ownership lock for a use case (shared across all runners)
 
 ## Git Behavior
 

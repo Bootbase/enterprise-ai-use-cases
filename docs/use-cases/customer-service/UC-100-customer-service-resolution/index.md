@@ -7,13 +7,13 @@ category_dir: "customer-service"
 category_icon: "headphones"
 industry: "Cross-Industry (FinTech, SaaS, E-Commerce)"
 complexity: "High"
-status: "research"
+status: "detailed"
 summary: "Enterprise customer service organizations face a compounding crisis: rising ticket volumes, growing customer expectations for instant resolution, and a shrinking labor pool willing to work in support roles. Traditional chatbots deflect simple FAQ queries but fail on anything requiring multi-step reasoning, cross-system lookups, or transactional actions."
 slug: "UC-100-customer-service-resolution"
-has_solution_design: false
-has_implementation_guide: false
-has_evaluation: false
-has_references: false
+has_solution_design: true
+has_implementation_guide: true
+has_evaluation: true
+has_references: true
 permalink: /use-cases/UC-100-customer-service-resolution/
 ---
 

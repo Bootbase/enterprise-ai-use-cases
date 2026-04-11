@@ -8,6 +8,7 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 from subprocess import run
 
+from .claims import acquire_claim, list_claimed_topics, release_claim
 from .config import AppConfig
 from .console import banner, error, info, warn
 from .git_ops import (
@@ -25,7 +26,7 @@ from .git_ops import (
     show_head_file,
     upstream_ref,
 )
-from .models import AgentRunResult, Phase, RunState, WorkflowMode
+from .models import AgentRunResult, Phase, RunState, VerificationResult, WorkflowMode
 from .state import default_state, load_state, save_state
 from .topic_inference import extract_topic_ids
 from .verification import find_next_topic_needing_detail, find_use_case_dirs, verify_research_complete, verify_research_new
@@ -38,21 +39,66 @@ class RunnerError(RuntimeError):
 INDEX_FILES = ("README.md", "docs/use-cases/README.md")
 
 
-def _load_or_create_state(config: AppConfig) -> tuple[RunState, bool]:
-    state = load_state(config.state_path)
-    if state and state.current_phase not in {Phase.COMPLETED, Phase.STOPPED, Phase.FAILED}:
-        if Path(state.root).resolve() != config.root.resolve():
-            raise RunnerError(f"State file root {state.root} does not match requested root {config.root}")
-        if state.workflow_mode != config.workflow_mode:
-            raise RunnerError(
-                f"State file workflow_mode {state.workflow_mode.value} does not match requested mode {config.workflow_mode.value}"
-            )
-        info(f"Resuming workflow from {config.state_path}")
-        state.sleep_hours = config.sleep_hours
-        return state, True
+def _reset_instance_artifacts(config: AppConfig) -> None:
+    """Wipe only this instance's persisted artifacts.
 
-    shutil.rmtree(config.state_path.parent, ignore_errors=True)
-    return default_state(config.root, config.session_name, config.sleep_hours, config.workflow_mode), False
+    The shared ``.research-runner/`` directory may host other instances'
+    state, logs, and the ``claims/`` lock directory, so removing it wholesale
+    would corrupt their work. We only delete the files this instance owns.
+    """
+    config.state_path.unlink(missing_ok=True)
+    shutil.rmtree(config.logs_dir, ignore_errors=True)
+    shutil.rmtree(config.baselines_dir, ignore_errors=True)
+
+
+def _load_or_create_state(config: AppConfig) -> tuple[RunState, bool]:
+    """Always pick up from the persisted state when one exists.
+
+    Resume is the default behavior. There are three cases:
+
+    1. No state file on disk → start a brand new workflow.
+    2. State file in a non-terminal phase → resume that phase in place and
+       re-acquire the topic claim.
+    3. State file in a terminal phase (``COMPLETED``/``STOPPED``/``FAILED``) →
+       roll into a fresh cycle from the same instance. The previous cycle's
+       claim has already been released by the process that wrote the terminal
+       state, so a peer instance is free to take over that topic if it wants.
+       The new cycle's selection logic still consults the filesystem, so any
+       use case that was in progress but never reached ``status: detailed``
+       will be picked up again on the next cycle without losing work.
+    """
+    state = load_state(config.state_path)
+    if state is None:
+        info(f"No prior state at {config.state_path}; starting a new workflow")
+        return default_state(config.root, config.session_name, config.sleep_hours, config.workflow_mode), False
+
+    if Path(state.root).resolve() != config.root.resolve():
+        raise RunnerError(f"State file root {state.root} does not match requested root {config.root}")
+    if state.workflow_mode != config.workflow_mode:
+        raise RunnerError(
+            f"State file workflow_mode {state.workflow_mode.value} does not match requested mode {config.workflow_mode.value}"
+        )
+
+    state.sleep_hours = config.sleep_hours
+
+    if state.current_phase in {Phase.COMPLETED, Phase.STOPPED, Phase.FAILED}:
+        info(
+            f"Previous run at {config.state_path} ended in '{state.current_phase.value}'; "
+            "resuming with a fresh cycle"
+        )
+        _release_topic_claim(config, state)
+        _reset_instance_artifacts(config)
+        return default_state(config.root, config.session_name, config.sleep_hours, config.workflow_mode), False
+
+    info(f"Resuming workflow from {config.state_path} at phase '{state.current_phase.value}'")
+    if state.topic_id:
+        if not acquire_claim(config.claims_dir, state.topic_id, config.instance_id):
+            raise RunnerError(
+                f"Cannot resume {state.topic_id}: it is currently claimed by another runner instance. "
+                f"Stop the other runner or remove {config.claims_dir / (state.topic_id + '.json')} "
+                "before retrying."
+            )
+    return state, True
 
 
 def _phase_log_path(config: AppConfig, state: RunState, phase_name: str) -> Path:
@@ -89,8 +135,34 @@ def _infer_topic_id_from_log(config: AppConfig, log_path: Path, root: Path, excl
     raise RunnerError(f"Could not disambiguate inferred topic IDs: {', '.join(candidates)}")
 
 
+def _release_topic_claim(config: AppConfig, state: RunState) -> None:
+    if not state.topic_id:
+        return
+    if release_claim(config.claims_dir, state.topic_id, config.instance_id):
+        info(f"Released claim on {state.topic_id}")
+
+
+def _claim_next_detail_topic(config: AppConfig) -> VerificationResult | None:
+    """Pick the next un-detailed topic and atomically claim it for this instance.
+
+    Loops until a candidate is successfully claimed or no candidates remain.
+    Each iteration re-reads the claims directory because peer instances may
+    have grabbed something between the listing and the atomic acquire.
+    """
+    while True:
+        excluded = list_claimed_topics(config.claims_dir, exclude_instance=config.instance_id)
+        candidate = find_next_topic_needing_detail(config.root, excluded_ids=excluded)
+        if candidate is None:
+            return None
+        if acquire_claim(config.claims_dir, candidate.topic_id, config.instance_id):
+            info(f"Claimed {candidate.topic_id} for instance '{config.instance_id}'")
+            return candidate
+        info(f"{candidate.topic_id} was claimed by another runner; retrying with the next candidate")
+
+
 def _mark_failed(config: AppConfig, state: RunState, message: str) -> int:
     error(message)
+    _release_topic_claim(config, state)
     state.current_phase = Phase.FAILED
     state.failure_message = message
     save_state(config.state_path, state)
@@ -112,7 +184,7 @@ def _fresh_preflight(config: AppConfig, state: RunState) -> None:
     state.artifacts.logs_dir = str(config.logs_dir)
 
     if config.workflow_mode == WorkflowMode.DETAIL_NEXT:
-        next_topic = find_next_topic_needing_detail(config.root)
+        next_topic = _claim_next_detail_topic(config)
         if next_topic is None:
             state.current_phase = Phase.STOPPED
             state.stop_reason = "No use cases remain that are not detailed"
@@ -186,8 +258,9 @@ def _runtime_remaining_seconds(config: AppConfig, state: RunState) -> float | No
 
 
 def _next_cycle_state(config: AppConfig, previous_state: RunState) -> RunState:
+    _release_topic_claim(config, previous_state)
     started_at = previous_state.timestamps.started_at
-    shutil.rmtree(config.state_path.parent, ignore_errors=True)
+    _reset_instance_artifacts(config)
     state = default_state(config.root, config.session_name, config.sleep_hours, config.workflow_mode)
     if started_at is not None:
         state.timestamps.started_at = started_at
@@ -221,6 +294,7 @@ def _stop_run(config: AppConfig, state: RunState, reason: str, *, exit_code: int
         warn(reason)
     else:
         info(reason)
+    _release_topic_claim(config, state)
     state.current_phase = Phase.STOPPED
     state.stop_reason = reason
     save_state(config.state_path, state)
@@ -502,6 +576,12 @@ def run_workflow(config: AppConfig) -> int:
                         _phase_log_path(config, state, "research-new"),
                         config.root,
                         excluded_ids=_existing_topic_ids(config),
+                    )
+                if not acquire_claim(config.claims_dir, state.topic_id, config.instance_id):
+                    raise RunnerError(
+                        f"{state.topic_id} is already claimed by another runner instance. "
+                        f"Two new-and-complete runs appear to have produced the same use case ID. "
+                        "Inspect the generated directory manually and remove the conflicting claim file."
                     )
                 verification = verify_research_new(config.root, state.topic_id)
                 if verification.use_case_dir in _existing_use_case_dirs(config):

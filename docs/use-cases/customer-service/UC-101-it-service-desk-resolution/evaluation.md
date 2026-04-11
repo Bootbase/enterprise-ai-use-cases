@@ -16,62 +16,64 @@ permalink: /use-cases/UC-101-it-service-desk-resolution/evaluation/
 
 ## Decision Summary
 
-This is a strong enterprise AI use case with unusually direct evidence. Multiple named deployments report autonomous resolution rates between 35% and 88%, sub-minute resolution times, and high employee satisfaction. The evidence is mostly vendor-published (Moveworks customer stories) rather than independent benchmark research, but the deployments are named, the metrics are specific, and the volume claims are large enough to be operationally meaningful. The business case holds when three conditions are met: the organization has a high enough L1 ticket volume to justify integration work, the identity and endpoint systems expose APIs for the target actions, and runbook quality is good enough to ground the AI's classification and resolution decisions. [S2][S3][S4]
+This is a strong use case if the enterprise stays disciplined about scope. The published evidence shows that routine identity and employee-support requests can be automated or sharply accelerated in production, but the external evidence base is still concentrated in vendor-published customer stories rather than independent benchmarks. The case is strongest when the first release stays inside low-risk L1 work, keeps ITSM and identity systems authoritative, and measures success on safe autonomous resolution rather than on headline chatbot usage. [S1][S2][S3][S4][S5]
 
 ## Published Evidence
 
 | Deployment / Source | Published Metric | What It Shows |
 |---------------------|------------------|---------------|
-| Broadcom / Moveworks | 88% autonomous resolution rate (up from 10% at launch), 75,000+ IT issues resolved, employees receive support in under 60 seconds instead of days, 40% cost reduction in ticket services, $1.4M in savings | A large enterprise can reach very high autonomous resolution rates over time. The ramp from 10% to 88% shows that AI service desk quality improves with deployment maturity. [S2] |
-| Nutanix / Moveworks | 54% autonomous resolution rate, 7-second average MTTR, 30,000+ tickets resolved autonomously, 90% employee satisfaction, deployed in 7 weeks | Sub-minute MTTR is achievable for routine IT requests. High employee satisfaction shows that autonomous resolution does not inherently degrade the experience. [S3] |
-| Equinix / Moveworks | 68% deflection rate, 43% autonomous resolution, 82% of tickets routed by AI at 96% accuracy, 96% employee satisfaction | Even partial automation (43% resolution plus AI-assisted routing) creates meaningful capacity relief and high satisfaction when the triage quality is strong. [S4] |
-| MetricNet benchmarks | Tier 1 cost: $22/ticket, Desktop Support: $70/ticket, Tier 3: $104/ticket, industry CSAT: 83.8% | Establishes the cost baseline for manual IT service desk operations. The gap between $22/ticket and sub-$2 AI resolution cost is the primary economic driver. [S5] |
+| IBM CIO organization, `AskIT` virtual assistant | `75%` of inquiries handled successfully; about `26,000` contacts monthly | A large enterprise can run AI-first internal support at meaningful scale without routing every request to an analyst. |
+| Broadcom + Moveworks | `88%` autonomous resolution rate reported in 2025 year-to-date tracking | Routine employee-support workflows can reach high automation when the operating surface is narrow and well integrated. |
+| Equinix + Moveworks | `96%` routing accuracy; `82%` of tickets routed within `30 seconds`; average ticket lifespan down nearly one-third | Even before full auto-resolution, AI triage and routing materially improve speed and reduce queue waste. |
+| Achieve + Moveworks | `95%` of password resets completely automated | Password reset is a credible first-release intent because it is repetitive, policy-bound, and API-addressable. |
+| Verisk + Moveworks | `4,200` account issues resolved each month | Identity and access requests generate enough repeat volume to justify dedicated automation design. |
 
 ## Assumptions And Scenario Model
 
+The scenario below models a `10,000`-employee enterprise service desk. Values are estimated unless the basis says published.
+
 | Assumption | Value | Basis |
 |------------|-------|-------|
-| Annual L1/L2 ticket volume | 96,000 tickets (8,000/month) | Estimated. Consistent with the research brief's 10,000-employee reference at 0.8 tickets per employee per month. [S1] |
-| Current average resolution time | 2 hours 50 minutes | Published. HappySignals Global IT Experience Benchmark. [S7] |
-| Current cost per L1 ticket | $22 | Published. MetricNet 2024 benchmark for Tier 1 service desk. [S5] |
-| Password resets as share of volume | 30% | Estimated. Conservative midpoint of the Gartner 20-50% range cited in the research brief. [S1][S6] |
-| Steady-state autonomous resolution rate | 50% | Estimated. Conservative relative to Broadcom (88%) and Nutanix (54%), and realistic for a first-year deployment with a limited intent set. [S2][S3] |
-| AI cost per resolved ticket | $1.50 | Estimated. Accounts for model inference, orchestration overhead, and identity API calls. Higher than customer-facing chatbot costs due to identity mutation complexity. |
+| Monthly ticket volume | `8,000` tickets | Estimated from the UC-101 research brief baseline for a `10,000`-employee enterprise. [S1] |
+| First-release eligible share | `55%` of tickets | Estimated. Restricts scope to identity issues, known device recovery, and KB-grounded self-service rather than all L1 work. Supported directionally by the published identity-automation examples. [S2][S4][S5] |
+| Autonomous resolution on eligible tickets | `75%` | Estimated. Conservative relative to the stronger published identity-specific metrics and below the Broadcom headline rate. [S3][S4][S5] |
+| Current fully loaded handling cost | `$17` per ticket | Estimated. Anchored to the research brief cost range and BLS wage data for computer user support specialists. [S1][S12] |
+| AI-resolved ticket operating cost | `$0.80` per ticket | Estimated from current model pricing plus retrieval, orchestration, and residual support overhead; assumes a narrow action plan, not a long multi-agent session. [S13][S14] |
 
 ## Expected Economics
 
 | Factor | Value | Note |
 |--------|-------|------|
-| **Current cost** | ~$2.1M per year | Estimated. 96,000 tickets x $22 per ticket (MetricNet Tier 1 benchmark). [S5] |
-| **Expected steady-state cost** | ~$1.2M-$1.4M per year | Estimated. 50% of tickets resolved at $1.50 AI cost; remaining 50% still handled by analysts at $22 per ticket. |
-| **Expected benefit** | ~$700K-$900K annual savings | Estimated. Driven by eliminating analyst handle time on routine L1 requests plus reduced misrouting rework. |
-| **Implementation cost** | ~$350K-$600K one-time | Estimated. Covers ITSM and identity provider integration, runbook content cleanup, security review, replay-set creation, and pilot operations. |
-| **Payback view** | ~5-8 months | Estimated. Requires the deployment to reach the 50% automation assumption and maintain identity mutation safety. |
+| **Current cost** | `~$1.63M/year` | Estimated: `96,000` tickets annually at `$17` each. Excludes employee downtime while waiting for help. |
+| **Expected steady-state cost** | `~$0.99M/year` | Estimated: about `39,600` tickets resolved by automation at `$0.80`, with the remainder still handled manually at the baseline cost. |
+| **Expected benefit** | `~$0.64M/year` labor savings | Estimated. This is service-desk operating savings only; it does not include regained employee productivity from faster resolution. |
+| **Implementation cost** | `$350K-$550K` in year one | Estimated: orchestration service, connector work, KB cleanup, evaluation harness, and pilot operations. Wide range because incumbent-system complexity dominates. |
+| **Payback view** | `~7-11 months` | Estimated from annual labor savings alone. Faster payback is possible if the enterprise has strong KB hygiene and already exposes the required APIs. |
 
 ## Quality, Risk, And Failure Modes
 
 | Area | Strength / Risk | Control Or Mitigation |
 |------|-----------------|-----------------------|
-| Password resets and account unlocks | Strength. These are the highest-volume, most standardized L1 tasks. Published deployments consistently show these as the first category to reach high autonomous resolution rates. [S2][S3][S6] | Start the pilot with identity actions only. They are the easiest to validate and produce the fastest employee experience improvement. |
-| Identity mutation safety | Risk. Resetting the wrong user's password or granting unauthorized access creates a direct security incident. [S9] | Gate every identity write with exact employee-ID match, identity verification status, and action-specific rules. Never process identity mutations for privileged accounts without human approval. |
-| Runbook quality and drift | Risk. If runbooks are outdated, scattered, or inconsistent, the AI will ground its reasoning on wrong procedures. | Give IT operations ownership of runbook tagging, effective dates, and retrieval quality. Regression-test against runbook-heavy scenarios in every release. |
-| Credential exposure | Risk. Password resets return temporary credentials that must never appear in logs, work notes, or conversation history. [S15][S16] | Redact temporary passwords before writing work notes. Deliver credentials through a secure, time-limited channel (e.g., direct message with auto-expiry). |
-| Evidence quality | Mixed. The deployment evidence is strong enough for pilot sizing, but it comes primarily from one vendor's (Moveworks) customer stories. Independent benchmarks would strengthen confidence. | Use published evidence to size the opportunity, then require local replay and supervised pilot data before scaling. |
+| **Identity workflows** | Strength: unlock and reset flows are repetitive and already API-driven; Risk: the wrong identity check turns a high-volume win into a security problem | Keep verification outside the model, require IdP state before any write, and never let the model collect secrets in chat. [S8][S9][S11] |
+| **Knowledge quality** | Risk: bad or stale KB articles produce confident but wrong troubleshooting advice | Tag and version articles, monitor reopen rates by article, and route to human review when retrieval freshness is unknown. |
+| **Ticket routing** | Strength: published evidence is strong on faster routing and queue reduction; Risk: over-automation can hide outage patterns if every ticket is treated independently | Add incident-swarm detection and switch to broadcast or queue-only mode during major events. [S4] |
+| **Operational scope creep** | Risk: service desks often want to add software fulfillment and privilege changes too early | Freeze the first-release action catalog and expand only after shadow-mode and pilot gates are met. |
+| **Evidence quality** | Risk: most public metrics are vendor-published and may overstate transferability to a weaker environment | Treat the published metrics as directional, not universal, and validate the local business case with a historical-ticket replay before production rollout. [S2][S3][S4][S5] |
 
 ## Rollout KPI Set
 
 | KPI | Why It Matters | Pilot Gate |
 |-----|----------------|------------|
-| Autonomous resolution rate on supported intents | Shows whether the workflow is actually escaping the analyst queue | >= 30% in supervised pilot, trending toward >= 50% before broader release |
-| Mean time to resolution (AI-resolved tickets) | Captures the employee-visible speed improvement | < 2 minutes (vs. 2h 50m baseline) |
-| Identity mutation accuracy | Hard safety metric for password resets, unlocks, and access changes | 0 unauthorized identity writes |
-| Ticket misrouting rate | Measures whether AI classification is improving or degrading routing quality | < 8% (vs. 15-25% baseline) |
-| Employee satisfaction (CSAT) | Prevents a cost-only rollout that damages employee experience | Within 5 points of the human baseline, or above |
+| **Autonomous resolution rate on in-scope tickets** | Core measure of whether the automation catalog is actually working | `>= 65%` after the pilot period |
+| **Unsafe action rate** | The most important safety metric for identity and endpoint writes | `0` unapproved or policy-breaking actions |
+| **Median automated resolution time** | Tests whether the system is removing queue time rather than just shifting work | `< 60 seconds` for approved auto-executed intents |
+| **Reopen rate for AI-resolved tickets** | Catches bad KB content, wrong plans, and fragile write paths | `<=` the human baseline for the same intent family |
+| **Escalation packet completeness** | Determines whether analysts gain time or lose time on AI handoffs | `>= 95%` of escalations include intent, evidence, attempted action, and blocked reason |
+| **Employee CSAT for AI-resolved tickets** | Confirms the user experience is actually better, not just cheaper | `>= 4.2/5.0` |
 
 ## Open Questions
 
-- Which L1 intent categories in the target enterprise have clean, current runbooks that are ready for retrieval, and which require content remediation before the AI can use them?
-- Does the organization's identity provider support the specific API operations needed (password reset, group membership, app assignment) with sufficient granularity and permission scoping?
-- What identity verification flow is acceptable before an AI-initiated password reset — SSO session validation, MFA challenge, or manager approval?
-- How will the organization handle burst load during major incidents (e.g., company-wide VPN outage generating thousands of simultaneous tickets)?
-- What local error budget would IT leadership accept before preferring lower automation and more human handling?
+- What share of historical tickets actually falls into the first-release action catalog once duplicate outage tickets are removed?
+- Which identity-verification pattern is acceptable inside the employee channels for unlock and reset requests, and which requests must always bounce to a separate proofing flow?
+- Does the incumbent ITSM configuration permit a narrow Scripted REST control plane, or will the enterprise need to adapt to existing automation assets and approval workflows?
+- How much knowledge-base cleanup is required before the retrieval layer can be trusted for VPN, device, and software-support guidance?

@@ -17,6 +17,7 @@ TOPIC_ID_RE = re.compile(r"^(?P<topic_id>UC-\d+)-")
 README_STATUS_RE = re.compile(r"\|\s*(research|detailed)\s*\|", re.IGNORECASE)
 INDEX_READMES = ("docs/use-cases/README.md", "README.md")
 CODE_FENCE_RE = re.compile(r"```.*?```", re.DOTALL)
+INLINE_CODE_RE = re.compile(r"`[^`\n]+`")
 PLACEHOLDER_RE = re.compile(r"\{[A-Za-z][A-Za-z0-9 ,._/+():-]{1,120}\}")
 MARKDOWN_LINK_RE = re.compile(r'(?<!!)\[[^\]]+\]\((?P<target><[^>]+>|[^)\s]+(?:\s+"[^"]*")?)\)')
 RAW_URL_RE = re.compile(r"https?://[^\s<>)\"']+")
@@ -128,8 +129,17 @@ def _extract_frontmatter_permalink(content: str) -> str | None:
     return match.group("permalink")
 
 
-def _content_without_code_fences(content: str) -> str:
-    return CODE_FENCE_RE.sub("", content)
+def _content_without_code(content: str) -> str:
+    """Strip fenced code blocks and inline code spans.
+
+    Inline code carries verbatim content (API path templates like
+    ``/repos/{owner}/{repo}``, format strings, shell snippets, example URLs).
+    These look identical to unfilled template placeholders and raw URLs to
+    the prose-oriented heuristics below, so they must be excluded before the
+    placeholder, raw-URL, and link checks run.
+    """
+    stripped = CODE_FENCE_RE.sub("", content)
+    return INLINE_CODE_RE.sub("", stripped)
 
 
 def _content_without_frontmatter(content: str) -> str:
@@ -304,12 +314,12 @@ def _validate_markdown_links(
     check_remote: bool = False,
 ) -> None:
     content = path.read_text(encoding="utf-8")
+    stripped = _content_without_code(content)
 
-    placeholder_match = PLACEHOLDER_URL_RE.search(content)
+    placeholder_match = PLACEHOLDER_URL_RE.search(stripped)
     if placeholder_match:
         raise RuntimeError(f"{path} contains a placeholder URL: {placeholder_match.group(0)}")
 
-    stripped = _content_without_code_fences(content)
     for match in MARKDOWN_LINK_RE.finditer(stripped):
         target = _clean_markdown_link_target(match.group("target"))
         if target.startswith(("mailto:", "tel:")):
@@ -371,7 +381,7 @@ def _validate_markdown_file(
                 raise RuntimeError(f"{path} is missing required heading: {heading}")
 
     if check_placeholders:
-        stripped = _content_without_code_fences(content)
+        stripped = _content_without_code(content)
         placeholder_match = PLACEHOLDER_RE.search(stripped)
         if placeholder_match:
             raise RuntimeError(f"{path} still contains template placeholder text: {placeholder_match.group(0)}")
@@ -412,14 +422,19 @@ def topic_id_from_use_case_dir(use_case_dir: Path) -> str | None:
     return match.group("topic_id")
 
 
-def find_next_topic_needing_detail(root: Path) -> VerificationResult | None:
+def find_next_topic_needing_detail(
+    root: Path,
+    *,
+    excluded_ids: set[str] | None = None,
+) -> VerificationResult | None:
+    excluded = excluded_ids or set()
     candidates: list[tuple[int, str, str]] = []
     for index_md in root.glob(f"docs/use-cases/*/UC-*/{USE_CASE_INDEX}"):
         status = use_case_status(index_md)
         if status == "detailed":
             continue
         topic_id = topic_id_from_use_case_dir(index_md.parent)
-        if topic_id is None:
+        if topic_id is None or topic_id in excluded:
             continue
         candidates.append((int(topic_id.split("-", 1)[1]), topic_id, str(index_md.parent.relative_to(root))))
 

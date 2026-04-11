@@ -135,7 +135,7 @@ class WorkflowResumeTests(unittest.TestCase):
                     self.assertIn("user draft change", working_readme)
                     self.assertIn("UC-024", working_readme)
 
-                state_path = root / ".research-runner" / "state.json"
+                state_path = root / ".research-runner" / "state-claude.json"
                 self.assertTrue(state_path.exists())
                 copied_state_dir = Path(tmp_dir) / "state-copy"
                 copied_state_dir.mkdir(parents=True, exist_ok=True)
@@ -168,7 +168,7 @@ class WorkflowResumeTests(unittest.TestCase):
             _run(root, "git", "config", "user.email", "test@example.com")
             _run(root, "git", "init", "--bare", str(remote))
             _run(root, "git", "remote", "add", "origin", str(remote))
-            (root / "README.md").write_text("| UC-021 | [Title](foo) | Workflow Automation | Cross | High | `research` |\n", encoding="utf-8")
+            (root / "README.md").write_text("| UC-021 | Title | Workflow Automation | Cross | High | `research` |\n", encoding="utf-8")
             base = root / "docs/use-cases/workflow-automation/UC-021-example"
             base.mkdir(parents=True, exist_ok=True)
             (base / "index.md").write_text('---\nstatus: "research"\n---\n', encoding="utf-8")
@@ -259,7 +259,7 @@ class WorkflowResumeTests(unittest.TestCase):
                 exit_code = run_workflow(config)
 
             self.assertEqual(exit_code, 0)
-            state = load_state(root / ".research-runner" / "state.json")
+            state = load_state(root / ".research-runner" / "state-claude.json")
             self.assertIsNotNone(state)
             assert state is not None
             self.assertEqual(state.current_phase, Phase.STOPPED)
@@ -303,7 +303,7 @@ class WorkflowResumeTests(unittest.TestCase):
                     exit_code = run_workflow(config)
 
             self.assertEqual(exit_code, 0)
-            state = load_state(root / ".research-runner" / "state.json")
+            state = load_state(root / ".research-runner" / "state-claude.json")
             self.assertIsNotNone(state)
             assert state is not None
             self.assertEqual(state.current_phase, Phase.STOPPED)
@@ -377,7 +377,7 @@ class WorkflowResumeTests(unittest.TestCase):
 
             self.assertEqual(exit_code, 130)
             self.assertEqual(calls, 3)
-            state = load_state(root / ".research-runner" / "state.json")
+            state = load_state(root / ".research-runner" / "state-claude.json")
             self.assertIsNotNone(state)
             assert state is not None
             self.assertEqual(state.current_phase, Phase.STOPPED)
@@ -392,8 +392,8 @@ class WorkflowResumeTests(unittest.TestCase):
             _run(root, "git", "config", "user.email", "test@example.com")
             (root / "README.md").write_text(
                 (
-                    "| UC-021 | [Title](foo) | Workflow Automation | Cross | High | `research` |\n"
-                    "| UC-022 | [Title](bar) | Workflow Automation | Cross | High | `research` |\n"
+                    "| UC-021 | Title | Workflow Automation | Cross | High | `research` |\n"
+                    "| UC-022 | Title | Workflow Automation | Cross | High | `research` |\n"
                 ),
                 encoding="utf-8",
             )
@@ -458,7 +458,7 @@ class WorkflowResumeTests(unittest.TestCase):
 
             self.assertEqual(exit_code, 130)
             self.assertEqual(calls, 2)
-            state = load_state(root / ".research-runner" / "state.json")
+            state = load_state(root / ".research-runner" / "state-claude.json")
             self.assertIsNotNone(state)
             assert state is not None
             self.assertEqual(state.current_phase, Phase.STOPPED)

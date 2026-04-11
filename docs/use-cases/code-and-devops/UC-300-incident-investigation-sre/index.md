@@ -7,13 +7,13 @@ category_dir: "code-and-devops"
 category_icon: "terminal"
 industry: "Cross-Industry (SaaS, Internet Platforms, FinTech, Travel, E-Commerce)"
 complexity: "High"
-status: "research"
+status: "detailed"
 summary: "Modern software companies operate hundreds to thousands of microservices generating continuous alert streams. Site Reliability Engineers manually investigate each alert by correlating signals across logs, metrics, traces, and deployments — work that consumes 20–30% of senior engineer time and leaves 62% of alerts never properly investigated."
 slug: "UC-300-incident-investigation-sre"
-has_solution_design: false
-has_implementation_guide: false
-has_evaluation: false
-has_references: false
+has_solution_design: true
+has_implementation_guide: true
+has_evaluation: true
+has_references: true
 permalink: /use-cases/UC-300-incident-investigation-sre/
 ---
 

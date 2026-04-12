@@ -7,15 +7,15 @@ category_dir: "industry-specific"
 category_icon: "recycle"
 industry: "Waste Management / Circular Economy"
 complexity: "High"
-status: "research"
+status: "detailed"
 date_added: "2026-04-12"
 date_updated: "2026-04-12"
 summary: "AI vision and robotic sorting systems identify and separate recyclable materials from mixed waste streams at twice human speed and higher accuracy, recovering hundreds of thousands of dollars in commodity value per facility per year."
 slug: "UC-524-waste-sorting-material-recovery"
-has_solution_design: false
-has_implementation_guide: false
-has_evaluation: false
-has_references: false
+has_solution_design: true
+has_implementation_guide: true
+has_evaluation: true
+has_references: true
 permalink: /use-cases/UC-524-waste-sorting-material-recovery/
 ---
 

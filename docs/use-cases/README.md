@@ -120,7 +120,7 @@ docs/use-cases/
 | UC-521 | Autonomous Semiconductor Fab Yield Optimization | Industry-Specific | Semiconductor | detailed | `industry-specific/UC-521-semiconductor-yield-optimization/` |
 | UC-522 | Autonomous Railway Predictive Maintenance and Network Operations | Industry-Specific | Rail / Transportation | detailed | `industry-specific/UC-522-railway-predictive-maintenance/` |
 | UC-523 | Autonomous Upstream Oil & Gas Production Optimization | Industry-Specific | Oil & Gas | detailed | `industry-specific/UC-523-oil-gas-production-optimization/` |
-| UC-524 | Autonomous Waste Sorting and Material Recovery Optimization | Industry-Specific | Waste Management / Circular Economy | research | `industry-specific/UC-524-waste-sorting-material-recovery/` |
+| UC-524 | Autonomous Waste Sorting and Material Recovery Optimization | Industry-Specific | Waste Management / Circular Economy | detailed | `industry-specific/UC-524-waste-sorting-material-recovery/` |
 
 ---
 

@@ -7,15 +7,15 @@ category_dir: "industry-specific"
 category_icon: "briefcase"
 industry: "Pharmaceutical / Life Sciences"
 complexity: "High"
-status: "research"
+status: "detailed"
 date_added: "2026-04-09"
-date_updated: "2026-04-10"
+date_updated: "2026-04-12"
 summary: "Clinical trial patient recruitment is the single largest bottleneck in drug development. 80% of trials are delayed due to enrollment failures; patient recruitment accounts for 32-40% of total trial costs. An agentic AI system autonomously parses complex eligibility criteria, scans structured and unstructured EHR data in near real-time, scores and ranks patient-trial matches, optimizes site selection, and monitors enrollment velocity—reducing patient identification from weeks to hours while achieving 95%+ match accuracy and supporting FDA diversity action plans."
 slug: "UC-509-clinical-trial-patient-matching"
-has_solution_design: false
-has_implementation_guide: false
-has_evaluation: false
-has_references: false
+has_solution_design: true
+has_implementation_guide: true
+has_evaluation: true
+has_references: true
 permalink: /use-cases/UC-509-clinical-trial-patient-matching/
 ---
 
@@ -48,4 +48,7 @@ The manual process of matching patients in electronic health records (EHR) to co
 
 ## Key Documents
 
-This case study is still at `research` status. Detailed artifacts are not published yet.
+- [Solution Design](solution-design.md) — Operating model, architecture, AI boundaries, integration seams, and design decisions
+- [Implementation Guide](implementation-guide.md) — Delivery blueprint, contracts, orchestration, prompts, and evaluation harness
+- [Evaluation](evaluation.md) — Published evidence, economics, risks, and rollout KPIs
+- [References](references.md) — Annotated source register and claim map

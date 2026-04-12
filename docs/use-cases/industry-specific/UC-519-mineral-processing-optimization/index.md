@@ -7,15 +7,15 @@ category_dir: "industry-specific"
 category_icon: "⛏️"
 industry: "Mining & Metals"
 complexity: "High"
-status: "research"
+status: "detailed"
 date_added: "2026-04-12"
 date_updated: "2026-04-12"
 summary: "Mining companies lose hundreds of millions annually to sub-optimal comminution, flotation, and leaching parameters that human operators cannot continuously re-tune as ore characteristics shift. AI systems that fuse real-time sensor data across the processing circuit and recommend set-point adjustments in minutes — not hours — are recovering 1–5% additional mineral output and cutting energy consumption 10–15% at copper, gold, and iron ore operations worldwide."
 slug: "UC-519-mineral-processing-optimization"
-has_solution_design: false
-has_implementation_guide: false
-has_evaluation: false
-has_references: false
+has_solution_design: true
+has_implementation_guide: true
+has_evaluation: true
+has_references: true
 permalink: /use-cases/UC-519-mineral-processing-optimization/
 ---
 

@@ -7,15 +7,15 @@ category_dir: "industry-specific"
 category_icon: "🔥"
 industry: "Emergency Management / Utilities"
 complexity: "High"
-status: "research"
+status: "detailed"
 date_added: "2026-04-12"
 date_updated: "2026-04-12"
 summary: "Wildfires cost the U.S. alone $394-893 billion per year in combined damages and health impacts. Current detection relies on 911 calls, human lookout towers, and periodic satellite passes that miss ignitions for hours. AI systems fusing camera networks, IoT gas sensors, and geostationary satellite imagery now detect fires within minutes of ignition — often before any human report — enabling suppression while fires are still under one acre."
 slug: "UC-520-wildfire-detection-early-warning"
-has_solution_design: false
-has_implementation_guide: false
-has_evaluation: false
-has_references: false
+has_solution_design: true
+has_implementation_guide: true
+has_evaluation: true
+has_references: true
 permalink: /use-cases/UC-520-wildfire-detection-early-warning/
 ---
 

@@ -7,15 +7,15 @@ category_dir: "industry-specific"
 category_icon: "briefcase"
 industry: "Retail / E-Commerce / Airlines / Hospitality"
 complexity: "High"
-status: "research"
+status: "detailed"
 date_added: "2026-04-09"
-date_updated: "2026-04-10"
+date_updated: "2026-04-12"
 summary: "Enterprises still set prices through manual spreadsheet processes on weekly/monthly cycles, missing continuous market optimization opportunities. McKinsey: a 1% price increase generates 8% operating profit increase. An autonomous multi-agent dynamic pricing system continuously ingests competitor prices, demand signals, inventory levels, and applies configurable guardrails—enabling Amazon's 2.5M daily price changes and delivering 3-8% revenue uplift across retail, 5-15% for airlines, and 7-20% for hospitality."
 slug: "UC-508-dynamic-pricing-optimization"
-has_solution_design: false
-has_implementation_guide: false
-has_evaluation: false
-has_references: false
+has_solution_design: true
+has_implementation_guide: true
+has_evaluation: true
+has_references: true
 permalink: /use-cases/UC-508-dynamic-pricing-optimization/
 ---
 

@@ -7,15 +7,15 @@ category_dir: "industry-specific"
 category_icon: "shield"
 industry: "Banking / Payments"
 complexity: "High"
-status: "research"
+status: "detailed"
 date_added: "2026-04-12"
 date_updated: "2026-04-12"
 summary: "AI models score every card and digital payment transaction in under 50 milliseconds, catching fraudulent transactions while cutting false declines that cost merchants more than the fraud itself."
 slug: "UC-525-real-time-payment-fraud-detection"
-has_solution_design: false
-has_implementation_guide: false
-has_evaluation: false
-has_references: false
+has_solution_design: true
+has_implementation_guide: true
+has_evaluation: true
+has_references: true
 permalink: /use-cases/UC-525-real-time-payment-fraud-detection/
 ---
 

@@ -122,7 +122,7 @@ docs/use-cases/
 | UC-522 | Autonomous Railway Predictive Maintenance and Network Operations | Industry-Specific | Rail / Transportation | detailed | `industry-specific/UC-522-railway-predictive-maintenance/` |
 | UC-523 | Autonomous Upstream Oil & Gas Production Optimization | Industry-Specific | Oil & Gas | detailed | `industry-specific/UC-523-oil-gas-production-optimization/` |
 | UC-524 | Autonomous Waste Sorting and Material Recovery Optimization | Industry-Specific | Waste Management / Circular Economy | detailed | `industry-specific/UC-524-waste-sorting-material-recovery/` |
-| UC-525 | Autonomous Real-Time Payment Fraud Detection | Industry-Specific | Banking / Payments | research | `industry-specific/UC-525-real-time-payment-fraud-detection/` |
+| UC-525 | Autonomous Real-Time Payment Fraud Detection | Industry-Specific | Banking / Payments | detailed | `industry-specific/UC-525-real-time-payment-fraud-detection/` |
 
 ---
 

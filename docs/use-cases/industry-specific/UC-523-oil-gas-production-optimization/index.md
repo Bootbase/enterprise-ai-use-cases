@@ -7,15 +7,15 @@ category_dir: "industry-specific"
 category_icon: "🏭"
 industry: "Oil & Gas"
 complexity: "High"
-status: "research"
+status: "detailed"
 date_added: "2026-04-12"
 date_updated: "2026-04-12"
 summary: "AI-driven well and field optimization that continuously adjusts artificial lift, injection rates, and production schedules across thousands of wells to maximize recovery, cut unplanned downtime, and reduce operating costs."
 slug: "UC-523-oil-gas-production-optimization"
-has_solution_design: false
-has_implementation_guide: false
-has_evaluation: false
-has_references: false
+has_solution_design: true
+has_implementation_guide: true
+has_evaluation: true
+has_references: true
 permalink: /use-cases/UC-523-oil-gas-production-optimization/
 ---
 

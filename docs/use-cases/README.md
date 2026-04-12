@@ -118,7 +118,7 @@ docs/use-cases/
 | UC-520 | Autonomous Wildfire Detection and Early Warning | Industry-Specific | Emergency Management / Utilities | detailed | `industry-specific/UC-520-wildfire-detection-early-warning/` |
 | UC-521 | Autonomous Semiconductor Fab Yield Optimization | Industry-Specific | Semiconductor | detailed | `industry-specific/UC-521-semiconductor-yield-optimization/` |
 | UC-522 | Autonomous Railway Predictive Maintenance and Network Operations | Industry-Specific | Rail / Transportation | detailed | `industry-specific/UC-522-railway-predictive-maintenance/` |
-| UC-523 | Autonomous Upstream Oil & Gas Production Optimization | Industry-Specific | Oil & Gas | research | `industry-specific/UC-523-oil-gas-production-optimization/` |
+| UC-523 | Autonomous Upstream Oil & Gas Production Optimization | Industry-Specific | Oil & Gas | detailed | `industry-specific/UC-523-oil-gas-production-optimization/` |
 
 ---
 

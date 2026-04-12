@@ -114,7 +114,7 @@ docs/use-cases/
 | UC-518 | Autonomous Vessel Voyage Optimization and Fleet Decarbonization | Industry-Specific | Maritime / Shipping | detailed | `industry-specific/UC-518-vessel-voyage-optimization/` |
 | UC-519 | Autonomous Mineral Processing Optimization | Industry-Specific | Mining & Metals | detailed | `industry-specific/UC-519-mineral-processing-optimization/` |
 | UC-520 | Autonomous Wildfire Detection and Early Warning | Industry-Specific | Emergency Management / Utilities | detailed | `industry-specific/UC-520-wildfire-detection-early-warning/` |
-| UC-521 | Autonomous Semiconductor Fab Yield Optimization | Industry-Specific | Semiconductor | research | `industry-specific/UC-521-semiconductor-yield-optimization/` |
+| UC-521 | Autonomous Semiconductor Fab Yield Optimization | Industry-Specific | Semiconductor | detailed | `industry-specific/UC-521-semiconductor-yield-optimization/` |
 
 ---
 

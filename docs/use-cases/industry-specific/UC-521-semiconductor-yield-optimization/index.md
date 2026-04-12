@@ -7,15 +7,15 @@ category_dir: "industry-specific"
 category_icon: "🔬"
 industry: "Semiconductor"
 complexity: "High"
-status: "research"
+status: "detailed"
 date_added: "2026-04-12"
 date_updated: "2026-04-12"
 summary: "Advanced-node semiconductor wafers cost $16,000–22,000 each, and initial yields at 3nm/5nm nodes hover around 50–60%, meaning nearly half the dies on every wafer ship as scrap. Yield engineering teams manually correlate defect patterns across hundreds of process parameters using weeks-old data. AI systems now detect defects with 95% accuracy, cut defect rates by up to 40%, and enable real-time process adjustments — compressing root-cause analysis from days to hours."
 slug: "UC-521-semiconductor-yield-optimization"
-has_solution_design: false
-has_implementation_guide: false
-has_evaluation: false
-has_references: false
+has_solution_design: true
+has_implementation_guide: true
+has_evaluation: true
+has_references: true
 permalink: /use-cases/UC-521-semiconductor-yield-optimization/
 ---
 

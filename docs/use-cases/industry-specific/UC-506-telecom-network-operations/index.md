@@ -7,15 +7,15 @@ category_dir: "industry-specific"
 category_icon: "briefcase"
 industry: "Telecommunications"
 complexity: "High"
-status: "research"
+status: "detailed"
 date_added: "2026-04-09"
-date_updated: "2026-04-10"
+date_updated: "2026-04-12"
 summary: "Telecom operators manage 150,000+ network elements with billions of daily telemetry points. NOC engineers face alarm storms where 70-90% of alerts are noise. An autonomous multi-agent system correlates alarms across RAN, transport, and core domains, identifies root cause, executes pre-approved remediation in minutes, and continuously optimizes RAN parameters based on real-time traffic—reducing mean-time-to-repair by 40% and network OpEx by 15-30%."
 slug: "UC-506-telecom-network-operations"
-has_solution_design: false
-has_implementation_guide: false
-has_evaluation: false
-has_references: false
+has_solution_design: true
+has_implementation_guide: true
+has_evaluation: true
+has_references: true
 permalink: /use-cases/UC-506-telecom-network-operations/
 ---
 

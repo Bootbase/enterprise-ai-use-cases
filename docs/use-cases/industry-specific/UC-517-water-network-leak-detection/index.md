@@ -7,15 +7,15 @@ category_dir: "industry-specific"
 category_icon: "briefcase"
 industry: "Water / Utilities"
 complexity: "High"
-status: "research"
+status: "detailed"
 date_added: "2026-04-12"
 date_updated: "2026-04-12"
 summary: "Water utilities lose an average of 30% of treated drinking water to leaks in aging distribution networks, costing US utilities alone $6.4 billion annually. An agentic AI system continuously monitors acoustic and flow data from networked sensors, classifies leak signatures, prioritizes repairs by severity and water loss cost, and dispatches field crews with sub-meter location accuracy — reducing non-revenue water by 50% or more."
 slug: "UC-517-water-network-leak-detection"
-has_solution_design: false
-has_implementation_guide: false
-has_evaluation: false
-has_references: false
+has_solution_design: true
+has_implementation_guide: true
+has_evaluation: true
+has_references: true
 permalink: /use-cases/UC-517-water-network-leak-detection/
 ---
 

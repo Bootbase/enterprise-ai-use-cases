@@ -116,7 +116,7 @@ docs/use-cases/
 | UC-519 | Autonomous Mineral Processing Optimization | Industry-Specific | Mining & Metals | detailed | `industry-specific/UC-519-mineral-processing-optimization/` |
 | UC-520 | Autonomous Wildfire Detection and Early Warning | Industry-Specific | Emergency Management / Utilities | detailed | `industry-specific/UC-520-wildfire-detection-early-warning/` |
 | UC-521 | Autonomous Semiconductor Fab Yield Optimization | Industry-Specific | Semiconductor | detailed | `industry-specific/UC-521-semiconductor-yield-optimization/` |
-| UC-522 | Autonomous Railway Predictive Maintenance and Network Operations | Industry-Specific | Rail / Transportation | research | `industry-specific/UC-522-railway-predictive-maintenance/` |
+| UC-522 | Autonomous Railway Predictive Maintenance and Network Operations | Industry-Specific | Rail / Transportation | detailed | `industry-specific/UC-522-railway-predictive-maintenance/` |
 
 ---
 

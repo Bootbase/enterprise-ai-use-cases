@@ -7,15 +7,15 @@ category_dir: "industry-specific"
 category_icon: "🔬"
 industry: "Rail / Transportation"
 complexity: "High"
-status: "research"
+status: "detailed"
 date_added: "2026-04-12"
 date_updated: "2026-04-12"
 summary: "Railway operators manage tens of thousands of track-kilometers, rolling stock fleets, and signaling systems where unplanned failures cascade into network-wide delays and safety incidents. Maintenance accounts for 25–30% of total operating costs and is still largely time-based. AI systems ingesting wayside sensor data, machine vision, and operational telemetry now predict component failures days to weeks in advance — cutting maintenance costs by 15–25%, reducing service delays by up to 20%, and preventing derailments before they occur."
 slug: "UC-522-railway-predictive-maintenance"
-has_solution_design: false
-has_implementation_guide: false
-has_evaluation: false
-has_references: false
+has_solution_design: true
+has_implementation_guide: true
+has_evaluation: true
+has_references: true
 permalink: /use-cases/UC-522-railway-predictive-maintenance/
 ---
 

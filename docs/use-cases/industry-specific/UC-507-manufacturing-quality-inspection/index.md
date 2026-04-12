@@ -7,15 +7,15 @@ category_dir: "industry-specific"
 category_icon: "briefcase"
 industry: "Manufacturing"
 complexity: "High"
-status: "research"
+status: "detailed"
 date_added: "2026-04-09"
-date_updated: "2026-04-10"
+date_updated: "2026-04-12"
 summary: "Manufacturing quality inspection remains overwhelmingly dependent on human eyesight achieving only 80% accuracy and missing up to 90% of microscopic defects. The cost of poor quality averages 20% of total revenue. An agentic multi-agent vision system deployed at production-line edge detects defects at >99% accuracy, diagnoses root cause via process correlation, executes closed-loop corrective action, and maintains full traceability—achieving 100% inline inspection at production speed while reducing escaped defects by 60-90%."
 slug: "UC-507-manufacturing-quality-inspection"
-has_solution_design: false
-has_implementation_guide: false
-has_evaluation: false
-has_references: false
+has_solution_design: true
+has_implementation_guide: true
+has_evaluation: true
+has_references: true
 permalink: /use-cases/UC-507-manufacturing-quality-inspection/
 ---
 
